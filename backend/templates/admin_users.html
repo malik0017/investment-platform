@@ -1,0 +1,39 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Users - Investment Admin{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">User Management</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Users</li>
+</ol>
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        List of Users (Placeholder)
+    </div>
+    <div class="card-body">
+        <p>Table of users will go here.</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Is Admin</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>admin</td>
+                    <td>Yes</td>
+                    <td><button class="btn btn-sm btn-info">Edit</button> <button
+                            class="btn btn-sm btn-danger">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

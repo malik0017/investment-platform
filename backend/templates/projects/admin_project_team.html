@@ -1,0 +1,144 @@
+<!-- backend/templates/projects/admin_project_team.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Project Team - {{ project.title }} - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Team for {{ project.title }}</h2>
+        <a href="{{ url_for('admin_project_detail', project_id=project.id) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Project
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Add Team Member</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_project_team_add', project_id=project.id) }}">
+                        <div class="mb-3">
+                            <label for="user_id" class="form-label">Select User *</label>
+                            <select class="form-select" id="user_id" name="user_id" required>
+                                <option value="">Select a user</option>
+                                {% for user in all_users %}
+                                <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role *</label>
+                            <input type="text" class="form-control" id="role" name="role" required
+                                placeholder="e.g., Developer, Designer, Manager">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add to Team</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Project Team Members</h5>
+                </div>
+                <div class="card-body">
+                    {% if team_members %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Joined Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for member in team_members %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div
+                                                class="avatar avatar-40 rounded-circle bg-theme-1-subtle text-theme-1 me-2 p-2">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <strong>{{ member.member.username }}</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ member.member.email }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ member.role }}</span>
+                                    </td>
+                                    <td>{{ member.joined_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="modal" data-bs-target="#editRoleModal{{ member.id }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <form method="POST"
+                                                action="{{ url_for('admin_project_team_remove', project_id=project.id, member_id=member.id) }}"
+                                                onsubmit="return confirm('Are you sure you want to remove this team member?');">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-person-dash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Edit Role Modal -->
+                                <div class="modal fade" id="editRoleModal{{ member.id }}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Role for {{ member.member.username }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <form method="POST"
+                                                action="{{ url_for('admin_project_team_edit', project_id=project.id, member_id=member.id) }}">
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="role{{ member.id }}" class="form-label">Role
+                                                            *</label>
+                                                        <input type="text" class="form-control" id="role{{ member.id }}"
+                                                            name="role" value="{{ member.role }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Update Role</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="bi bi-people" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">No team members found</h5>
+                            <p>Add team members to collaborate on this project</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

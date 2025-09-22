@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}News - Insights - RSR Group{% endblock %}
+{% block extra_css %}{% endblock %}
+{% block content %}
+<div class="wrapper ccm-page page-type-news-and-insights page-template-news-and-insights">
+    <main>
+        <section class="careers-page">
+            <div class="common-banner-block">
+                <div class="bg-img"
+                    style="background-image: url('{{ url_for('frontend_static', filename='img/a2fe6eba50b4e866e3b1b584222df047.jpg') }}')">
+                </div>
+                <div class="container-fluid">
+                    <div class="content-container">
+                        <div class=" banner-content">
+                            <div class="breadcrumb">
+                                <nav role="navigation" aria-label="breadcrumb">
+                                    <ul class="nav">
+                                        <li class="old-navLink"><a href="{{ url_for('home') }}" target="_self">RSR Group | Riyadh</a>
+                                        </li>
+                                        <li class="active">News &amp; Insights</li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <h1>
+                                News & Insights
+                            </h1>
+                        </div>
+                        <a class="scrollTo" href="#explore">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_426_5912" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                    width="24" height="24">
+                                    <rect width="24" height="24" fill="white" />
+                                </mask>
+                                <g mask="url(#mask0_426_5912)">
+                                    <path
+                                        d="M12 20.9992C10.3333 20.9992 8.91667 20.4159 7.75 19.2492C6.58333 18.0826 6 16.6659 6 14.9992V9.07422C6 7.40755 6.58333 5.99089 7.75 4.82422C8.91667 3.65755 10.3333 3.07422 12 3.07422C13.6667 3.07422 15.0833 3.65755 16.25 4.82422C17.4167 5.99089 18 7.40755 18 9.07422V14.9992C18 16.6659 17.4167 18.0826 16.25 19.2492C15.0833 20.4159 13.6667 20.9992 12 20.9992ZM12.5 9.07422H17C17 7.75755 16.5627 6.62822 15.688 5.68622C14.8127 4.74489 13.75 4.21589 12.5 4.09922V9.07422ZM7 9.07422H11.5V4.09922C10.25 4.21589 9.18733 4.74489 8.312 5.68622C7.43733 6.62822 7 7.75755 7 9.07422ZM12 19.9992C13.3833 19.9992 14.5627 19.5119 15.538 18.5372C16.5127 17.5619 17 16.3826 17 14.9992V10.0742H7V14.9992C7 16.3826 7.48767 17.5619 8.463 18.5372C9.43767 19.5119 10.6167 19.9992 12 19.9992Z"
+                                        fill="white" />
+                                </g>
+                            </svg>
+                            <span>Scroll To Explore</span>
+    
+                        </a>
+                    </div>
+                </div>
+            </div>
+    
+            <section class="section news-insights-slider section_light js-only-news">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="title">
+                                <h2>News</h2>
+                                <div>
+                                    <a class="mutiply-cta arrowed dark" href="{{url_for('news_insights_news', id=5)}}">
+                                        <span class="arrow">
+                                            <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </span>
+                                        <span>View All</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="container-fluid">
+                    <div class="row-wrap">
+    
+                        <div class="news-slider-wrapper">
+                            <div class="featured-news-slider ">
+                                <div class="news-parallax-wrapper">
+    
+                                    <div class="">
+                                        <img class="lazy"
+                                            data-src="{{ url_for('frontend_static', filename='img/fb5e377950140cea4dabea0cc2acc6a6.jpg')}}"
+                                            alt="">
+                                    </div>
+                                </div>
+    
+                                <div class="featured-news">
+                                    <div class="animated-line"></div>
+                                    <!-- <div class="swiper-wrapper"> -->
+                                    <div class="content-box">
+                                        <a
+                                            href="#">
+                                            <div class="content-wrapper">
+                                                <h3>
+                                                RSR Group posted a strong Q1 2025 net profit of SAR 80M, fueled by robust revenue growth. The Group also completed the
+                                                strategic SAR 3.8B divestment of RTCC, demonstrating disciplined capital allocation.</h3>
+                                                <p class="p">29 Jul 2025</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <!-- </div> -->
+    
+                                    <div class="controls hide">
+                                        <div class="pagination-wrapper dark">
+                                            <div class="swiper-progress-bar">
+                                                <span class="slide_progress-bar"></span>
+                                            </div>
+                                            <div class="swiper-counter"></div>
+                                        </div>
+                                        <div class="navigation dark">
+                                            <div class="swiper-button-prev">
+                                                <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                                        fill="white" />
+                                                </svg>
+                                            </div>
+                                            <div class="swiper-button-next">
+                                                <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                                        fill="white" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="news-listing-wrapper">
+                            <div class="news-listing">
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group has finalized the acquisition of Tendam, a transformative move that doubles Operational EBITDA and
+                                        significantly extends its international reach.</h4>
+                                        <p class="p">23 Jul 2025</p>
+                                    </a>
+                                </div>
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group solidifies its role as a mobility champion via its strategic investment in Mwasalat Holdings.</h4>
+                                        <p class="p">07 Jul 2025</p>
+                                    </a>
+                                </div>
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group announces the c.1.2 sale of Abetong to a consortium formed by Riyadh Holding.</h4>
+                                        <p class="p">30 Jun 2025</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <section class="section news-insights-slider section_light js-only-news">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="title">
+                                <h2>Insights</h2>
+                                <div>
+                                    <a class="mutiply-cta arrowed dark" href="{{url_for('news_insights_news', id=5)}}">
+                                        <span class="arrow">
+                                            <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </span>
+                                        <span>View All</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="container-fluid">
+                    <div class="row-wrap">
+                        <div class="news-slider-wrapper">
+                            <div class="featured-news-slider ">
+                                <div class="news-parallax-wrapper">
+    
+                                    <div class="">
+                                        <img class="lazy"
+                                            data-src="{{ url_for('frontend_static', filename='img/eb31d7cb534c210add87647dc15971b3.jpg')}}"
+                                            alt="">
+                                    </div>
+                                </div>
+    
+                                <div class="featured-news">
+                                    <div class="animated-line"></div>
+                                    <!-- <div class="swiper-wrapper"> -->
+                                    <div class="content-box">
+                                        <a href="#">
+                                            <div class="content-wrapper">
+                                                <h3>Macro View Outlook 2025</h3>
+                                                <p class="p">22 Jan 2025</p>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <!-- </div> -->
+    
+                                    <div class="controls hide">
+                                        <div class="pagination-wrapper dark">
+                                            <div class="swiper-progress-bar">
+                                                <span class="slide_progress-bar"></span>
+                                            </div>
+                                            <div class="swiper-counter"></div>
+                                        </div>
+                                        <div class="navigation dark">
+                                            <div class="swiper-button-prev">
+                                                <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                                        fill="white" />
+                                                </svg>
+                                            </div>
+                                            <div class="swiper-button-next">
+                                                <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                                        fill="white" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="news-listing-wrapper">
+                            <div class="news-listing">
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a href="#">
+                                        <h4>Macro Outlook 2024</h4>
+                                        <p class="p">12 Jan 2024</p>
+                                    </a>
+                                </div>
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a href="#">
+                                        <h4>Navigating Geopolitical Risks</h4>
+                                        <p class="p">12 Jun 2023</p>
+                                    </a>
+                                </div>
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a href="#">
+                                        <h4>The Macro View</h4>
+                                        <p class="p">30 May 2023</p>
+                                    </a>
+                                </div>
+                                <div class="each-news">
+                                    <div class="span"></div>
+                                    <a href="#">
+                                        <h4>Energy and Utilities Investment Outlook</h4>
+                                        <p class="p">22 Feb 2023</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+    
+    <div class="push"></div>
+
+</div>
+
+{% endblock %}
+{% block extra_js %}{% endblock %}

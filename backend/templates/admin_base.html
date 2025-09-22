@@ -1,0 +1,499 @@
+<!-- backend/templates/admin_base.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>
+      {% block title %}RSR Dashboard - Investment Platform{% endblock %}
+    </title>
+    <link rel="icon" type="image/png" href="{{ url_for('admin_static', filename='admin_assets/images/RSR_Brand Logo.jpg') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --adminuiux-content-font: "Open Sans", sans-serif;
+        --adminuiux-content-font-weight: 400;
+        --adminuiux-title-font: "Lexend", sans-serif;
+        --adminuiux-title-font-weight: 600;
+      }
+    </style>
+  
+    
+
+     <!-- Chart.js CDN -->
+      <!-- <link href="{{ url_for('admin_static', filename='admin_assets/css/latest_app.css') }}" rel="stylesheet" /> -->
+    <link href="{{ url_for('admin_static', filename='admin_assets/css/app.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('admin_static', filename='admin_assets/css/bootstrap-icons.css') }}" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    
+    <link href="{{ url_for('admin_static', filename='admin_assets/css/style.css') }}" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+    <style>
+/* Custom SweetAlert2 Styles */
+.custom-swal-popup {
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(226, 232, 240, 0.7) !important;
+}
+
+.custom-swal-title {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    font-family: 'Lexend', sans-serif !important;
+}
+
+.swal2-icon {
+    width: 2.5em !important;
+    height: 2.5em !important;
+    margin: 1em auto 0.5em !important;
+}
+
+.swal2-timer-progress-bar {
+    height: 3px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .swal2-popup {
+        width: 90% !important;
+        margin: 0 auto !important;
+    }
+}
+/* Dark mode styles */
+/* body.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode .adminuiux-card {
+    background-color: #2d2d2d;
+    border-color: #404040;
+    color: #ffffff;
+}
+
+body.dark-mode .adminuiux-header {
+    background-color: #2d2d2d;
+    border-bottom-color: #404040;
+}
+
+body.dark-mode .adminuiux-sidebar {
+    background-color: #2d2d2d;
+}
+
+body.dark-mode .text-secondary {
+    color: #b0b0b0 !important;
+}
+
+body.dark-mode .table {
+    color: #ffffff;
+}
+
+body.dark-mode .table-hover tbody tr:hover {
+    background-color: #3d3d3d;
+    color: #ffffff;
+}
+
+body.dark-mode .form-control {
+    background-color: #3d3d3d;
+    border-color: #555555;
+    color: #ffffff;
+}
+
+body.dark-mode .form-control:focus {
+    background-color: #4d4d4d;
+    border-color: #007bff;
+    color: #ffffff;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #2d2d2d;
+    border-color: #404040;
+}
+
+body.dark-mode .dropdown-item {
+    color: #ffffff;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: #3d3d3d;
+    color: #ffffff;
+}
+
+/* Fix for scroll behavior */
+.adminuiux-header {
+    transition: background-color 0.3s ease;
+}
+
+body.dark-mode .adminuiux-header {
+    background-color: #2d2d2d !important;
+} */
+</style>
+  </head>
+
+  <body class="main-bg main-bg-opac main-bg-blur adminuiux-sidebar-fill-white adminuiux-sidebar-boxed theme-blue roundedui" data-theme="theme-blue" data-sidebarfill="adminuiux-sidebar-fill-white">
+    <!-- Page Loader -->
+    <div class="pageloader">
+      <div class="container h-100">
+        <div class="row justify-content-center align-items-center text-center h-100">
+          <div class="col-12 mb-auto pt-4"></div>
+          <div class="col-auto">
+            <img src="{{ url_for('admin_static', filename='admin_assets/images/RSR Logo_Legal Name_V2.png') }}" alt="" class="height-60 mb-3" />
+            <p class="h6 mb-0">RSR </p>
+            <p class="h3 mb-4">Investment</p>
+            <div class="loader10 mb-2 mx-auto"></div>
+          </div>
+          <div class="col-12 mt-auto pb-4">
+            <p class="text-secondary">
+              Loading admin dashboard...
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    {% include 'admin_header.html' %}
+    
+    <div class="adminuiux-wrap">
+      {% include 'admin_sidebar.html' %}
+      
+      <main class="adminuiux-content has-sidebar" onclick="contentClick()"> 
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+    
+    {% include 'admin_footer.html' %}
+    
+    <div class="position-fixed bottom-0 end-0 m-3 z-index-5">
+      <button class="btn btn-square btn-theme shadow" type="button" data-bs-toggle="offcanvas" data-bs-target="#theming"
+        aria-controls="theming"><i class="bi bi-palette"></i></button>
+      <br>
+      <button class="btn btn-theme btn-square rounded-circle shadow mt-2 d-none" id="backtotop"><i
+          class="bi bi-arrow-up"></i></button>
+      </div>
+    {% include 'admin_theme_selector.html' %}
+
+<!-- Theme JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{{ url_for('admin_static', filename='admin_assets/js/app.js') }}"></script>
+<!-- <script src="{{ url_for('admin_static', filename='admin_assets/js/investment/investment-statistics.js') }}"> </script> -->
+
+
+   <script src="{{ url_for('admin_static', filename='admin_assets/plugins/apexcharts-bundle/js/apexcharts.min.js') }}"></script>
+
+<script>
+// Store flash messages in a JavaScript variable first
+const flashMessages = [
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {
+                    category: '{{ category }}',
+                    message: '{{ message }}'
+                },
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Custom toast styles
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        width: '400px',
+        padding: '1.25rem',
+        backdrop: false,
+        animation: true,
+        customClass: {
+            container: 'animate__animated animate__fadeInRight',
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            htmlContainer: 'custom-swal-html',
+            icon: 'custom-swal-icon'
+        },
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+    });
+
+    // Display flash messages
+    flashMessages.forEach(msg => {
+        if (msg.category && msg.message) {
+            var icon = msg.category === 'danger' ? 'error' : msg.category;
+            var iconColor = 
+                msg.category === 'danger' ? '#ef4444' :
+                msg.category === 'success' ? '#10b981' :
+                msg.category === 'warning' ? '#f59e0b' : '#3b82f6';
+            
+            Toast.fire({
+                icon: icon,
+                title: msg.message,
+                background: '#fff',
+                color: '#1e293b',
+                iconColor: iconColor,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInRight animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutRight animate__faster'
+                }
+            });
+        }
+    });
+
+    // Enhanced session timeout dialog
+    let inactivityTimer;
+    const resetTimer = () => {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(logout, 30 * 60 * 1000);
+    };
+    
+    const logout = () => {
+        Swal.fire({
+            title: '<span style="color:#1e293b">Session Timeout</span>',
+            html: '<div style="color:#64748b">You will be logged out due to inactivity</div>',
+            icon: 'warning',
+            iconColor: '#f59e0b',
+            showCancelButton: true,
+            confirmButtonText: 'Stay Logged In',
+            cancelButtonText: 'Logout Now',
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#ef4444',
+            background: '#fff',
+            customClass: {
+                container: 'animate__animated animate__fadeIn',
+                popup: 'shadow-lg rounded-xl',
+                title: 'text-xl font-semibold',
+                htmlContainer: 'text-base',
+                confirmButton: 'px-4 py-2 rounded-lg',
+                cancelButton: 'px-4 py-2 rounded-lg'
+            },
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown animate__faster'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp animate__faster'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                resetTimer();
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Session extended',
+                    iconColor: '#10b981'
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                window.location.href = "{{ url_for('admin_logout') }}";
+            }
+        });
+    };
+    
+    // Reset timer on user activity
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeydown = resetTimer;
+    document.onclick = resetTimer;
+    document.onscroll = resetTimer;
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Summary Chart
+  const summaryCtx = document.getElementById('summarychart');
+  if (summaryCtx) {
+    new Chart(summaryCtx, {
+      type: 'line',
+      data: {
+        labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+        datasets: [{
+          label: 'Portfolio Value',
+          data: [58000, 59200, 60500, 62000, 63500, 64800, 65520],
+          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(54, 162, 235, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return ' ' + context.raw.toLocaleString();
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: function(value) {
+                return '' + value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Doughnut Chart
+  const doughnutCtx = document.getElementById('doughnutchart');
+  if (doughnutCtx) {
+    new Chart(doughnutCtx, {
+      type: 'doughnut',
+      data: {
+        // labels: ['Share Holdings', 'Mutual Funds', 'Bank Bonds', 'Gov. Securities', 'Fixed Deposit'],
+        datasets: [{
+          data: [165520, 265850, 356260, 185650, 190450],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(201, 203, 207, 0.8)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+          legend: { position: 'right' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Area Chart
+  // const areaCtx = document.getElementById('areachartblue1');
+  // if (areaCtx) {
+  //   new Chart(areaCtx, {
+  //     type: 'line',
+  //     data: {
+  //       labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+  //       datasets: [{
+  //         label: 'Wallet Value',
+  //         data: [1100000, 1120000, 1135000, 1152250],
+  //         backgroundColor: 'rgba(54, 162, 235, 0.2)',
+  //         borderColor: 'rgba(54, 162, 235, 1)',
+  //         borderWidth: 2,
+  //         tension: 0.4,
+  //         fill: true
+  //       }]
+  //     },
+  //     options: {
+  //       responsive: true,
+  //       maintainAspectRatio: false,
+  //       plugins: {
+  //         legend: { display: false },
+  //         tooltip: {
+  //           callbacks: {
+  //             label: function(context) {
+  //               return '' + context.raw.toLocaleString();
+  //             }
+  //           }
+  //         }
+  //       },
+  //       scales: {
+  //         y: {
+  //           beginAtZero: false,
+  //           ticks: {
+  //             callback: function(value) {
+  //               return '' + (value / 1000).toLocaleString() + '             k';
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
+});
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const d    kModeBtn = document.getElementById('btn-layout-modes-dark-pag      
+
+    if (darkModeBtn) {
+      darkModeBtn.addEventListener('click', functi      ) {
+        toggleD        e();
+      });
+    }
+
+    // Initialize dark mode based on user preference or system setting
+    function initDarkMode() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.body.classList.add('dark-mode');
+        updateDarkModeIcons(true);
+      } else {
+        document.body.classList.remove('dark-mode');
+        updateDarkModeIcons(false);
+      }
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateDarkModeIcons(isDark);
+    }
+
+    function updateDarkModeIcons(isDark) {
+      const sunIcons = document.querySelectorAll('.btnsunmoon .sun');
+      const moonIcons = document.querySelectorAll('.btnsunmoon .moon');
+
+      if (isDark) {
+        sunIcons.forEach(icon => icon.style.display = 'none');
+        moonIcons.forEach(icon => icon.style.display = 'block');
+      } else {
+        sunIcons.forEach(icon => icon.style.display = 'block');
+        moonIcons.forEach(icon => icon.style.display = 'none');
+      }
+    }
+
+    // Initialize on page load
+    initDarkMode();
+  });
+</script>
+
+    {% block extra_js %}{% endblock %}
+
+
+  </body>
+</html>

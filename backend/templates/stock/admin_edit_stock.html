@@ -1,0 +1,344 @@
+<!-- backend/templates/stock/admin_edit_stock.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Edit Stock - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        border: none;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .calculated-field {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .real-time-preview {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 0.5rem;
+    }
+
+    .performance-indicator {
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .positive-change {
+        background-color: rgba(40, 167, 69, 0.15);
+        color: #28a745;
+    }
+
+    .negative-change {
+        background-color: rgba(220, 53, 69, 0.15);
+        color: #dc3545;
+    }
+
+    .neutral-change {
+        background-color: rgba(108, 117, 125, 0.15);
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row gx-3 align-items-center">
+        <div class="col-12 col-sm">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_stock_view') }}">Stocks</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Stock</li>
+                </ol>
+            </nav>
+            <h5>Edit Stock - {{ stock.company_name }}</h5>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card form-card">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Edit Stock Information</h6>
+                </div>
+                <div class="card-body">
+                    <form id="stockForm" method="POST" action="{{ url_for('edit_stock_post', stock_id=stock.id) }}">
+                        <!-- Flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="real-time-preview p-3 mb-4">
+                                    <h6 class="mb-2">Investment Summary</h6>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Initial Investment:</span>
+                                        <strong id="previewStockValue">{{ "%.2f"|format(stock.total_cost_basis) }}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Current Value:</span>
+                                        <strong id="previewCurrentValue">{{ "%.2f"|format(stock.current_value) if
+                                            stock.current_value else "%.2f"|format(stock.total_cost_basis) }}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Gain/Loss:</span>
+                                        <strong id="previewGainLoss"
+                                            class="{% if stock.unrealised_gain_loss and stock.unrealised_gain_loss > 0 %}text-success{% elif stock.unrealised_gain_loss and stock.unrealised_gain_loss < 0 %}text-danger{% else %}text-secondary{% endif %}">
+                                            {{ "%.2f"|format(stock.unrealised_gain_loss) if stock.unrealised_gain_loss
+                                            else '0.00' }}
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 mb-4 border rounded">
+                                    <h6 class="mb-2">Performance Indicators</h6>
+                                    <div id="performanceIndicators">
+                                        {% if stock.unrealised_gain_loss and stock.unrealised_gain_loss > 0 %}
+                                        <div class="performance-indicator positive-change">
+                                            <i class="bi bi-graph-up-arrow me-1"></i> Bullish Trend
+                                        </div>
+                                        <div class="performance-indicator positive-change">
+                                            <i class="bi bi-caret-up-fill me-1"></i>
+                                            {% if stock.total_cost_basis > 0 %}
+                                            {{ "%.2f"|format((stock.unrealised_gain_loss/stock.total_cost_basis)*100) }}%
+                                            Gain
+                                            {% else %}
+                                            0.00% Gain
+                                            {% endif %}
+                                        </div>
+                                        {% elif stock.unrealised_gain_loss and stock.unrealised_gain_loss < 0 %} <div
+                                            class="performance-indicator negative-change">
+                                            <i class="bi bi-graph-down-arrow me-1"></i> Bearish Trend
+                                    </div>
+                                    <div class="performance-indicator negative-change">
+                                        <i class="bi bi-caret-down-fill me-1"></i>
+                                        {% if stock.total_cost_basis > 0 %}
+                                        {{ "%.2f"|format((stock.unrealised_gain_loss/stock.total_cost_basis)*100) }}% Loss
+                                        {% else %}
+                                        0.00% Loss
+                                        {% endif %}
+                                    </div>
+                                    {% else %}
+                                    <div class="performance-indicator neutral-change">
+                                        <i class="bi bi-dash-circle me-1"></i> Neutral Position
+                                    </div>
+                                    <div class="performance-indicator neutral-change">
+                                        <i class="bi bi-dash me-1"></i> 0.00% Change
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="company_name" class="form-label">Company Name <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="company_name" name="company_name"
+                            value="{{ stock.company_name }}" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="market" class="form-label">Market<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="market" name="market" value="{{ stock.market }}"
+                            required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="ticker_symbol" class="form-label">Ticker Symbol <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="ticker_symbol" name="ticker_symbol" value="{{ stock.ticker_symbol }}"
+                            required>
+                    </div>
+
+                    <!-- <div class="col-md-6 mb-3">
+                        <label for="no_of_shares" class="form-label">Number of Shares <span
+                                class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="no_of_shares" name="no_of_shares" step="0.0001"
+                            min="0" value="{{ stock.no_of_shares }}" required oninput="calculateValues()">
+                    </div> -->
+
+                    <!-- <div class="col-md-6 mb-3">
+                        <label for="purchase_price" class="form-label">Purchase Price <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="purchase_price" name="purchase_price"
+                                step="0.0001" min="0" value="{{ stock.purchase_price }}" required
+                                oninput="calculateValues()">
+                        </div>
+                    </div> -->
+
+                    <div class="col-md-6 mb-3">
+                        <label for="market_price" class="form-label">Current Market Price</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="market_price" name="market_price"
+                                step="0.0001" min="0" value="{{ stock.market_price if stock.market_price else '' }}"
+                                oninput="calculateCurrentValue()">
+                        </div>
+                        <div class="form-text">Leave blank if unchanged</div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="current_value" class="form-label">Current Portfolio Value</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control calculated-field" id="current_value" readonly
+                                value="{{ stock.current_value if stock.current_value else stock.total_cost_basis }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="update_date" class="form-label">Update Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="update_date" name="update_date" required
+                            value="{{ now().strftime('%Y-%m-%d') }}">
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <label for="stock_value" class="form-label">Initial Investment Value</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control calculated-field" id="stock_value" name="stock_value"
+                                readonly value="{{ stock.total_cost_basis }}">
+                        </div>
+                        <div class="form-text">Calculated automatically as: Number of Shares × Purchase Price</div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin_stock_view') }}" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i> Update Stock
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function calculateStockValue() {
+        const noOfShares = parseFloat(document.getElementById('no_of_shares').value) || 0;
+        const purchasePrice = parseFloat(document.getElementById('purchase_price').value) || 0;
+        const stockValue = noOfShares * purchasePrice;
+
+        document.getElementById('stock_value').value = stockValue.toFixed(4);
+        document.getElementById('previewStockValue').textContent = '' + stockValue.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4
+        });
+
+        // Recalculate current value if current price is set
+        calculateCurrentValue();
+    }
+
+    function calculateCurrentValue() {
+        const noOfShares = parseFloat(document.getElementById('no_of_shares').value) || 0;
+        const currentPrice = parseFloat(document.getElementById('market_price').value) || 0;
+        const purchasePrice = parseFloat(document.getElementById('purchase_price').value) || 0;
+
+        let currentValue;
+        if (currentPrice > 0) {
+            currentValue = noOfShares * currentPrice;
+        } else {
+            // If no current price, use purchase price
+            currentValue = noOfShares * purchasePrice;
+        }
+
+        document.getElementById('current_value').value = currentValue.toFixed(4);
+        document.getElementById('previewCurrentValue').textContent = '' + currentValue.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4
+        });
+
+        // Calculate gain/loss
+        const stockValue = noOfShares * purchasePrice;
+        const gainLoss = currentValue - stockValue;
+
+        document.getElementById('previewGainLoss').textContent = '' + gainLoss.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4
+        });
+
+        // Update performance indicators
+        updatePerformanceIndicators(gainLoss, stockValue);
+    }
+
+    function updatePerformanceIndicators(gainLoss, stockValue) {
+        const indicatorsContainer = document.getElementById('performanceIndicators');
+        let indicatorsHTML = '';
+
+        if (gainLoss > 0) {
+            const percentageGain = stockValue > 0 ? (gainLoss / stockValue) * 100 : 0;
+            indicatorsHTML = `
+                <div class="performance-indicator positive-change">
+                    <i class="bi bi-graph-up-arrow me-1"></i> Bullish Trend
+                </div>
+                <div class="performance-indicator positive-change">
+                    <i class="bi bi-caret-up-fill me-1"></i> ${percentageGain.toFixed(2)}% Gain
+                </div>
+            `;
+            document.getElementById('previewGainLoss').className = 'text-success';
+        } else if (gainLoss < 0) {
+            const percentageLoss = stockValue > 0 ? (Math.abs(gainLoss) / stockValue) * 100 : 0;
+            indicatorsHTML = `
+                <div class="performance-indicator negative-change">
+                    <i class="bi bi-graph-down-arrow me-1"></i> Bearish Trend
+                </div>
+                <div class="performance-indicator negative-change">
+                    <i class="bi bi-caret-down-fill me-1"></i> ${percentageLoss.toFixed(2)}% Loss
+                </div>
+            `;
+            document.getElementById('previewGainLoss').className = 'text-danger';
+        } else {
+            indicatorsHTML = `
+                <div class="performance-indicator neutral-change">
+                    <i class="bi bi-dash-circle me-1"></i> Neutral Position
+                </div>
+                <div class="performance-indicator neutral-change">
+                    <i class="bi bi-dash me-1"></i> 0.00% Change
+                </div>
+            `;
+            document.getElementById('previewGainLoss').className = 'text-secondary';
+        }
+
+        indicatorsContainer.innerHTML = indicatorsHTML;
+    }
+
+    function calculateValues() {
+        calculateStockValue();
+        calculateCurrentValue();
+    }
+
+    // Initialize calculation on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        calculateValues();
+    });
+</script>
+{% endblock %}

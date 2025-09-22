@@ -1,0 +1,205 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Odoo Data Explorer{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <h1 class="mt-4">Odoo Data Explorer</h1>
+
+  <div class="row">
+    <!-- Journal Entries Card -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card bg-primary text-white mb-4">
+        <div class="card-body">Journal Entries</div>
+        <div class="card-footer d-flex align-items-center justify-content-between">
+          <span>Total: {{ journal_entries.total_count if journal_entries and 'total_count' in journal_entries else 'N/A'
+            }}</span>
+          <a class="text-white stretched-link" href="{{ url_for('odoo.journal_entries_detailed') }}" data-toggle="collapse">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart of Accounts Card -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card bg-warning text-white mb-4">
+        <div class="card-body">Chart of Accounts</div>
+        <div class="card-footer d-flex align-items-center justify-content-between">
+          <span>Total: {{ chart_of_accounts.total_count if chart_of_accounts and 'total_count' in chart_of_accounts else
+            'N/A' }}</span>
+          <a class="text-white stretched-link" href="{{ url_for('odoo.chart_of_accounts_detailed') }}" data-toggle="collapse">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- GL Transactions Card -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card bg-success text-white mb-4">
+        <div class="card-body">GL Transactions</div>
+        <div class="card-footer d-flex align-items-center justify-content-between">
+          <span>Total: {{ gl_transactions.total_count if gl_transactions and 'total_count' in gl_transactions else 'N/A'
+            }}</span>
+          <a class="text-white stretched-link" href="{{ url_for('odoo.gl_transactions_detailed') }}" data-toggle="collapse">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Partners Card -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card bg-info text-white mb-4">
+        <div class="card-body">Partners</div>
+        <div class="card-footer d-flex align-items-center justify-content-between">
+          <span>Total: {{ partners.total_count if partners and 'total_count' in partners else 'N/A' }}</span>
+          <a class="text-white stretched-link" href="{{ url_for('odoo.partners_detailed') }}" data-toggle="collapse">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Journal Entries Details -->
+  <div class="collapse" id="journalEntries">
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Journal Entries (Sample)
+      </div>
+      <div class="card-body">
+        {% if journal_entries and 'sample_records' in journal_entries %}
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                {% for field in journal_entries.fields %}
+                <th>{{ field }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in journal_entries.sample_records %}
+              <tr>
+                {% for field in journal_entries.fields %}
+                <td>{{ record[field] }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p>No data available or error: {{ journal_entries.error if journal_entries and 'error' in journal_entries else
+          'Unknown error' }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart of Accounts Details -->
+  <div class="collapse" id="chartOfAccounts">
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Chart of Accounts (Sample)
+      </div>
+      <div class="card-body">
+        {% if chart_of_accounts and 'sample_records' in chart_of_accounts %}
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                {% for field in chart_of_accounts.fields %}
+                <th>{{ field }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in chart_of_accounts.sample_records %}
+              <tr>
+                {% for field in chart_of_accounts.fields %}
+                <td>{{ record[field] }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p>No data available or error: {{ chart_of_accounts.error if chart_of_accounts and 'error' in chart_of_accounts
+          else 'Unknown error' }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- GL Transactions Details -->
+  <div class="collapse" id="glTransactions">
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        GL Transactions (Sample)
+      </div>
+      <div class="card-body">
+        {% if gl_transactions and 'sample_records' in gl_transactions %}
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                {% for field in gl_transactions.fields %}
+                <th>{{ field }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in gl_transactions.sample_records %}
+              <tr>
+                {% for field in gl_transactions.fields %}
+                <td>{{ record[field] }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p>No data available or error: {{ gl_transactions.error if gl_transactions and 'error' in gl_transactions else
+          'Unknown error' }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Partners Details -->
+  <div class="collapse" id="partners">
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Partners (Sample)
+      </div>
+      <div class="card-body">
+        {% if partners and 'sample_records' in partners %}
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                {% for field in partners.fields %}
+                <th>{{ field }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in partners.sample_records %}
+              <tr>
+                {% for field in partners.fields %}
+                <td>{{ record[field] }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p>No data available or error: {{ partners.error if partners and 'error' in partners else 'Unknown error' }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

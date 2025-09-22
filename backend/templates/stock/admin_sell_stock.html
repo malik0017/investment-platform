@@ -1,0 +1,241 @@
+<!-- backend/templates/stock/admin_sell_stock.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Sell Stock - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        border: none;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .calculated-field {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .real-time-preview {
+        background: linear-gradient(135deg, #dc3545 0%, #a71e2a 100%);
+        color: white;
+        border-radius: 0.5rem;
+    }
+
+    .current-info {
+        background-color: #e9ecef;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #212529;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row gx-3 align-items-center">
+        <div class="col-12 col-sm">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_stock_view') }}">Stocks</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Sell Stock</li>
+                </ol>
+            </nav>
+            <h5>Sell Stock - {{ stock.company_name }} ({{ stock.ticker_symbol }})</h5>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card form-card">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0"><i class="bi bi-cart-dash me-2"></i>Sell Shares</h6>
+                </div>
+                <div class="card-body">
+                    <form id="sellForm" method="POST" action="{{ url_for('sell_stock_post', stock_id=stock.id) }}">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        <div class="current-info mb-4">
+                            <h6 class="mb-3">Current Position</h6>
+                            <div class="info-item">
+                                <span class="info-label">Current Shares:</span>
+                                <span class="info-value">{{ "%.4f"|format(stock.no_of_shares) }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Average Price:</span>
+                                <span class="info-value">{{ "%.4f"|format(stock.average_cost) }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Total Investment:</span>
+                                <span class="info-value">{{ "%.2f"|format(stock.total_cost_basis) }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Current Value:</span>
+                                <span class="info-value">{{ "%.2f"|format(stock.current_value) if stock.current_value
+                                    else "N/A" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="real-time-preview p-3 mb-4">
+                                    <h6 class="mb-2">Sale Preview</h6>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Shares After Sale:</span>
+                                        <strong id="previewRemainingShares">{{ "%.4f"|format(stock.no_of_shares)
+                                            }}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Sale Proceeds:</span>
+                                        <strong id="previewSaleProceeds">0.00</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Estimated P&L:</span>
+                                        <strong id="previewGainLoss">0.00</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shares_to_sell" class="form-label">Shares to Sell <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="shares_to_sell" name="shares_to_sell"
+                                    step="0.0001" min="0.0001" max="{{ stock.no_of_shares }}" required
+                                    oninput="calculateSale()">
+                                <div class="form-text">Maximum: {{ "%.4f"|format(stock.no_of_shares) }} shares</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="sell_price" class="form-label">Sell Price per Share <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"></span>
+                                    <input type="number" class="form-control" id="sell_price" name="sell_price"
+                                        step="0.0001" min="0.0001" required oninput="calculateSale()">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="sell_date" class="form-label">Sale Date <span
+                                        class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="sell_date" name="sell_date" required
+                                    value="{{ now().strftime('%Y-%m-%d') }}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="cost_basis" class="form-label">Cost Basis of Sold Shares</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"></span>
+                                    <input type="text" class="form-control calculated-field" id="cost_basis" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label for="remaining_investment" class="form-label">Remaining Investment</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"></span>
+                                    <input type="text" class="form-control calculated-field" id="remaining_investment"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('admin_stock_view') }}" class="btn btn-secondary me-md-2">
+                                        <i class="bi bi-arrow-left me-1"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-cart-check me-1"></i> Confirm Sale
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function calculateSale() {
+        const currentShares = parseFloat({{ stock.no_of_shares | float }});
+    const avgPrice = parseFloat({{ stock.average_cost | float }});
+    const sharesToSell = parseFloat(document.getElementById('shares_to_sell').value) || 0;
+    const sellPrice = parseFloat(document.getElementById('sell_price').value) || 0;
+
+    // Calculate values
+    const saleProceeds = sharesToSell * sellPrice;
+    const costBasis = sharesToSell * avgPrice;
+    const gainLoss = saleProceeds - costBasis;
+    const remainingShares = currentShares - sharesToSell;
+    const remainingInvestment = remainingShares * avgPrice;
+
+    // Update preview fields
+    document.getElementById('previewRemainingShares').textContent = remainingShares.toFixed(4);
+    document.getElementById('previewSaleProceeds').textContent = '$' + saleProceeds.toFixed(2);
+    document.getElementById('previewGainLoss').textContent = '$' + gainLoss.toFixed(2);
+
+    // Update form fields
+    document.getElementById('cost_basis').value = costBasis.toFixed(2);
+    document.getElementById('remaining_investment').value = remainingInvestment.toFixed(2);
+
+    // Color code the gain/loss
+    const gainLossElement = document.getElementById('previewGainLoss');
+    if (gainLoss > 0) {
+        gainLossElement.classList.add('text-success');
+        gainLossElement.classList.remove('text-danger');
+    } else if (gainLoss < 0) {
+        gainLossElement.classList.add('text-danger');
+        gainLossElement.classList.remove('text-success');
+    } else {
+        gainLossElement.classList.remove('text-success', 'text-danger');
+    }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        calculateSale();
+
+        // Set max attribute for shares to sell
+        document.getElementById('shares_to_sell').setAttribute('max', {{ stock.no_of_shares | float }});
+    });
+</script>
+{% endblock %}

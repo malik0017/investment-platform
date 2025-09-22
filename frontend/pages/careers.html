@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block title %} Careers - RSR Group{% endblock %}
+{% block extra_css %} {% endblock %}
+{% block content %}
+
+<div class="wrapper ccm-page page-type-careers page-template-careers">
+    <main>
+        <section class="careers-page">
+            <div class="common-banner-block">
+                <div class="bg-img"
+                    style="background-image: url('{{ url_for('frontend_static', filename='img/fb6bb270b72aa432e5e2a9bfe2f5a948.jpg') }}')">
+                </div>
+                <div class="container-fluid">
+                    <div class="content-container">
+                        <div class=" banner-content">
+                            <div class="breadcrumb">
+                                <nav role="navigation" aria-label="breadcrumb">
+                                    <ul class="nav">
+                                        <li class="old-navLink"><a href="{{ url_for('home') }}" target="_self">RSR Group | Riyadh</a>
+                                        </li>
+                                        <li class="active">Careers</li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <h1>
+                                Careers
+                            </h1>
+                        </div>
+    
+                        <a class="scrollTo" href="#explore">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_426_5912" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                    width="24" height="24">
+                                    <rect width="24" height="24" fill="white" />
+                                </mask>
+                                <g mask="url(#mask0_426_5912)">
+                                    <path
+                                        d="M12 20.9992C10.3333 20.9992 8.91667 20.4159 7.75 19.2492C6.58333 18.0826 6 16.6659 6 14.9992V9.07422C6 7.40755 6.58333 5.99089 7.75 4.82422C8.91667 3.65755 10.3333 3.07422 12 3.07422C13.6667 3.07422 15.0833 3.65755 16.25 4.82422C17.4167 5.99089 18 7.40755 18 9.07422V14.9992C18 16.6659 17.4167 18.0826 16.25 19.2492C15.0833 20.4159 13.6667 20.9992 12 20.9992ZM12.5 9.07422H17C17 7.75755 16.5627 6.62822 15.688 5.68622C14.8127 4.74489 13.75 4.21589 12.5 4.09922V9.07422ZM7 9.07422H11.5V4.09922C10.25 4.21589 9.18733 4.74489 8.312 5.68622C7.43733 6.62822 7 7.75755 7 9.07422ZM12 19.9992C13.3833 19.9992 14.5627 19.5119 15.538 18.5372C16.5127 17.5619 17 16.3826 17 14.9992V10.0742H7V14.9992C7 16.3826 7.48767 17.5619 8.463 18.5372C9.43767 19.5119 10.6167 19.9992 12 19.9992Z"
+                                        fill="white" />
+                                </g>
+                            </svg>
+                            <span>Scroll To Explore</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- <div class="benefit-block main-block">
+          <div class="container">
+             <div class="row">
+                <div class="col-lg-12">
+                   <div class="bullet-title">Our Benefits</div>
+                   <div class="benefit-slider">
+                      <div class="swiper-container">
+                         <div class="swiper-wrapper">
+                            <div class="swiper-slide" data-name="Paid Holidays">
+                               <div class="benefit-image-block">
+                                  <img class="benefit-img" src="/application/themes/multiply/dist/images/paid-holidays.jpg" alt=" " >
+                               </div>
+                               <div class="content-wrapper">
+                                  <h3>Paid Holidays/ Vacations</h3>
+                                  <p class="">Arcu ac, varius mi pellentesque et. Tellus nisi, malesuada sit malesuada. Malesuada faucibus adipiscing neque.s mi pellentesque et. Tellus nisi, malesuada sit malesuada. Malesuada faucib.</p>
+                               </div>
+                            </div>
+                            <div class="swiper-slide" data-name="Casual Dress">
+                               <div class="benefit-image-block">
+                                  <img class="benefit-img" src="/application/themes/multiply/dist/images/paid-holidays.jpg" alt=" " >
+                               </div>
+                               <div class="content-wrapper">
+                                  <h3>Casual Dress</h3>
+                                  <p class="">Arcu ac, varius mi pellentesque et. Tellus nisi, malesuada sit malesuada. Malesuada faucibus adipiscing neque.s mi pellentesque et. Tellus nisi, malesuada sit malesuada. Malesuada faucib.</p>
+                               </div>
+                            </div>
+                            <div class="swiper-slide" data-name="Social Media">
+                               <div class="benefit-image-block">
+                                  <img class="benefit-img" src="/application/themes/multiply/dist/images/paid-holidays.jpg" alt=" " >
+                               </div>
+                               <div class="content-wrapper">
+                                  <h3>Social Media</h3>
+                                  <p class="">Arcu ac, varius mi pellentesque et. Tellus nisi, malesuada sit malesuada. Malesuada faucibus adipiscing neque.s mi pellentesque et. Tellus nisi, malesuada sit malesuada. Malesuada faucib.</p>
+                               </div>
+                            </div>
+                         </div>
+    
+                         <div class="controls">
+                            <div class="pagination-wrapper"></div>
+                            <div class="navigation dark">
+                               <div class="swiper-button-prev">
+                                     <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z" fill="white" />
+                                     </svg>
+                               </div>
+                               <div class="swiper-button-next">
+                                     <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z" fill="white" />
+                                     </svg>
+                               </div>
+                            </div>
+    
+                         </div>
+    
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div> -->
+    
+            <div class="image-content-block">
+                <div class="image-content-container">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <div class="content-area block-fade-up">
+                                    <!-- <div class="bullet-title"></div> -->
+                                    <div class="section_title">
+                                        <!-- <h5>Board members</h5> -->
+                                        <h5>Working at RSR Group</h5>
+                                    </div>
+                                    <h2>There is no better place we would rather be than here and now</h2>
+                                    <p class="p">RSR  Group prioritises adaptability, continuous learning, and
+                                        forward-thinking, emphasising the importance of evolving in the face of change.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <div class="ic-illustration block-fade-up">
+                                    <img class="ic-bg lazy"
+                                        data-src="{{ url_for('frontend_static', filename='img/career_side_pic.png')}}"
+                                        alt="careers.png" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+
+            <section class="section section_light our-principles">
+                <div class="container-fluid">
+                    <div class="flex">
+                        <div class="title-area">
+                            <div class="section_title">
+                                <!-- <h5>Our Principles</h5> -->
+                                <h5>Our Principles</h5>
+                            </div>
+                            <h2>Our obsession with growth is at the roots of our Group&rsquo;s expansion</h2>
+                            <!-- <h2>Our obsession with growth is at the roots of our Group’s expansion</h2> -->
+                        </div>
+                        <div class="slider-area">
+                            <div class="swiper-container js-op-slider">
+                                <div class="swiper-wrapper">
+                                    <div class="swiper-slide">
+                                        <ul style="text-transform: none;">
+                                            <li><span style="text-transform:none;">We don&rsquo;t take anything for
+                                                    granted</span>
+                                                <div class="line">&nbsp;</div>
+                                            </li>
+                                            <li><span style="text-transform:none;">We believe the best is always yet to
+                                                    come</span>
+                                                <div class="line">&nbsp;</div>
+                                            </li>
+                                            <li><span style="text-transform:none;">We are obsessed with growth</span>
+                                                <div class="line">&nbsp;</div>
+                                            </li>
+                                            <li><span style="text-transform:none;">We do what&rsquo;s right, not
+                                                    what&rsquo;s easy</span>
+                                                <div class="line">&nbsp;</div>
+                                            </li>
+                                            <li><span style="text-transform:none;">We seek technology that unlocks and
+                                                    empowers human potential</span>
+                                                <div class="line">&nbsp;</div>
+                                            </li>
+                                            <li><span style="text-transform:none;">We make work-life balance a conscious
+                                                    decision</span>
+                                                <div class="line">&nbsp;</div>
+                                            </li>
+                                        </ul>
+                                        <!-- <ul>
+                                                <li>
+                                                    <span>We don’t take anything for granted</span>
+                                                    <div class="line"></div>
+                                                </li>
+                                                <li>
+                                                    <span>We believe the best is always yet to come.</span>
+                                                    <div class="line"></div>
+                                                </li>
+                                                <li>
+                                                    <span>We are obsessed with growth.</span>
+                                                    <div class="line"></div>
+                                                </li>
+                                                <li>
+                                                    <span>We are driven by data.</span>
+                                                    <div class="line"></div>
+                                                </li>
+                                                <li>
+                                                    <span>We seek technology that enhances human potential.</span>
+                                                    <div class="line"></div>
+                                                </li>
+                                            </ul> -->
+                                    </div>
+    
+                                    <!-- <div class="swiper-slide">
+                                    <ul>
+                                        <li>
+                                            <span>We don’t take anything for granted</span>
+                                            <div class="line"></div>
+                                        </li>
+                                    </ul>
+                                </div>
+    
+                                <div class="swiper-slide">
+                                    <ul>
+                                        <li>
+                                            <span>We don’t take anything for granted</span>
+                                            <div class="line"></div>
+                                        </li>
+                                        <li>
+                                            <span>We believe the best is always yet to come.</span>
+                                            <div class="line"></div>
+                                        </li>
+                                    </ul>
+                                </div> -->
+    
+                                </div>
+                                <div class="controls">
+                                    <div class="pagination-wrapper dark">
+                                        <div class="swiper-progress-bar">
+                                            <span class="slide_progress-bar"></span>
+                                        </div>
+                                        <div class="swiper-counter"></div>
+                                    </div>
+                                    <div class="navigation dark">
+                                        <div class="swiper-button-prev">
+                                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                                    fill="white" />
+                                            </svg>
+                                        </div>
+                                        <div class="swiper-button-next">
+                                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                                    fill="white" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+    
+            <div class="vacancy-listing-block main-block">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="header-holder block-fade-up">
+                                <h2>Vacancy Listing</h2>
+                                <a class="load-more-btn" href="{{url_for('vacancy_listing')}}">
+                                    <svg width="35" height="34" viewBox="0 0 35 34" fill="#ffffff"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M17.2546 32.7797C26.2318 32.7797 33.5093 25.6656 33.5093 16.8899C33.5093 8.11413 26.2318 1 17.2546 1C8.27745 1 1 8.11413 1 16.8899C1 25.6656 8.27745 32.7797 17.2546 32.7797Z"
+                                            stroke="#323E48" stroke-miterlimit="10" />
+                                        <path d="M18.2852 22.5015L24.0251 16.8904L18.2852 11.2793" stroke="#323E48"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M10.4805 16.8906H24.026" stroke="#323E48" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    <span>VIEW ALL Vacancies</span>
+                                </a>
+                                <!-- <a class="mutiply-cta arrowed dark" href="https://multiply.ae/">
+                         <span class="arrow">
+                            <svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                               <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428" stroke-linecap="round" stroke-linejoin="round" />
+                               <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                         </span>
+                         <span>VIEW ALL Vacancies</span>
+                      </a> -->
+                            </div>
+                            <ul class="vacancy-listing block-fade-up">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+        </section>
+    </main>
+    
+    <div class="push"></div>
+</div>
+{% endblock %}
+{% block extra_js %} {% endblock %}

@@ -1,0 +1,29 @@
+<!-- backend/templates/admin_footer.html -->
+<footer class="adminuiux-footer has-adminuiux-sidebar mt-auto">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 col-md col-lg py-2">
+        <span class="small">
+          Copyright @{{ current_year }}, RSR Investment Platform Dashboard
+          <span class="d-none d-md-inline">•</span>
+          <span class="d-block d-md-inline">Logged in as: {{ session.get('username', 'Admin') }}</span>
+        </span>
+      </div>
+      <div class="col-12 col-md-auto col-lg-auto align-self-center">
+        <ul class="nav small">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Help</a>
+          </li>
+          <li class="nav-item">|</li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Terms</a>
+          </li>
+          <li class="nav-item">|</li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Privacy</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

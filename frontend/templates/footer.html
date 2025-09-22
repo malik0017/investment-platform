@@ -1,0 +1,303 @@
+<footer class="footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="links-section desktop">
+                <div class="col-sm-3">
+                    <ul>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                        <li><a href="{{ url_for('businesses') }}">Businesses</a></li>
+                        <li><a href="{{url_for('overviews')}}">Portfolio</a></li>
+                        <!-- <li class="hide"><a href="#">ESG</a></li> -->
+                        <li><a href="{{url_for('news_insights')}}">News &amp; Insights</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <ul>
+                        <li><a href="{{ url_for('careers') }}">Careers</a></li>
+                        <li><a href="{{ url_for('whistle_blower') }}">Whistle-blower</a></li>
+                        <!-- <li><a href="newsletter.html">Newsletter</a></li> -->
+                        <li><a href="{{ url_for('contact') }}">Contact us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="links-section tablet">
+                <div class="col-sm-3">
+                    <ul>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                        <li><a href="{{ url_for('businesses') }}">Businesses</a></li>
+                        <li><a href="{{url_for('overviews')}}">Portfolio</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <ul>
+                        <li class="hide"><a href="#">ESG</a></li>
+                        <li><a href="{{url_for('news_insights')}}">News &amp; Insights</a></li>
+                        <li><a href="{{ url_for('careers') }}">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <ul>
+                        <li><a href="{{ url_for('whistle_blower') }}">Whistle-blower</a></li>
+                        <!-- <li><a href="newsletter.html">Newsletter</a></li> -->
+                        <li><a href="{{ url_for('contact') }}">Contact us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="links-section mobile">
+                <div class="col-xs-6">
+                    <ul>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                        <li><a href="{{ url_for('businesses') }}">Businesses</a></li>
+                        <li><a href="{{url_for('overviews')}}">Portfolio</a></li>
+                        <li class="hide"><a href="#">ESG</a></li>
+                    </ul>
+                </div>
+                <div class="col-xs-6">
+                    <ul>
+                        <li><a href="{{ url_for('careers') }}">Careers</a></li>
+                        <li><a href="{{ url_for('whistle_blower') }}">Whistle-blower</a></li>
+                        <!-- <li><a href="newsletter.html">Newsletter</a></li> -->
+                        <li><a href="{{ url_for('contact') }}">Contact us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="newsletter-section">
+                <div class="col-sm-6">
+                    <h5>Subscribe to newsletter</h5>
+                    <div id="formidable_container_1" class="formidable newsletter-form ">
+                        <div id="formidable_message_1" class="formidable_message">
+                        </div>
+                        <form id="" name="formidable_form" method="" class=""
+                            action="#">
+                            <input type="hidden" name="formID" id="formID" value="1">
+                            <input type="hidden" name="cID" id="cID" value="1">
+                            <input type="hidden" name="bID" id="bID" value="18">
+                            <input type="hidden" name="resolution" id="resolution" value="">
+                            <input type="hidden" name="ccm_token" id="ccm_token"
+                                value="">
+                            <input type="hidden" name="locale" id="locale" value="en_AE">
+                            <div class="formidable_row">
+                                <div class="formidable_column width-12  last">
+                                    <div>
+                                        <div class="element enter-your-email-1">
+                                            <label for="enter-your-email-1">
+                                                Enter your email <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+
+                                                <input type="email" id="enter-your-email-1" name="enter-your-email-1"
+                                                    value="" class="form-control ccm-input-email" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formidable_row">
+                                <div class="formidable_column width-12  last">
+                                    <div>
+                                        <div class="captcha_holder ">
+                                            <div id="captcha-2" class="captcha_input"></div>
+                                        </div>
+                                        <div class="dummyFormidableClick" style="display: none;"></div>
+                                        <script async defer>
+                                            var head = document.getElementsByTagName('head')[0];
+                                            var js = document.createElement("script");
+                                            js.type = "text/javascript";
+                                            js.setAttribute("async", "");
+                                            js.setAttribute("defer", "");
+                                            js.src = "{{ url_for('frontend_static', filename='recaptcha/api85f1.js') }}";
+                                            var initializedCaptcha = 0;
+
+                                            $(window).on("scroll load", function () {
+                                                setTimeout(function () {
+                                                    if ($(".formidable").hasClass("formInview")) {
+                                                        if (!initializedCaptcha) {
+                                                            head.appendChild(js);
+                                                            initializedCaptcha = 1;
+                                                        }
+                                                    }
+                                                }, 100);
+                                            });
+
+                                            var widgetId = [];
+                                            function onloadCallback() {
+                                                var i = 0;
+                                                $(".captcha--buttons").each(function () {
+                                                    var object = $(this);
+                                                    widgetId[i] = grecaptcha.render(object.attr("id"), {
+                                                        "size": "invisible",
+                                                        "sitekey": "6LfuvMEhAAAAACe6QytsmWtn75c0nEQLWtRHQ8OT",
+                                                        "callback": function (token) {
+                                                            object.parents('form').find(".g-recaptcha-response").val(token);
+                                                            //console.log(object.parents('form').find('.dummyFormidableClick'));
+                                                            object.parents('form').find('.dummyFormidableClick').trigger('click');
+                                                        }
+                                                    });
+                                                    i++;
+                                                });
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- <div class="formidable_row">
+                                <div class="formidable_column width-12  last">
+                                    <div>
+                                        <div class="element catcha-note-3">
+                                            <div class="input">
+                                                <div class="" name="catcha-note-3">
+                                                    <p class="captcha-text">This site is protected by reCAPTCHA and the
+                                                        Google <a href="https://policies.google.com/privacy"
+                                                            target="_blank">Privacy Policy</a> and <a
+                                                            href="https://policies.google.com/terms"
+                                                            target="_blank">Terms of service</a> apply</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="formidable_row submit-row">
+                                <svg width="19" height="13" viewBox="0 0 19 13" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M11.9085 0.340971L11.0879 1.16159L15.8651 5.96811L0.771484 5.96811L0.771484 7.14044L15.8651 7.14043L11.0879 11.947L11.9085 12.7676L18.1218 6.55427L11.9085 0.340971Z"
+                                        fill="white" />
+                                </svg>
+                                <div class="formidable_column width-12">
+                                    <div class="element">
+                                        <div class="label-hidden"></div>
+                                        <div id="ff_buttons" class="buttons col-sm-9">
+                                            <input type="submit"
+                                                class="btn ccm-input-submit submit btn btn-success button button-violet-dark captcha--buttons"
+                                                id="btnSubmit_1" name="btnSubmit_1" value="" />
+                                            <!-- <div class="please_wait_loader"><img src="https://multiply.ae/packages/formidable_full/images/loader.gif" alt="Please wait..."></div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <script>
+                        $(function () {
+                            $('form[id="ff_1"]').formidable({
+                                'error_messages_on_top': false,
+                                'error_messages_on_top_class': 'error',
+                                'warning_messages_class': 'warning',
+                                'error_messages_beneath_field': true,
+                                'error_messages_beneath_field_class': 'error',
+                                'success_messages_class': 'success',
+                                'remove_form_on_success': true,
+                                errorCallback: function () {
+                                    //Uncomment for invisible recaptcha
+                                    var c = $('.captcha--buttons').length;
+                                    for (var i = 0; i < c; i++) {
+                                        grecaptcha.reset(i);
+                                    }
+                                },
+                                successCallback: function () { }
+                            });
+                        });
+                    </script>
+                    <div class="social-icons">
+                        <ul>
+                            <li>
+                                <a target="_blank" class="linkedin"
+                                    href="https://www.linkedin.com/company/rashidsons/">
+                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_1541_25876)">
+                                            <path
+                                                d="M12.89 12.5005V12.5H12.8931V7.91563C12.8931 5.67292 12.4103 3.94531 9.78841 3.94531C8.52799 3.94531 7.68216 4.63698 7.33685 5.29271H7.30039V4.15469H4.81445V12.5H7.40299V8.36771C7.40299 7.27969 7.60924 6.22761 8.95664 6.22761C10.2842 6.22761 10.304 7.46927 10.304 8.4375V12.5005H12.89Z"
+                                                fill="white" />
+                                            <path d="M0.599609 4.1543H3.19128V12.4996H0.599609V4.1543Z" fill="white" />
+                                            <path
+                                                d="M1.89362 0C1.06497 0 0.392578 0.672396 0.392578 1.50104C0.392578 2.32969 1.06497 3.01615 1.89362 3.01615C2.72227 3.01615 3.39466 2.32969 3.39466 1.50104C3.39414 0.672396 2.72174 0 1.89362 0V0Z"
+                                                fill="white" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_1541_25876">
+                                                <rect width="12.5" height="12.5" fill="white"
+                                                    transform="translate(0.392578)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" class="instagram" href="#">
+                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path class="dot"
+                                            d="M7.10831 10.7181C8.66912 10.7181 9.9344 9.45281 9.9344 7.892C9.9344 6.3312 8.66912 5.06592 7.10831 5.06592C5.54751 5.06592 4.28223 6.3312 4.28223 7.892C4.28223 9.45281 5.54751 10.7181 7.10831 10.7181Z"
+                                            stroke="white" stroke-miterlimit="10" />
+                                        <path class="circle"
+                                            d="M10.2171 1.39209H3.9997C2.12674 1.39209 0.608398 2.91043 0.608398 4.78339V11.0008C0.608398 12.8738 2.12674 14.3921 3.9997 14.3921H10.2171C12.0901 14.3921 13.6084 12.8738 13.6084 11.0008V4.78339C13.6084 2.91043 12.0901 1.39209 10.2171 1.39209Z"
+                                            stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path class="small_dot"
+                                            d="M10.7824 5.06626C11.2506 5.06626 11.6302 4.68667 11.6302 4.21843C11.6302 3.75019 11.2506 3.37061 10.7824 3.37061C10.3142 3.37061 9.93457 3.75019 9.93457 4.21843C9.93457 4.68667 10.3142 5.06626 10.7824 5.06626Z"
+                                            fill="white" />
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" class="twitter" href="#">
+                                    <!-- <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.273 2.10287C13.7422 2.33569 13.1767 2.49002 12.587 2.56495C13.1936 2.20278 13.6566 1.63364 13.8743 0.947644C13.3087 1.28484 12.6842 1.52302 12.0188 1.65594C11.4817 1.08413 10.7164 0.72998 9.88138 0.72998C8.26139 0.72998 6.9572 2.04488 6.9572 3.65684C6.9572 3.88878 6.97682 4.11179 7.02499 4.3241C4.59234 4.20546 2.43979 3.03953 0.993758 1.26343C0.741304 1.70144 0.593222 2.20278 0.593222 2.74247C0.593222 3.75586 1.11508 4.65416 1.89296 5.17424C1.42284 5.16532 0.961644 5.02883 0.57092 4.81384C0.57092 4.82276 0.57092 4.83436 0.57092 4.84596C0.57092 6.26791 1.5852 7.449 2.91526 7.72108C2.67708 7.7862 2.41749 7.81742 2.14809 7.81742C1.96075 7.81742 1.77164 7.80672 1.59412 7.76746C1.97324 8.92625 3.04907 9.77817 4.32829 9.80583C3.33275 10.5846 2.06869 11.0538 0.700269 11.0538C0.460304 11.0538 0.230152 11.0431 0 11.0137C1.29617 11.8495 2.8323 12.3268 4.48886 12.3268C9.87335 12.3268 12.8172 7.86648 12.8172 4.00028C12.8172 3.87093 12.8127 3.74605 12.8065 3.62205C13.3872 3.20992 13.8751 2.69519 14.273 2.10287Z" fill="white" />
+                                    </svg> -->
+                                    <svg width="15" height="13" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M21.0986 23.9971C19.6331 23.9971 18.1805 23.996 16.7279 23.9995C16.6314 23.9997 16.5717 23.969 16.5125 23.8832C14.6397 21.1696 12.7643 18.4582 10.8892 15.7466C10.8608 15.7055 10.8305 15.666 10.7924 15.6139C10.7545 15.6603 10.7231 15.6976 10.6929 15.7359C8.54907 18.4453 6.40495 21.1544 4.26338 23.866C4.18866 23.9606 4.11448 24.0005 3.99942 24C2.88406 23.9951 1.76867 23.9971 0.653291 23.9971C0.606874 23.9971 0.560458 23.9971 0.473898 23.9971C3.35451 20.3558 6.21238 16.7432 9.07455 13.1253C6.05191 8.75423 3.0362 4.39322 0 0.00259292C0.0769794 0.00259292 0.1183 0.00259292 0.15962 0.00259292C2.59357 0.00259315 5.02752 0.00327805 7.46147 9.07266e-05C7.55881 -3.66617e-05 7.61713 0.0326435 7.6756 0.118331C9.36311 2.59128 11.0532 5.06206 12.7431 7.53308C12.7713 7.57433 12.8011 7.61424 12.8376 7.66521C12.8793 7.61435 12.9143 7.57305 12.9479 7.53051C14.9004 5.06163 16.8532 2.59302 18.8036 0.122161C18.8723 0.035093 18.9412 -0.000386255 19.0464 3.16844e-06C20.1704 0.00416897 21.2945 0.00259403 22.4185 0.00259489C22.46 0.00259489 22.5014 0.00259511 22.5817 0.00259511C19.8874 3.40852 17.2169 6.78427 14.5406 10.1673C17.6911 14.7734 20.8354 19.3704 24 23.9971C23.0169 23.9971 22.0642 23.9971 21.0986 23.9971ZM14.8246 17.5331C15.7252 18.8357 16.6265 20.1376 17.5249 21.442C17.5829 21.5264 17.6413 21.5631 17.7395 21.5622C18.3231 21.5569 18.9066 21.5597 19.4902 21.5593C19.531 21.5593 19.5718 21.5548 19.6343 21.5512C19.5971 21.4919 19.5746 21.4528 19.5494 21.4159C15.2241 15.0902 10.8986 8.76472 6.5749 2.43769C6.51452 2.34934 6.45426 2.31017 6.35119 2.31111C5.72444 2.31678 5.09764 2.31393 4.47086 2.31393C4.42617 2.31393 4.38148 2.31393 4.29977 2.31393C7.82046 7.40465 11.3171 12.4606 14.8246 17.5331Z"
+                                            fill="#FDFDFD" />
+                                    </svg>
+
+
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" class="fb" href="#">
+                                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M5.96543 2.17881H7.16363V0.0919336C6.95691 0.0634961 6.24598 -0.000488281 5.41801 -0.000488281C3.69043 -0.000488281 2.50699 1.08615 2.50699 3.08334V4.92139H0.600586V7.25436H2.50699V13.1245H4.84434V7.2549H6.67363L6.96402 4.92193H4.84379V3.31467C4.84434 2.64037 5.0259 2.17881 5.96543 2.17881Z"
+                                            fill="white" />
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" class="youtube" href="#">
+                                    <svg width="21" height="16" viewBox="0 0 21 16" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path class="box"
+                                            d="M1.21582 8C1.21582 10.6206 1.49899 12.1507 1.70909 12.9422C1.76702 13.1569 1.87657 13.3556 2.02889 13.5221C2.18121 13.6886 2.37205 13.8183 2.58601 13.9007C5.64611 15.0263 10.7158 14.9999 10.7158 14.9999C10.7158 14.9999 15.7855 15.0263 18.8456 13.9007C19.0596 13.8183 19.2504 13.6886 19.4028 13.5221C19.5551 13.3556 19.6646 13.1569 19.7226 12.9422C19.9326 12.1507 20.2158 10.6206 20.2158 8C20.2158 5.37942 19.9326 3.84928 19.7226 3.05783C19.6646 2.84308 19.5551 2.64445 19.4028 2.47795C19.2504 2.31145 19.0596 2.18174 18.8456 2.09929C15.7855 0.973671 10.7158 1.00005 10.7158 1.00005C10.7158 1.00005 5.64611 0.973671 2.58601 2.09929C2.37205 2.18174 2.18121 2.31145 2.02889 2.47795C1.87657 2.64445 1.76702 2.84308 1.70909 3.05783C1.49899 3.84928 1.21582 5.37942 1.21582 8Z"
+                                            stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path class="triangle" d="M14.2158 8.5L9.21582 6V11L14.2158 8.5Z" stroke="white"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 terms-wrap">
+                <div class="terms-section">
+                    <div class="copy_rights">
+                        <span> © 2025</span><span> RSR Group. All rights reserved</span>
+                    </div>
+
+                    <div class="links">
+                        <a href="#">Terms & Condinations</a>
+                        <span></span>
+                        <a href="#">Privacy Policy</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</footer>

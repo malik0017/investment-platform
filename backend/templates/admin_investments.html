@@ -1,0 +1,1153 @@
+{% extends "admin_base.html" %}
+
+{% block title %}
+
+Investments - Investment
+Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Investment Table Styling */
+  #investmentTable tbody tr:hover {
+    background-color: #f8f9fc;
+  }
+
+  .table-primary {
+    background-color: #e3f2fd;
+  }
+
+  .fa-circle {
+    font-size: 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* Chart Containers */
+  .card-body canvas {
+    min-height: 300px;
+  }
+
+  /* New doughnut chart styles */
+  .width-240 {
+    width: 240px !important;
+  }
+
+  .height-240 {
+    height: 240px !important;
+  }
+
+  .avatar-10 {
+    width: 10px;
+    height: 10px;
+  }
+
+  .bg-green {
+    background-color: #4e73df;
+  }
+
+  .bg-yellow {
+    background-color: #f6c23e;
+  }
+
+  .bg-orange {
+    background-color: #e74a3b;
+  }
+
+  .bg-purple {
+    background-color: #9933ff;
+  }
+
+  .bg-secondary {
+    background-color: #858796;
+  }
+
+  .currency-icon {
+    height: 0.8rem;
+    vertical-align: sub;
+  }
+
+  /* Specific size for the portfolio value icon */
+  .portfolio-currency-icon {
+    height: 1.2rem;
+    vertical-align: middle;
+  }
+
+  /* Active state for time period navigation */
+  .time-period-nav .page-link.active {
+    background-color: #4e73df;
+    color: white;
+    border-color: #4e73df;
+  }
+
+  /* Hover effect for time period navigation */
+  .time-period-nav .page-link:hover:not(.active) {
+    background-color: #f8f9fc;
+  }
+
+  /* Loading overlay for charts */
+  .chart-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  /* Date Range Picker Styling */
+.daterangepicker {
+    font-family: inherit;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.daterangepicker .calendar-table {
+    background-color: white;
+}
+
+.daterangepicker td.active, 
+.daterangepicker td.active:hover {
+    background-color: #4e73df;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #4e73df;
+    color: white;
+}
+
+.daterangepicker .ranges li:hover {
+    background-color: #f8f9fc;
+}
+
+/* Form control styling */
+#daterangepicker {
+    min-width: 240px;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid #e3e6f0;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+#daterangepicker:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+/* Responsive card height */
+@media (min-width: 992px) {
+  .portfolio-value-card {
+    min-height: 470px;
+  }
+ /* Search and Table Styling */
+.search-container {
+  position: relative;
+}
+
+.search-container .input-group {
+  border-radius: 6px;
+  border: 1px solid #e3e6f0;
+  transition: all 0.3s ease;
+}
+
+.search-container .input-group:focus-within {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.search-container .input-group-text {
+  background: transparent;
+  border: none;
+}
+
+.search-container .form-control {
+  border: none;
+  box-shadow: none;
+}
+
+.search-container .form-control:focus {
+  box-shadow: none;
+}
+
+#detailedInvestmentsTable th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #4e73df;
+  border-bottom: 2px solid #4e73df;
+  cursor: pointer;
+  user-select: none;
+}
+
+#detailedInvestmentsTable th.sortable:hover {
+  background-color: #f8f9fc;
+}
+
+#detailedInvestmentsTable th i {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+#detailedInvestmentsTable th.sortable:hover i {
+  opacity: 1;
+}
+
+#detailedInvestmentsTable tbody tr {
+  transition: all 0.3s ease;
+}
+
+#detailedInvestmentsTable tbody tr:hover {
+  background-color: #f8f9fc;
+  transform: translateY(-1px);
+}
+
+#detailedInvestmentsTable .badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+}
+
+/* Highlight search results */
+.highlight {
+  background-color: #fff3cd;
+  font-weight: 600;
+}
+
+/* Loading state */
+.table-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* No results styling */
+.text-muted .bi-inbox {
+  font-size: 3rem;
+  opacity: 0.5;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 100% !important;
+    margin-top: 1rem;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  #detailedInvestmentsTable th,
+  #detailedInvestmentsTable td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .pagination {
+    margin-top: 1rem;
+  }
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <h1 class="mt-4">Investment Portfolio</h1>
+
+  <div class="row">
+    <div class="col-12 col-lg-6 col-xl-4 mb-4">
+    <div class="card adminuiux-card portfolio-value-card">
+      <div class="card-body pb-0">
+        <div class="avatar avatar-60 bg-theme-1-subtle text-theme-1 rounded mb-4">
+          <i class="bi bi-bar-chart-line h4"></i>
+        </div>
+              <h5 class="fw-medium">Your portfolio value is</h5>
+              <h1 class="fw-medium">
+                {{ "{:,.2f}M".format(investments_total) }}
+                {% if portfolio_growth_percentage > 0 %}
+                <span class="text-success fs-14">
+                  <i class="bi bi-arrow-up-short me-1"></i>
+                  {{ "%.1f"|format(portfolio_growth_percentage) }}%
+                </span>
+                {% else %}
+                <span class="text-danger fs-14">
+                  <i class="bi bi-arrow-down-short me-1"></i>
+                  {{ "%.1f"|format(portfolio_growth_percentage|abs) }}%
+                </span>
+                {% endif %}
+                </h1>
+                
+                <p class="text-secondary mb-4">
+                Your portfolio has been grown to<br />
+                {{ "SAR {:,.2f}M".format(current_portfolio_value) }} at
+                {{ "%.1f"|format(weekly_growth_rate) }}% last week.
+                </p>
+                
+                <div class="row">
+                  <div class="col">
+                    <div class="card mb-3">
+                      <div class="card-body d-flex">
+                        <div class="row">
+                          <div class="col-auto">
+                            <div class="avatar avatar-60 bg-theme-1-subtle text-theme-1 rounded"><i class="menu-icon bi bi-wallet h4"></i>
+                            </div>
+                          </div>
+                          <div class="col">
+                            <h4 class="fw-medium">
+                              {{ "{:,.0f}k".format(profit_revenue | abs) }}
+                            </h4>
+                            <p class="text-secondary mb-2">Profit Revenue</p>
+                            </p>
+                            </div>
+                            </div>
+                            </div>
+                      </div>
+                      </div>
+                      <div class="col">
+                        <div class="card mb-3">
+                          <div class="card-body">
+                          <p class="text-secondary mb-2">Total Investment</p>
+                          <h4 class="fw-medium">
+                            {{ "SAR {:,.0f}k".format(total_investment) }}
+                          </h4>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+    </div>
+
+    <div class="col-12 col-lg-6 col-xl-8 mb-4">
+      <div class="card adminuiux-card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col-auto">
+            <nav aria-label="Time period navigation">
+              <ul class="pagination pagination-sm justify-content-end mb-0 time-period-nav">
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="1">1D</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="7">1W</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="30">1M</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="365">1Y</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link active" href="#" data-days="0">All</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+      
+          <div class="col position-relative text-end">
+            <form id="dateRangeForm" method="GET" action="{{ url_for('admin_investments') }}" class="d-inline">
+              <input type="hidden" name="start_date" id="startDateInput" value="{{ start_date }}" />
+              <input type="hidden" name="end_date" id="endDateInput" value="{{ end_date }}" />
+              <input class="form-control d-inline-block w-auto align-middle mx-3" id="daterangepicker" readonly
+                style="cursor: pointer; background-color: white;" />
+              <button type="submit" class="btn btn-square btn-theme d-inline-block align-middle">
+                <i data-feather="calendar"></i> Apply
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+        <div class="card-body position-relative">
+          <div class="chart-loading d-none" id="chartLoading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        
+          <!-- Always render canvas -->
+          <div class="w-100" style="height: 370px">
+            <canvas id="summaryChart"></canvas>
+          </div>
+        
+          <!-- Embed backend JSON for chart -->
+          <script id="timeSeriesData" type="application/json">
+            {{ time_series_data | tojson }}
+          </script>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Investment Cards -->
+
+    {% set chart_ids = ['areachartblue1', 'areachartgreen1', 'areachartyellow1',
+    'areachartred1'] %}
+    {% set colors = ['theme-blue', 'theme-green',
+    'theme-orange', 'theme-red', 'theme-purple'] %} 
+    {% set icons =
+    ['bi-cash-stack', 'bi-bank', 'bi-graph-up', 'bi-percent', 'bi-x-diamond'] %}
+    
+    {% for investment in investments %}
+     {% if investment.investment_category != 'Investments' %}
+    <div class="col-12 col-sm-6 col-xxl-3 mb-4">
+      <div class="card adminuiux-card overflow-hidden">
+        <div class="card-body {{ colors[loop.index0 % colors|length] }}">
+          <div class="row mb-3">
+            <div class="col">
+              <div class="avatar avatar-60 text-center rounded bg-theme-1 text-white">
+                <i class="bi {{ icons[loop.index0 % icons|length] }} h4"></i>
+              </div>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-sm btn-square btn-link">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="row gx-3 align-items-center">
+            <div class="col">
+              <h2 class="fw-medium">
+                <img src="{{ url_for('admin_static', filename='admin_assets/images/sar.svg') }}" alt="SAR"
+                  class="currency-icon me-1" style="width: 16px; height: 16px" />
+                {{ "{:,.2f}M".format(investment.total_balance) }}
+              </h2>
+              <p class="text-secondary small">
+                {{ investment.investment_category }}
+              </p>
+            </div>
+
+            <div class="col-auto text-end">
+              <h4 class="fw-medium my-2">
+                <small class="text-success">
+                  +{{
+                  "%.2f"|format((investment.total_balance/investments_total*100))
+                  }}%
+                </small>
+              </h4>
+
+              <p class="text-secondary small">Portfolio Share</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="summarychart height-60">
+          <!-- <canvas id="{{ chart_ids[loop.index0 % chart_ids|length] }}-{{ loop.index }}"></canvas> -->
+          <canvas id="{{ chart_ids[loop.index0 % chart_ids|length] }}"></canvas>
+        </div>
+      </div>
+    </div>
+
+    {% endif %} {% endfor %}
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table mr-1"></i>
+        Investment Summary
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover" id="investmentTable" width="100%" cellspacing="0">
+            <thead class="thead-dark">
+              <tr>
+                <th>Investment Category</th>
+                <th class="text-right">Total Balance (Million SAR)</th>
+                <th class="text-right">Percentage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% set colors = ['text-primary', 'text-warning', 'text-danger',
+              'text-info', 'text-secondary'] %} 
+              {% for investment in investments %}
+
+              <tr class="{{ 'table-primary' if investment.investment_category == 'Investments' else '' }}">
+                <td>
+                  {% if investment.investment_category == 'Investments' %}
+                  <strong>{{ investment.investment_category }}</strong>
+                  {% else %}
+                  <i class="fas fa-circle mr-2 {{ colors[loop.index0 % colors|length] }}"></i>
+                  {{ investment.investment_category }} 
+                  {% endif %}
+                </td>
+
+                <td class="text-right">
+                  <img src="{{ url_for('admin_static', filename='admin_assets/images/sar.svg') }}" alt="SAR"
+                    class="portfolio-currency-icon" />
+                  {{ "{:,.2f}".format(investment.total_balance|default(0)) }}M
+                </td>
+                <td class="text-right">
+                  {{ "%.2f"|format((investment.total_balance/investments_total*100)) }}%
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-12 col-xl-12">
+      <div class="card adminuiux-card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6>Detailed Investment Accounts</h6>
+          <div class="search-container" style="max-width: 300px;">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-transparent border-end-0">
+                <i class="bi bi-search"></i>
+              </span>
+              <input type="text" id="detailedSearchInput" class="form-control border-start-0"
+                placeholder="Search investments..." aria-label="Search investments">
+              <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+          </div>
+          <div class="card-body">
+            <table class="table responsive nowrap mb-0" id="dataTable">
+              <thead>
+                <tr>
+                  <th data-priority="1">Date</th>
+                  <th data-priority="1">Account Name</th>
+                  <th>Labels</th>
+                  <th data-priority="2">Balance (Million SAR)</th>
+                  <th data-priority="3">Type</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in detailed_investments %}
+                    <tr>
+                  <td>
+                    <p class="mb-0">{{ item.investment_date }}</p>
+                  </td>
+                  <td>
+                    <p class="mb-0">{{ item.investment_name }}</p>
+                  </td>
+                  <td>
+                    <p class="mb-0">{{ item.investment_labels or 'No labels' }}</p>
+                  </td>
+                  <td>
+                    <p class="mb-0 text-success">
+                      <img src="{{ url_for('admin_static', filename='admin_assets/images/sar.svg') }}" alt="SAR"
+                        class="currency-icon me-1" />
+                      {{ "{:,.2f}".format(item.investment_balance|default(0)) }}M
+                    </p>
+                    </td>
+                    <td>
+                      <p class="mb-0 text-success">
+                        <i class="bi bi-caret-up-fill"></i>
+                        Investment
+                      </p>
+                  </td>
+                  </tr>
+                  {% endfor %}
+                {% if not detailed_investments %}
+                <tr>
+                  <td colspan="5" class="text-center py-3">
+                    <p class="text-secondary">No investment accounts found</p>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+              </table>
+              </div>
+              </div>
+              </div>
+              </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+  // Global variables to hold chart instances
+  let summaryChartInstance = null;
+  let smallChartInstances = {};
+  let currentActivePeriod = '0'; 
+
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM loaded, initializing charts...");
+
+    // Initialize the summary chart
+    initSummaryChart();
+
+    // Initialize date range picker
+    initDateRangePicker();
+
+    // Set up time period navigation
+    initTimePeriodNavigation();
+
+    // Initialize other charts
+    initOtherCharts();
+
+    // Initialize table search and sorting
+    initTableSearch();
+  });
+
+  function initSummaryChart() {
+    const ctx = document.getElementById('summaryChart');
+    if (!ctx) {
+      console.error("Summary chart canvas not found!");
+      return;
+    }
+
+    if (summaryChartInstance) {
+      summaryChartInstance.destroy();
+    }
+
+    const timeSeriesData = {{ time_series_data | tojson | safe
+  }};
+
+  if (!timeSeriesData || !timeSeriesData.labels || timeSeriesData.labels.length === 0) {
+    console.warn("No investment data available for the selected period");
+    ctx.style.display = "none";
+    ctx.insertAdjacentHTML("afterend", `
+            <div class="alert alert-info text-center mt-3">
+                <h5><i class="bi bi-bar-chart"></i> No Investment Data Available</h5>
+                <p class="mb-0">No investment transactions found for the selected date range.<br>
+                Please try a different time period or check if investments exist in this range.</p>
+            </div>
+        `);
+    return;
+  }
+
+  // Use the colors from your template
+  const templateColors = ['#219EBC', '#588157', '#004557', '#1B263B', '##004557'];
+
+  summaryChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: timeSeriesData.labels,
+      datasets: [{
+        label: 'Investment Value (Million SAR)',
+        data: timeSeriesData.datasets[0].data,
+        backgroundColor: timeSeriesData.labels.map((_, index) =>
+          templateColors[index % templateColors.length]
+        ),
+        borderColor: timeSeriesData.labels.map((_, index) =>
+          templateColors[index % templateColors.length]
+        ),
+        borderRadius: 8,
+        borderWidth: 0,
+        barPercentage: 0.6,
+        categoryPercentage: 0.8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Value (Million SAR)',
+            font: { weight: 'bold', size: 12 }
+          },
+          ticks: {
+            callback: function (value) {
+              return ' ' + value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+            }
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Investment Categories',
+            font: { weight: 'bold', size: 12 }
+          },
+          grid: {
+            display: false
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          callbacks: {
+            label: function (context) {
+              return 'Value: ' + context.parsed.y.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }) + 'M';
+            }
+          }
+        }
+      },
+      animation: {
+        duration: 1500,
+        easing: 'easeOutQuart'
+      }
+    }
+  });
+
+  // Hide loading indicator
+  setTimeout(() => {
+    $('#chartLoading').addClass('d-none');
+  }, 500);
+}
+
+  function initDateRangePicker() {
+    const startDate = '{{ start_date }}' || moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const endDate = '{{ end_date }}' || moment().format('YYYY-MM-DD');
+
+    // Set initial values for hidden inputs
+    $('#startDateInput').val(startDate);
+    $('#endDateInput').val(endDate);
+
+    // Initialize date range picker with current values
+    $('#daterangepicker').daterangepicker({
+      startDate: moment(startDate),
+      endDate: moment(endDate),
+      ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      locale: {
+        format: 'DD/MM/YYYY'
+      }
+    });
+
+    // Set initial display value
+    $('#daterangepicker').val(moment(startDate).format('DD/MM/YYYY') + ' - ' + moment(endDate).format('DD/MM/YYYY'));
+
+    // Handle date range selection
+    $('#daterangepicker').on('apply.daterangepicker', function (ev, picker) {
+      // Update hidden inputs with selected dates
+      $('#startDateInput').val(picker.startDate.format('YYYY-MM-DD'));
+      $('#endDateInput').val(picker.endDate.format('YYYY-MM-DD'));
+
+      // Update display
+      $('#daterangepicker').val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+
+      // When using custom date range, remove active class from time period nav
+      $('.time-period-nav .page-link').removeClass('active');
+      currentActivePeriod = null;
+
+      // Remove any existing days parameter
+      $('#dateRangeForm').find('input[name="days"]').remove();
+    });
+
+    // Handle the Apply button click
+    $('#dateRangeForm').on('submit', function (e) {
+      e.preventDefault(); // Prevent default form submission
+
+      // Show loading indicator
+      $('#chartLoading').removeClass('d-none');
+
+      // Get the current values from the date picker
+      const picker = $('#daterangepicker').data('daterangepicker');
+      if (picker) {
+        $('#startDateInput').val(picker.startDate.format('YYYY-MM-DD'));
+        $('#endDateInput').val(picker.endDate.format('YYYY-MM-DD'));
+      }
+
+      // Remove any days parameter
+      $('#dateRangeForm').find('input[name="days"]').remove();
+
+      // Submit the form programmatically
+      this.submit();
+    });
+  }
+
+  function initTimePeriodNavigation() {
+    // Set active period based on current selection
+    const urlParams = new URLSearchParams(window.location.search);
+    const daysParam = urlParams.get('days');
+
+    if (daysParam !== null) {
+      currentActivePeriod = daysParam;
+      $('.time-period-nav .page-link').removeClass('active');
+      $(`.time-period-nav .page-link[data-days="${daysParam}"]`).addClass('active');
+    } else if (!daysParam) {
+      currentActivePeriod = '0';
+      $('.time-period-nav .page-link').removeClass('active');
+      $('.time-period-nav .page-link[data-days="0"]').addClass('active');
+    }
+
+    $('.time-period-nav .page-link').on('click', function (e) {
+      e.preventDefault();
+
+      // Update active state
+      $('.time-period-nav .page-link').removeClass('active');
+      $(this).addClass('active');
+
+      // Store the current active period
+      currentActivePeriod = $(this).data('days');
+
+      const days = $(this).data('days');
+      let startDate, endDate;
+
+      endDate = moment().format('YYYY-MM-DD');
+
+      if (days === 0) {
+        // For "All", set a very early start date
+        startDate = '2020-01-01';
+      } else {
+        startDate = moment().subtract(days, 'days').format('YYYY-MM-DD');
+      }
+
+      // Update the hidden inputs
+      $('#startDateInput').val(startDate);
+      $('#endDateInput').val(endDate);
+
+      // Also update the date range picker display
+      $('#daterangepicker').data('daterangepicker').setStartDate(moment(startDate));
+      $('#daterangepicker').data('daterangepicker').setEndDate(moment(endDate));
+      $('#daterangepicker').val(moment(startDate).format('DD/MM/YYYY') + ' - ' + moment(endDate).format('DD/MM/YYYY'));
+
+      // Show loading indicator
+      $('#chartLoading').removeClass('d-none');
+
+      // Add days parameter to the form
+      $('#dateRangeForm').find('input[name="days"]').remove();
+      $('<input>').attr({
+        type: 'hidden',
+        name: 'days',
+        value: days
+      }).appendTo('#dateRangeForm');
+
+      $('#dateRangeForm').submit();
+    });
+  }
+
+  function initOtherCharts() {
+    // Clear existing chart instances
+    Object.values(smallChartInstances).forEach(chart => {
+      if (chart) {
+        try {
+          chart.destroy();
+        } catch (e) {
+          console.warn("Error destroying chart:", e);
+        }
+      }
+    });
+    smallChartInstances = {};
+
+    // Add data-balance attribute to your investment cards in the template
+    document.querySelectorAll('canvas[id^="areachart"]').forEach((canvas, index) => {
+      const ctx = canvas.getContext('2d');
+      const chartId = canvas.id;
+
+      // Get the parent card and find the balance
+      const card = canvas.closest(".card");
+      const balanceElement = card.querySelector('h2.fw-medium');
+      let balance = 0;
+
+      if (balanceElement) {
+        const balanceText = balanceElement.textContent.replace(/[^\d.]/g, '');
+        balance = parseFloat(balanceText) || 0;
+      }
+
+      // Destroy existing chart if it exists
+      if (smallChartInstances[chartId]) {
+        try {
+          smallChartInstances[chartId].destroy();
+        } catch (e) {
+          console.warn("Error destroying chart:", e);
+        }
+      }
+
+      // Create sample data based on the actual balance
+      const sampleData = [
+        balance * 0.4,
+        balance * 0.6,
+        balance * 0.8,
+        balance,
+        balance * 1.1,
+        balance * 1.2
+      ];
+
+      smallChartInstances[chartId] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Performance',
+            data: sampleData,
+            borderColor: getColorFromId(chartId),
+            backgroundColor: getColorFromId(chartId) + '20',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              display: false,
+              grid: { display: false }
+            },
+            y: {
+              display: false,
+              grid: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false }
+          },
+          elements: {
+            line: {
+              tension: 0.4 // Smooth lines
+            }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+    });
+  }
+
+  function getColorFromId(id) {
+    const colorMap = {
+      'areachartblue1': '#4e73df',
+      'areachartgreen1': '#1cc88a',
+      'areachartyellow1': '#f6c23e',
+      'areachartred1': '#e74a3b'
+    };
+    return colorMap[id] || '#4e73df';
+  }
+
+  // Hide loading indicator when page is fully loaded
+  window.addEventListener('load', function () {
+    $('#chartLoading').addClass('d-none');
+  });
+                        // Table search and sorting functionality
+                        function initTableSearch() {
+                          const searchInput = document.getElementById('detailedSearchInput');
+                          const clearSearchBtn = document.getElementById('clearSearchBtn');
+                          const table = document.getElementById('dataTable');
+
+                          if (!table) {
+                            console.error("Table with ID 'dataTable' not found");
+                            return;
+                          }
+
+                          const rows = table.querySelectorAll('tbody tr');
+                          const thead = table.querySelector('thead tr');
+
+                          if (!rows.length) {
+                            console.warn("No table rows found");
+                            return;
+                          }
+
+                          // Add sortable class to headers if not already present
+                          const headers = thead.querySelectorAll('th');
+                          headers.forEach((header, index) => {
+                            if (!header.classList.contains('sortable')) {
+                              header.classList.add('sortable');
+                            }
+                            header.setAttribute('data-sort', index);
+                            header.style.cursor = 'pointer';
+                          });
+
+                          let currentSort = {
+                            column: 0, // Default to first column (Date)
+                            direction: 'desc'
+                          };
+
+                          // Search functionality
+                          searchInput.addEventListener('input', function () {
+                            const searchTerm = this.value.toLowerCase().trim();
+
+                            rows.forEach(row => {
+                              // Skip if it's the "no results" row
+                              if (row.cells.length < 2) return;
+
+                              const text = row.textContent.toLowerCase();
+                              const matches = text.includes(searchTerm);
+
+                              if (searchTerm === '' || matches) {
+                                row.style.display = '';
+
+                                // Highlight matching text
+                                if (searchTerm && matches) {
+                                  highlightText(row, searchTerm);
+                                } else {
+                                  removeHighlights(row);
+                                }
+                              } else {
+                                row.style.display = 'none';
+                              }
+                            });
+
+                            // Show message if no results
+                            toggleNoResults(searchTerm);
+                          });
+
+                          // Clear search
+                          clearSearchBtn.addEventListener('click', function () {
+                            searchInput.value = '';
+                            searchInput.dispatchEvent(new Event('input'));
+                            searchInput.focus();
+                          });
+
+                          // Sorting functionality
+                          headers.forEach(header => {
+                            header.addEventListener('click', function () {
+                              const column = parseInt(this.dataset.sort);
+                              const newDirection = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+
+                              sortTable(column, newDirection);
+                              updateSortIndicator(this, newDirection);
+
+                              currentSort = {
+                                column: column,
+                                direction: newDirection
+                              };
+                            });
+                          });
+
+                          function sortTable(column, direction) {
+                            const tbody = table.querySelector('tbody');
+                            const rowsArray = Array.from(rows).filter(row => row.style.display !== 'none');
+
+                            // Don't sort if only one row is visible (or none)
+                            if (rowsArray.length <= 1) return;
+
+                            rowsArray.sort((a, b) => {
+                              // Skip if it's the "no results" row
+                              if (a.cells.length < 2 || b.cells.length < 2) return 0;
+
+                              let aValue = a.cells[column].textContent.trim();
+                              let bValue = b.cells[column].textContent.trim();
+
+                              // Special handling for date and numeric columns
+                              if (column === 0) { // Date column
+                                aValue = new Date(aValue);
+                                bValue = new Date(bValue);
+                              } else if (column === 3) { // Balance column
+                                aValue = parseFloat(aValue.replace(/[^\d.]/g, ''));
+                                bValue = parseFloat(bValue.replace(/[^\d.]/g, ''));
+                              } else {
+                                aValue = aValue.toLowerCase();
+                                bValue = bValue.toLowerCase();
+                              }
+
+                              if (direction === 'asc') {
+                                return aValue > bValue ? 1 : -1;
+                              } else {
+                                return aValue < bValue ? 1 : -1;
+                              }
+                            });
+
+                            // Remove existing rows (except the no results row)
+                            rows.forEach(row => {
+                              if (row.cells.length > 1) { // Only remove actual data rows
+                                tbody.removeChild(row);
+                              }
+                            });
+
+                            // Add sorted rows
+                            rowsArray.forEach(row => tbody.appendChild(row));
+                          }
+
+                          function updateSortIndicator(header, direction) {
+                            // Remove all indicators
+                            /* headers.forEach(h => {
+                              const icon = h.querySelector('i');
+                              if (icon) {
+                                icon.className = direction === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down';
+                              } else {
+                                h.innerHTML += direction === 'asc' ? ' <i class="bi bi-arrow-up"></i>' : ' <i class="bi bi-arrow-down"></i>';
+                              }
+                            }); */
+                          }
+
+                          function highlightText(row, searchTerm) {
+                            removeHighlights(row);
+
+                            const cells = row.querySelectorAll('td');
+                            cells.forEach(cell => {
+                              const text = cell.textContent;
+                              const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
+                              cell.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
+                            });
+                          }
+
+                          function removeHighlights(row) {
+                            const highlights = row.querySelectorAll('.highlight');
+                            highlights.forEach(highlight => {
+                              highlight.outerHTML = highlight.textContent;
+                            });
+                          }
+
+                          function toggleNoResults(searchTerm) {
+                            const visibleRows = Array.from(rows).filter(row =>
+                              row.style.display !== 'none' && row.cells.length > 1
+                            ).length;
+
+                            const noResultsRow = table.querySelector('tbody tr:not([style*="display: none"])');
+
+                            if (searchTerm && visibleRows === 0) {
+                              // Show no results message if we have a search term but no visible rows
+                              if (!noResultsRow || noResultsRow.cells.length > 1) {
+                                const newRow = document.createElement('tr');
+                                newRow.innerHTML = '<td colspan="5" class="text-center py-3"><p class="text-secondary">No matching investments found</p></td>';
+                                table.querySelector('tbody').appendChild(newRow);
+                              }
+                            } else if (noResultsRow && noResultsRow.cells.length === 1) {
+                              // Remove no results message if we have visible rows
+                              noResultsRow.remove();
+                            }
+                          }
+
+                          function escapeRegex(string) {
+                            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                          }
+
+                          // Initialize with date descending
+                          sortTable(0, 'desc');
+                          updateSortIndicator(headers[0], 'desc');
+                        }
+
+                        // Make sure to call this function when the DOM is loaded
+                        document.addEventListener('DOMContentLoaded', function () {
+                          initTableSearch();
+
+                          // Add keyboard shortcuts
+                          document.addEventListener('keydown', function (e) {
+                            const searchInput = document.getElementById('detailedSearchInput');
+
+                            // Ctrl/Cmd + F to focus search
+                            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                              e.preventDefault();
+                              if (searchInput) {
+                                searchInput.focus();
+                                searchInput.select();
+                              }
+                            }
+
+                            // Escape to clear search
+                            if (e.key === 'Escape' && searchInput && searchInput.value) {
+                              searchInput.value = '';
+                              searchInput.dispatchEvent(new Event('input'));
+                            }
+                          });
+                        });
+</script>
+
+
+{% endblock %}

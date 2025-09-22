@@ -1,0 +1,1965 @@
+{% extends "admin_base.html" %}
+
+{% block title %}
+Financial Performance - Investment Admin
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profit-positive {
+        color: #28a745;
+    }
+
+    .profit-negative {
+        color: #dc3545;
+    }
+
+    .filter-section {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .date-filter-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .date-filter-btn {
+        background: linear-gradient(45deg, #4e73df, #224abe);
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .date-filter-btn:hover {
+        background: linear-gradient(45deg, #224abe, #4e73df);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-container {
+        position: relative;
+        height: 60px;
+        width: 100%;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding: 15px 0;
+    }
+
+    .date-range-card {
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .date-input-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .date-filter-container {
+            width: 100%;
+        }
+
+        .date-input-group {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .date-input-separator {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div>
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">
+                            <i class="bi bi-house-door me-1"></i> Dashboard
+                        </a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Financial Performance</li>
+                </ol>
+            </nav>
+            <h4 class="mb-0">Financial Performance Dashboard
+                {% if ytd_only %}<span class="badge bg-warning ms-2">YTD</span>{% endif %}
+            </h4>
+        </div>
+
+        <!-- Date Filter Card -->
+        <div class="date-range-card">
+            <form method="POST" class="date-filter-container">
+                <div class="date-input-group">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input type="date" class="form-control" name="start_date" value="{{ start_date }}"
+                            id="startDatePicker" title="Start Date">
+                    </div>
+                    <span class="date-input-separator">to</span>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input type="date" class="form-control" name="end_date" value="{{ end_date }}"
+                            id="endDatePicker" title="End Date">
+                    </div>
+                </div>
+                <button type="submit" class="date-filter-btn" name="action" value="apply">
+                    <i class="bi bi-filter me-1"></i> Apply
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+    <div class="row">
+        <!-- Profit/Loss Card -->
+        <div class="col-12 col-sm-6 col-xxl-3 mb-4">
+            <div class="card adminuiux-card overflow-hidden">
+                <div class="card-body {% if current_profit_loss >= 0 %}theme-green{% else %}theme-red{% endif %}">
+                    <div class="avatar avatar-60 text-center rounded bg-theme-1 text-white mb-3">
+                        <i
+                            class="bi {% if current_profit_loss >= 0 %}bi-graph-up-arrow{% else %}bi-graph-down-arrow{% endif %} h4"></i>
+                    </div>
+                    <h2
+                        class="fw-medium {% if current_profit_loss >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                        {{ ytd_profit_loss|format_currency }}
+                    </h2>
+                    <p class="text-secondary small">
+                        {% if ytd_only %}YTD {% endif %}Profit/Loss
+                    </p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="profitLossChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expense Card -->
+        <div class="col-12 col-sm-6 col-xxl-3 mb-4">
+            <div class="card adminuiux-card overflow-hidden">
+                <div class="card-body theme-red">
+                    <div class="avatar avatar-60 text-center rounded bg-theme-1 text-white mb-3">
+                        <i class="bi bi-graph-up h4"></i>
+                    </div>
+                    <h2 class="fw-medium profit-negative">
+                        {{ ytd_expenses|format_currency }}
+                    </h2>
+                    <p class="text-secondary small">
+                        {% if ytd_only %}YTD {% endif %}Total Expenses
+                    </p>
+                </div>
+                <div class="summarychart height-60 w-100">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assets Card -->
+        <div class="col-12 col-sm-6 col-xxl-3 mb-4">
+            <div class="card adminuiux-card overflow-hidden">
+                <div class="card-body theme-blue">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <div class="avatar avatar-60 text-center rounded bg-theme-1 text-white">
+                                <i class="bi bi-building h4"></i>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-square btn-link" onclick="refreshAssetData()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h2 class="fw-medium">
+                        {% set asset_value = total_assets | abs %}
+                        {% if asset_value >= 1000000000 %}
+                        {{ "{:,.2f}".format(asset_value / 1000000000) }}B
+                        {% elif asset_value >= 1000000 %}
+                        {{ "{:,.2f}".format(asset_value / 1000000) }}M
+                        {% elif asset_value >= 1000 %}
+                        {{ "{:,.2f}".format(asset_value / 1000) }}K
+                        {% else %}
+                        {{ "{:,.2f}".format(asset_value) }}
+                        {% endif %}
+                    </h2>
+                    <p class="text-secondary small">{% if ytd_only %}YTD {% endif %}Total Assets</p>
+                </div>
+                <div class="summarychart height-60 w-100">
+                    <canvas id="assetChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liabilities Card -->
+        <div class="col-12 col-sm-6 col-xxl-3 mb-4">
+            <div class="card adminuiux-card overflow-hidden">
+                <div class="card-body theme-purple">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <div class="avatar avatar-60 text-center rounded bg-theme-1 text-white">
+                                <i class="bi bi-graph-down h4"></i>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-square btn-link" onclick="refreshLiabilityData()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h2 class="fw-medium">
+                        {% set liability_value = total_liabilities | abs %}
+                        {% if liability_value >= 1000000000 %}
+                        {{ "{:,.2f}".format(liability_value / 1000000000) }}B
+                        {% elif liability_value >= 1000000 %}
+                        {{ "{:,.2f}".format(liability_value / 1000000) }}M
+                        {% elif liability_value >= 1000 %}
+                        {{ "{:,.2f}".format(liability_value / 1000) }}K
+                        {% else %}
+                        {{ "{:,.2f}".format(liability_value) }}
+                        {% endif %}
+                    </h2>
+                    <p class="text-secondary small">{% if ytd_only %}YTD {% endif %}Total Liabilities</p>
+                </div>
+                <div class="summarychart height-60 w-100">
+                    <canvas id="liabilityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Profit and Loss Statement Breakdown (Waterfall Chart) -->
+        <div class="col-12 col-lg-12 col-xl-12 mb-4">
+            <div class="card adminuiux-card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6>Profit and Loss Waterfall Analysis</h6>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-outline-primary" onclick="refreshPLChart()">
+                                <i class="bi bi-arrow-clockwise"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="w-100 height-500">
+                        <canvas id="profitLossWaterfallChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12 col-xl-8 mb-4">
+            <div class="card adminuiux-card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6>Profit and Loss Statement Breakdown</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="w-100 height-500 ">
+                        <canvas id="profitLossStatementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="card adminuiux-card h-100">
+                <div class="card-header">
+                    <h6>Ages in Years</h6>
+                </div>
+                <div class="card-body pb-0"><canvas id="doughnutchart" class="mx-auto mb-3 height-180"></canvas>
+                    <p class="text-secondary small">It looks like a children age between 0-15 are have more
+                        cases than expected.</p>
+                    <div class="row">
+                        <div class="col-auto mb-3">
+                            <p class="h4 mb-1">40</p>
+                            <p class="text-secondary small"><span
+                                    class="me-1 avatar avatar-10 rounded bg-green"></span>0-15</p>
+                        </div>
+                        <div class="col-auto mb-3">
+                            <p class="h4 mb-1">10</p>
+                            <p class="text-secondary small"><span
+                                    class="me-1 avatar avatar-10 rounded bg-yellow"></span>16-30</p>
+                        </div>
+                        <div class="col-auto mb-3">
+                            <p class="h4 mb-1">15</p>
+                            <p class="text-secondary small"><span
+                                    class="me-1 avatar avatar-10 rounded bg-orange"></span>31-45</p>
+                        </div>
+                        <div class="col-auto mb-3">
+                            <p class="h4 mb-1">25</p>
+                            <p class="text-secondary small"><span
+                                    class="me-1 avatar avatar-10 rounded bg-purple"></span>46-60</p>
+                        </div>
+                        <div class="col-auto mb-3">
+                            <p class="h4 mb-1">10</p>
+                            <p class="text-secondary small"><span
+                                    class="me-1 avatar avatar-10 rounded bg-secondary"></span>60+</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="card adminuiux-card h-100">
+                <div class="card-header">
+                    <h6>Top Investment Categories</h6>
+                </div>
+                <div class="card-body">
+                    <div class="semidoughnutchart">
+                        <div class="expensedatasemidoughnut">
+                            <p class="h4 mb-0"> 15.50k</p>
+                            <p class="text-secondary small">Profit</p>
+                        </div><canvas id="semidoughnutchart" class="mx-auto width-260 height-260"></canvas>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-md-6 mb-4">
+                            <p class="text-secondary small mb-2"><span
+                                    class="me-1 avatar avatar-10 rounded bg-green"></span> Share holdings</p>
+                            <h4 class="ps-3 fw-medium"> 165.52k<br><span class="text-success fs-14 fw-normal"><i
+                                        class="bi bi-caret-up-fill me-1 fs-14"></i> 25.30%</span></h4>
+                        </div>
+                        <div class="col-6 col-md-6 mb-4">
+                            <p class="text-secondary small mb-2"><span
+                                    class="me-1 avatar avatar-10 rounded bg-yellow"></span> Mutual Funds</p>
+                            <h4 class="ps-3 fw-medium"> 265.85k<br><span class="text-success fs-14 fw-normal"><i
+                                        class="bi bi-caret-up-fill me-1"></i> 21.42%</span></h4>
+                        </div>
+                        <div class="col-6 col-md-6 mb-4">
+                            <p class="text-secondary small mb-2"><span
+                                    class="me-1 avatar avatar-10 rounded bg-orange"></span> Bank Bonds</p>
+                            <h4 class="ps-3 fw-medium"> 356.26k<br><span class="text-success fs-14 fw-normal"><i
+                                        class="bi bi-caret-up-fill me-1"></i> 20.18%</span></h4>
+                        </div>
+                        <div class="col-6 col-md-6 mb-4">
+                            <p class="text-secondary small mb-2"><span
+                                    class="me-1 avatar avatar-10 rounded bg-purple"></span> Gov. Securities</p>
+                            <h4 class="ps-3 fw-medium"> 185.65<br><span class="text-success fs-14 fw-normal"><i
+                                        class="bi bi-caret-up-fill me-1"></i> 15.65%</span></h4>
+                        </div>
+                        <div class="col-6 col-md-6">
+                            <p class="text-secondary small mb-2"><span
+                                    class="me-1 avatar avatar-10 rounded bg-secondary"></span> Fixed Deposit</p>
+                            <h4 class="ps-3 fw-medium"> 190.45k<br><span class="text-success fs-14 fw-normal"><i
+                                        class="bi bi-caret-up-fill me-1"></i> 18.50%</span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-12 col-xl-8">
+            <div class="card adminuiux-card mb-4">
+                <div class="card-header">
+                    <h6>My Holdings Performance</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table responsive nowrap mb-0" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th data-priority="1">Company</th>
+                                <th data-priority="1">Price</th>
+                                <th>Holding</th>
+                                <th data-priority="2">Profit/Loss</th>
+                                <th data-priority="3">Today's Trend</th>
+                                <th data-priority="4">% Change</th>
+                                <th data-priority="1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Jintudal</p>
+                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 100.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 152</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">102 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Ciplasc</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 520.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 521.05</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">50 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 1520.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 15.40%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 408.65</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-danger"><i class="bi bi-graph-down-arrow"></i> Bearish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-danger"><i class="bi bi-caret-down-fill"></i> 0.85%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Trisha LLC</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 856.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 856.55</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">20 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 2050.00</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 35.15%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 685.00</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.03%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Cyborgous</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 150.00</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 153.00</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">3 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 450.00</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 10.00%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 45.0</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-danger"><i class="bi bi-graph-down-arrow"></i> Bearish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-danger"><i class="bi bi-caret-down-fill"></i> 0.65%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Spanishwebs</p>
+                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 130.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 135.52</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">100 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 150.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 5.52%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 10.15</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Jintudal</p>
+                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 100.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 152</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">102 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Jintudal</p>
+                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 100.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 152</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">102 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Jintudal</p>
+                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 100.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 152</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">102 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-inline-block align-middle">
+                                        <p class="mb-0">Jintudal</p>
+                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="mb-0"> 100.45</p>
+                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
+                                            title="Last top price">LTP:</span> 152</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0">102 units</p>
+                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
+                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
+                                </td>
+                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
+                                        class="btn btn-sm btn-outline-danger">Sell</button>
+                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
+                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
+                                            </li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">View
+                                                    Chart</a></li>
+                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
+                                                    Events</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="card adminuiux-card">
+                <div class="card-header">
+                    <h6>Top Gainer</h6>
+                </div>
+                <ul class="list-group list-group-flush border-top bg-none">
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto"><i
+                                    class="bi bi-building-lock avatar avatar-40 h5 rounded-circle border"></i>
+                            </div>
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Jindaabanda</p>
+                                <p class="small text-secondary"> 2250.00, 15 Units</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 4500.00</h6>
+                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto"><span
+                                    class="avatar avatar-40 rounded-circle border fw-bold small">SIP</span>
+                            </div>
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Guaranteed Return</p>
+                                <p class="small text-secondary"> 1500.00, 200.00/mo.</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 1800.00</h6>
+                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 24.15%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto"><i
+                                    class="bi bi-percent avatar avatar-40 h5 rounded-circle border"></i></div>
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Fixed Deposit @7.25%</p>
+                                <p class="small text-secondary"> 4000.00</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 5280.00</h6>
+                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 22.65%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto"><i
+                                    class="bi bi-percent avatar avatar-40 h5 rounded-circle border"></i></div>
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Fixed Deposit @7.00%</p>
+                                <p class="small text-secondary"> 4500.00, 24/45 mo.</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 5600.00</h6>
+                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 18.15%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col-auto"><span
+                                    class="avatar avatar-40 rounded-circle border fw-bold small">SIP</span>
+                            </div>
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Real Estate Fund</p>
+                                <p class="small text-secondary"> 1500.00</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 1850.00</h6>
+                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 17.65%</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="card adminuiux-card">
+                <div class="card-header">
+                    <h6>Top Loser</h6>
+                </div>
+                <ul class="list-group list-group-flush border-top bg-none">
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Infragistic LLP</p>
+                                <p class="small text-secondary"> 2250.00, 10 units</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 4500.00</h6>
+                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 25.30%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Reliables</p>
+                                <p class="small text-secondary"> 1200.00, 15 units</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 3150.00</h6>
+                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 22.65%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Alsometan</p>
+                                <p class="small text-secondary"> 2560.00, 11 units</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 4280.00</h6>
+                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 21.15%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <p class="mb-1 fw-medium">LinkedJosh</p>
+                                <p class="small text-secondary"> 850.00, 25 units</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 4280.00</h6>
+                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 21.05%</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row gx-3 align-items-center">
+                            <div class="col">
+                                <p class="mb-1 fw-medium">Real Estate Card</p>
+                                <p class="small text-secondary"> 1325.00, 13 units</p>
+                            </div>
+                            <div class="col-auto text-end">
+                                <h6> 1850.00</h6>
+                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 20.75%</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 col-xl-4 mb-4">
+            <div class="card adminuiux-card">
+                <div class="card-header">
+                    <h6>Riskometer</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h5>Moderate</h5>
+                        <p class="text-secondary small">Your portfolio in good situation</p>
+                    </div>
+                    <div class="riskometer moderate mb-3">
+                        <div class="indicator"></div>
+                    </div><br>
+                    <div class="text-center">
+                        <h4 class="fw-medium"> 15.51k <span class="text-success fs-14"><i
+                                    class="bi bi-arrow-up-short me-1"></i> 11.5%</span></h4>
+                        <p class="text-secondary">Profit Revenue</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-waterfall"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM loaded, initializing charts...');
+
+        // Initialize all charts
+        initializeCharts();
+
+        // Set today's date as default if no date is selected
+        const datePicker = document.getElementById('datePicker');
+        if (datePicker && !datePicker.value) {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            datePicker.value = formattedDate;
+        }
+    });
+
+    // Declare chart variables
+    let profitChart = null;
+    let expenseChart = null;
+    let liabilityChart = null;
+    let assetChart = null;
+    let profitLossStatementChart = null;
+    let profitLossWaterfallChart = null;
+
+    function initializeCharts() {
+        // Destroy existing charts first
+        destroyCharts();
+
+        // Initialize all charts
+        initializeProfitChart();
+        initializeExpenseChart();
+        initializeLiabilityChart();
+        initializeAssetChart();
+        initializeProfitLossStatementChart();
+        initializeProfitLossWaterfallChart();
+    }
+
+    // Add refresh function
+    function refreshPLChart() {
+        initializeProfitLossWaterfallChart();
+    }
+
+    function destroyCharts() {
+        const charts = [profitChart, expenseChart, liabilityChart, assetChart, profitLossStatementChart, profitLossWaterfallChart];
+        const chartIds = ['profitLossChart', 'expenseChart', 'liabilityChart', 'assetChart', 'profitLossStatementChart', 'profitLossWaterfallChart'];
+
+        charts.forEach((chart, index) => {
+            if (chart) {
+                chart.destroy();
+                charts[index] = null;
+            }
+
+            // Also check if Chart.js has any registered chart for this canvas
+            const canvas = document.getElementById(chartIds[index]);
+            if (canvas) {
+                const existingChart = Chart.getChart(canvas);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+            }
+        });
+    }
+
+    function initializeProfitChart() {
+        const ctx = document.getElementById('profitLossChart');
+        if (!ctx) {
+            console.error('Profit/Loss chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(ctx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            const monthlyData = {{ monthly_data | tojson | safe
+        }};
+    console.log('Monthly profit data:', monthlyData);
+
+    let labels = [];
+    let data = [];
+
+    if (monthlyData && monthlyData.length > 0) {
+        labels = monthlyData.map(item => item.month.substring(0, 3));
+        data = monthlyData.map(item => item.profit);
+    } else {
+        // Fallback data
+        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        data = [12000, 19000, 3000, 5000, 2000, 3000];
+    }
+
+    const isProfit = {{ current_profit_loss }} >= 0;
+    const chartColor = isProfit ? 'rgba(40, 167, 69, 1)' : 'rgba(220, 53, 69, 1)';
+    const bgColor = isProfit ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+
+    profitChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Profit/Loss Trend',
+                data: data,
+                borderColor: chartColor,
+                backgroundColor: bgColor,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: chartColor,
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 5
+            }]
+        },
+        options: getChartOptions()
+    });
+
+    console.log('Profit chart initialized successfully');
+        } catch (error) {
+        console.error('Error initializing profit chart:', error);
+    }
+    }
+
+    function initializeExpenseChart() {
+        const expenseCtx = document.getElementById('expenseChart');
+        if (!expenseCtx) {
+            console.error('Expense chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(expenseCtx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            const monthlyExpenseData = {{ monthly_expense_data | tojson | safe
+        }};
+    console.log('Monthly expense data from server:', monthlyExpenseData);
+
+    let expenseLabels = [];
+    let expenseValues = [];
+
+    if (monthlyExpenseData && monthlyExpenseData.length > 0) {
+        expenseLabels = monthlyExpenseData.map(item => item.month.substring(0, 3));
+        expenseValues = monthlyExpenseData.map(item => item.expense);
+    } else {
+        // Fallback data
+        expenseLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        expenseValues = [5000, 7500, 6000, 8000, 7000, 9000];
+    }
+
+    console.log('Expense chart data:', { labels: expenseLabels, data: expenseValues });
+
+    expenseChart = new Chart(expenseCtx, {
+        type: 'line',
+        data: {
+            labels: expenseLabels,
+            datasets: [{
+                label: 'Expense Trend',
+                data: expenseValues,
+                borderColor: 'rgba(220, 53, 69, 1)',
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: 'rgba(220, 53, 69, 1)',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { size: 12 },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: function (context) {
+                            const value = context.parsed.y;
+                            if (Math.abs(value) >= 1000000) {
+                                return '' + (value / 1000000).toFixed(2) + 'M';
+                            } else if (Math.abs(value) >= 1000) {
+                                return '' + (value / 1000).toFixed(2) + 'K';
+                            } else {
+                                return '' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { display: false, beginAtZero: true },
+                x: { display: false }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            elements: {
+                line: { borderWidth: 2 }
+            }
+        }
+    });
+    console.log('Expense chart initialized successfully');
+        } catch (error) {
+        console.error('Error initializing expense chart:', error);
+    }
+    }
+
+    function initializeLiabilityChart() {
+        const liabilityCtx = document.getElementById('liabilityChart');
+        if (!liabilityCtx) {
+            console.error('Liability chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(liabilityCtx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            const monthlyLiabilityData = {{ monthly_liability_data | tojson | safe
+        }};
+    console.log('Monthly liability data from server:', monthlyLiabilityData);
+
+    let liabilityLabels = [];
+    let liabilityValues = [];
+
+    if (monthlyLiabilityData && monthlyLiabilityData.length > 0) {
+        liabilityLabels = monthlyLiabilityData.map(item => item.month.substring(0, 3));
+        liabilityValues = monthlyLiabilityData.map(item => item.liability);
+    } else {
+        // Fallback data
+        liabilityLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        liabilityValues = [15000, 16000, 15500, 16500, 17000, 17500];
+    }
+
+    console.log('Liability chart data:', { labels: liabilityLabels, data: liabilityValues });
+
+    liabilityChart = new Chart(liabilityCtx, {
+        type: 'line',
+        data: {
+            labels: liabilityLabels,
+            datasets: [{
+                label: 'Liability Trend',
+                data: liabilityValues,
+                borderColor: 'rgba(111, 66, 193, 1)',
+                backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: 'rgba(111, 66, 193, 1)',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { size: 12 },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: function (context) {
+                            const value = context.parsed.y;
+                            if (Math.abs(value) >= 1000000000) {
+                                return '' + (value / 1000000000).toFixed(2) + 'B';
+                            } else if (Math.abs(value) >= 1000000) {
+                                return '' + (value / 1000000).toFixed(2) + 'M';
+                            } else if (Math.abs(value) >= 1000) {
+                                return '' + (value / 1000).toFixed(2) + 'K';
+                            } else {
+                                return '' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { display: false, beginAtZero: true },
+                x: { display: false }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            elements: {
+                line: { borderWidth: 2 }
+            }
+        }
+    });
+    console.log('Liability chart initialized successfully');
+        } catch (error) {
+        console.error('Error initializing liability chart:', error);
+    }
+    }
+
+    function initializeAssetChart() {
+        const assetCtx = document.getElementById('assetChart');
+        if (!assetCtx) {
+            console.error('Asset chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(assetCtx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            const monthlyAssetData = {{ monthly_asset_data | tojson | safe
+        }};
+    console.log('Monthly asset data from server:', monthlyAssetData);
+
+    let assetLabels = [];
+    let assetValues = [];
+
+    if (monthlyAssetData && monthlyAssetData.length > 0) {
+        assetLabels = monthlyAssetData.map(item => item.month.substring(0, 3));
+        assetValues = monthlyAssetData.map(item => item.assets);
+    } else {
+        // Fallback data
+        assetLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+        assetValues = [500000, 550000, 600000, 650000, 700000, 750000];
+    }
+
+    console.log('Asset chart data:', { labels: assetLabels, data: assetValues });
+
+    assetChart = new Chart(assetCtx, {
+        type: 'line',
+        data: {
+            labels: assetLabels,
+            datasets: [{
+                label: 'Asset Trend',
+                data: assetValues,
+                borderColor: 'rgba(0, 123, 255, 1)',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: 'rgba(0, 123, 255, 1)',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { size: 12 },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: function (context) {
+                            const value = context.parsed.y;
+                            if (Math.abs(value) >= 1000000000) {
+                                return '' + (value / 1000000000).toFixed(2) + 'B';
+                            } else if (Math.abs(value) >= 1000000) {
+                                return '' + (value / 1000000).toFixed(2) + 'M';
+                            } else if (Math.abs(value) >= 1000) {
+                                return '' + (value / 1000).toFixed(2) + 'K';
+                            } else {
+                                return '' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { display: false, beginAtZero: true },
+                x: { display: false }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            elements: {
+                line: { borderWidth: 2 }
+            }
+        }
+    });
+    console.log('Asset chart initialized successfully');
+        } catch (error) {
+        console.error('Error initializing asset chart:', error);
+    }
+    }
+
+    function getChartOptions() {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { size: 12 },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: function (context) {
+                            const value = context.parsed.y;
+                            return formatCurrency(value);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { display: false, beginAtZero: true },
+                x: { display: false }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            elements: {
+                line: { borderWidth: 2 }
+            }
+        };
+    }
+
+    function initializeProfitLossStatementChart() {
+        const ctx = document.getElementById('profitLossStatementChart');
+        if (!ctx) {
+            console.error('Profit/Loss Statement chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(ctx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            // Get data from template variables
+            const plData = {{ pl_data | tojson | safe
+        }};
+    console.log('P&L Data for chart:', plData);
+
+    // If no data, show a message and return
+    if (!plData || Object.keys(plData).length === 0) {
+        console.warn('No P&L data available for chart');
+        ctx.parentElement.innerHTML = '<div class="text-center p-4 text-muted">No P&L data available for the selected period</div>';
+        return;
+    }
+
+    // Define the categories we want to display in order
+    const categories = [
+        'Revenue',
+        'Cost of Revenue',
+        'Gross Profit/Loss',
+        'Total Expenses',
+        'Net Operating Profit',
+        'Finance Cost', 'Zakat/Tax ',
+        'Other Incomes',
+        'Total Investment Income',
+        'NET PROFIT/LOSS'
+    ];
+
+    // Define expense items array
+    const expenseItems = [
+        'Salaries & Related', 'GOSI', 'Medical Insurance', 'Office Rent',
+        'Other Office Exp', 'Professional Fees', 'Business Travel',
+        'Consultation', 'Depreciation'
+    ];
+
+    // Define which categories are expenses (should be negative)
+    const expenseCategories = [
+        'Cost of Revenue',
+        'Salaries & Related', 'GOSI', 'Medical Insurance', 'Office Rent',
+        'Other Office Exp', 'Professional Fees', 'Business Travel',
+        'Consultation', 'Depreciation', 'Total Expenses',
+        'Finance Cost', 'Zakat/Tax '
+    ];
+
+    // Define which categories are income (should be positive)
+    const incomeCategories = [
+        'Revenue',
+        'Other Incomes',
+        'Unrealized Valuation from Investment at Fair Value',
+        'Income from investment at FV realised Gain',
+        'Dividend from investment at fair value P/L',
+        'Results in Subsidiary',
+        'Results in Associate',
+        'Dividend from Investment at cost',
+        'Interest Income',
+        'Income from investment at Octal',
+        'Change in the fair value of equity investment at fair value through OCI',
+        'Gain from disposal of associate',
+        'Remeasurement of defined employee benefits obligations',
+        'Total Investment Income'
+    ];
+
+    const investmentItems = [
+        'Unrealized Valuation from Investment at Fair Value',
+        'Income from investment at FV realised Gain',
+        'Dividend from investment at fair value P/L',
+        'Results in Subsidiary',
+        'Results in Associate',
+        'Dividend from Investment at cost',
+        'Income from investment at Octal',
+        'Change in the fair value of equity investment at fair value through OCI',
+        'Gain from disposal of associate'
+    ];
+
+    const otherIncomeItems = [
+        'Remeasurement of defined employee benefits obligations',
+        'Other Income'
+    ];
+
+    // Prepare data for the chart
+    const chartData = categories.map(category => {
+        let value = 0;
+
+        if (category === 'Gross Profit/Loss') {
+            const revenue = Math.abs(plData['Revenue'] || 0);
+            const costOfRevenue = plData['Cost of Revenue'] || 0;
+            value = revenue - costOfRevenue;
+        }
+        else if (category === 'Total Expenses') {
+            // Sum all expense items (already negative)
+            value = expenseItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+        }
+        else if (category === 'Net Operating Profit') {
+            const revenue = Math.abs(plData['Revenue'] || 0);
+            const costOfRevenue = plData['Cost of Revenue'] || 0;
+            const totalExpenses = expenseItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+
+            // Net Operating Profit = Revenue - (Cost of Revenue + Total Expenses)
+            value = revenue - costOfRevenue - totalExpenses;
+            if (value < 0) {
+                value = -value; // Convert to positive if it's negative (loss)
+            }
+        }
+        else if (category === 'Other Incomes') {
+            value = otherIncomeItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+        }
+        else if (category === 'Total Investment Income') {
+            value = investmentItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+        }
+        else if (category === 'NET PROFIT/LOSS') {
+            // Calculate net profit/loss using proper values from plData
+            const revenue = Math.abs(plData['Revenue'] || 0);
+            const costOfRevenue = plData['Cost of Revenue'] || 0;
+            const totalExpenses = expenseItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+            const totalInvestmentIncome = investmentItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+            const interestIncome = Math.abs(plData['Interest Income'] || 0);
+            const financeCost = Math.abs(plData['Finance Cost'] || 0);
+            const zakatTax = Math.abs(plData['Zakat/Tax '] || 0);
+            const employeeBenefit = Math.abs(plData['Remeasurement of defined employee benefits obligations'] || 0);
+            const otherIncome = Math.abs(plData['Other Income'] || 0);
+            value = totalInvestmentIncome - otherIncome - interestIncome + financeCost + zakatTax + employeeBenefit - revenue + costOfRevenue + totalExpenses;
+            if (value < 0) {
+                value = -value; // Convert to positive if it's negative (loss)
+            }
+        }
+        else {
+            value = plData[category] || 0;
+        }
+
+        // Convert expenses to negative values
+        if (expenseCategories.includes(category)) {
+            value = -Math.abs(value);
+        }
+        // Ensure income values are positive
+        else if (incomeCategories.includes(category)) {
+            value = Math.abs(value);
+        }
+
+        return value;
+    });
+
+    // Define colors for different categories
+    const backgroundColors = categories.map(category => {
+        // Revenue - Green
+        if (category === 'Revenue') return 'rgba(40, 167, 69, 0.8)';
+
+        // Costs and Expenses - Red
+        if (category === 'Cost of Revenue') return 'rgba(220, 53, 69, 0.8)';
+        if ([
+            'Salaries & Related', 'GOSI', 'Medical Insurance', 'Office Rent',
+            'Other Office Exp', 'Professional Fees', 'Business Travel',
+            'Consultation', 'Depreciation', 'Total Expenses',
+            'Finance Cost', 'Zakat/Tax'
+        ].includes(category)) return 'rgba(220, 53, 69, 0.6)';
+
+        // Profit items - Green shades
+        if (['Gross Profit/Loss', 'Net Operating Profit'].includes(category)) {
+            // Color based on whether it's profit (green) or loss (red)
+            const index = categories.indexOf(category);
+            return chartData[index] >= 0 ? 'rgba(40, 167, 69, 0.6)' : 'rgba(220, 53, 69, 0.6)';
+        }
+
+        // Income items - Blue
+        if (category === 'Other Incomes') return 'rgba(23, 162, 184, 0.8)';
+
+        // Investment income - Purple
+        if ([
+            'Unrealized Valuation from Investment at Fair Value',
+            'Income from investment at FV realised Gain',
+            'Dividend from investment at fair value P/L',
+            'Results in Subsidiary',
+            'Results in Associate',
+            'Dividend from Investment at cost',
+            'Interest Income',
+            'Income from investment at Octal',
+            'Change in the fair value of equity investment at fair value through OCI',
+            'Gain from disposal of associate',
+            'Remeasurement of defined employee benefits obligations',
+            'Total Investment Income'
+        ].includes(category)) return 'rgba(111, 66, 193, 0.8)';
+
+        // Final profit/loss - Conditional color
+        if (category === 'Current Year Profit /Loss') {
+            return chartData[categories.indexOf(category)] >= 0 ?
+                'rgba(40, 167, 69, 0.8)' : 'rgba(220, 53, 69, 0.8)';
+        }
+
+        return 'rgba(108, 117, 125, 0.6)'; // Default gray
+    });
+
+    // Create the chart
+    profitLossStatementChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Amount (SAR)',
+                data: chartData,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors.map(color => color.replace('0.8', '1').replace('0.6', '1')),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let value = context.parsed.y;
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (value !== null) {
+                                // Show absolute values in tooltips for better readability
+                                const category = categories[context.dataIndex];
+                                if (expenseCategories.includes(category)) {
+                                    label += formatCurrency(Math.abs(value));
+                                } else {
+                                    label += formatCurrency(value);
+                                }
+                            }
+                            return label;
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: '',
+                    font: {
+                        size: 16
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Amount (SAR)'
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return formatCurrency(value);
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        callback: function (value, index) {
+                            // Shorten long labels for better display
+                            const label = this.getLabelForValue(value);
+                            if (label.length > 15) {
+                                return label.substring(0, 15) + '...';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+
+    console.log('Profit/Loss Statement chart initialized successfully');
+        } catch (error) {
+        console.error('Error initializing profit/loss statement chart:', error);
+    }
+    }
+
+    function initializeProfitLossWaterfallChart() {
+        const ctx = document.getElementById('profitLossWaterfallChart');
+        if (!ctx) {
+            console.error('Profit/Loss Waterfall chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(ctx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            // Get data from template variables
+            const plData = {{ pl_data | tojson | safe
+        }};
+    console.log('P&L Data for waterfall chart:', plData);
+
+    // If no data, show a message and return
+    if (!plData || Object.keys(plData).length === 0) {
+        console.warn('No P&L data available for waterfall chart');
+        ctx.parentElement.innerHTML = '<div class="text-center p-4 text-muted">No P&L data available for the selected period</div>';
+        return;
+    }
+
+    // Prepare waterfall data structure
+    const waterfallData = prepareWaterfallData(plData);
+
+    // Create the waterfall chart
+    profitLossWaterfallChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: waterfallData.labels,
+            datasets: [{
+                label: 'Amount (SAR)',
+                data: waterfallData.data,
+                backgroundColor: waterfallData.backgroundColors,
+                borderColor: waterfallData.borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let value = context.parsed.y;
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (value !== null) {
+                                label += formatCurrency(Math.abs(value));
+                            }
+                            return label;
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Profit & Loss Waterfall Analysis',
+                    font: {
+                        size: 16
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return formatCurrency(value);
+                        },
+                        stepSize: (function () {
+                            const maxValue = Math.max(...waterfallData.data.map(v => Math.abs(v)));
+                            if (maxValue <= 20) return 2;
+                            if (maxValue <= 100) return 10;
+                            if (maxValue <= 1000) return 100;
+                            return Math.ceil(maxValue / 5);
+                        })()
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45,
+                        callback: function (value, index) {
+                            // Shorten long labels for better display
+                            const label = this.getLabelForValue(value);
+                            if (label.length > 15) {
+                                return label.substring(0, 15) + '...';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+
+    console.log('Profit/Loss Waterfall chart initialized successfully');
+        } catch (error) {
+        console.error('Error initializing profit/loss waterfall chart:', error);
+    }
+    }
+
+    function prepareWaterfallData(plData) {
+        // Define the order of items in the waterfall chart
+        const waterfallOrder = [
+            'Revenue',
+            'Cost of Revenue',
+            'Gross Profit',
+            'Operating Expenses',
+            'Operating Profit',
+            'Other Income',
+            'Finance Cost',
+            'Zakat/Tax',
+            'Investment Income',
+            'Net Profit Before Tax',
+            'Tax',
+            'NET PROFIT/LOSS'
+        ];
+
+        // Calculate values for each category
+        const values = {};
+
+        // Revenue (positive)
+        values['Revenue'] = Math.abs(plData['Revenue'] || 0);
+
+        // Cost of Revenue (negative)
+        values['Cost of Revenue'] = -(Math.abs(plData['Cost of Revenue'] || 0));
+
+        // Gross Profit
+        values['Gross Profit'] = values['Revenue'] + values['Cost of Revenue'];
+
+        // Operating Expenses (sum of all expense items, negative)
+        const expenseItems = [
+            'Salaries & Related', 'GOSI', 'Medical Insurance', 'Office Rent',
+            'Other Office Exp', 'Professional Fees', 'Business Travel',
+            'Consultation', 'Depreciation'
+        ];
+        values['Operating Expenses'] = -expenseItems.reduce((sum, item) =>
+            sum + Math.abs(plData[item] || 0), 0);
+
+        // Operating Profit
+        values['Operating Profit'] = values['Gross Profit'] + values['Operating Expenses'];
+
+        // Other Income (positive)
+        values['Other Income'] = Math.abs(plData['Other Income'] || 0);
+
+        // Finance Cost (negative)
+        values['Finance Cost'] = -(Math.abs(plData['Finance Cost'] || 0));
+
+        // Zakat/Tax (negative)
+        values['Zakat/Tax'] = -(Math.abs(plData['Zakat/Tax '] || 0));
+
+        // Investment Income (positive)
+        const investmentItems = [
+            'Unrealized Valuation from Investment at Fair Value',
+            'Income from investment at FV realised Gain',
+            'Dividend from investment at fair value P/L',
+            'Results in Subsidiary',
+            'Results in Associate',
+            'Dividend from Investment at cost',
+            'Interest Income',
+            'Income from investment at Octal',
+            'Change in the fair value of equity investment at fair value through OCI',
+            'Gain from disposal of associate'
+        ];
+        values['Investment Income'] = investmentItems.reduce((sum, item) =>
+            sum + Math.abs(plData[item] || 0), 0);
+
+        // Net Profit Before Tax
+        values['Net Profit Before Tax'] = values['Operating Profit'] + values['Other Income'] +
+            values['Finance Cost'] + values['Zakat/Tax'] +
+            values['Investment Income'];
+
+        // Tax (negative)
+        values['Tax'] = -(Math.abs(plData['Zakat/Tax '] || 0) * 0.2); // Assuming 20% tax rate
+
+        // NET PROFIT/LOSS (final value)
+        values['NET PROFIT/LOSS'] = values['Net Profit Before Tax'] + values['Tax'];
+
+        // Prepare data for waterfall chart
+        const data = [];
+        const backgroundColors = [];
+        const borderColors = [];
+        const labels = [];
+
+        // Starting point (0)
+        data.push(0);
+        backgroundColors.push('rgba(0, 0, 0, 0)'); // Transparent
+        borderColors.push('rgba(0, 0, 0, 0)'); // Transparent
+        labels.push('Start');
+
+        // Add each category in order
+        for (const category of waterfallOrder) {
+            if (values.hasOwnProperty(category)) {
+                data.push(values[category]);
+
+                // Set colors based on category type
+                if (category === 'Revenue' || category === 'Other Income' || category === 'Investment Income') {
+                    // Income items - green
+                    backgroundColors.push('rgba(40, 167, 69, 0.8)');
+                    borderColors.push('rgba(40, 167, 69, 1)');
+                } else if (category === 'Cost of Revenue' || category === 'Operating Expenses' ||
+                    category === 'Finance Cost' || category === 'Zakat/Tax' || category === 'Tax') {
+                    // Expense items - red
+                    backgroundColors.push('rgba(220, 53, 69, 0.8)');
+                    borderColors.push('rgba(220, 53, 69, 1)');
+                } else if (category === 'Gross Profit' || category === 'Operating Profit' ||
+                    category === 'Net Profit Before Tax') {
+                    // Intermediate totals - blue
+                    backgroundColors.push('rgba(23, 162, 184, 0.8)');
+                    borderColors.push('rgba(23, 162, 184, 1)');
+                } else if (category === 'NET PROFIT/LOSS') {
+                    // Final total - purple if positive, orange if negative
+                    if (values[category] >= 0) {
+                        backgroundColors.push('rgba(111, 66, 193, 0.8)');
+                        borderColors.push('rgba(111, 66, 193, 1)');
+                    } else {
+                        backgroundColors.push('rgba(253, 126, 20, 0.8)');
+                        borderColors.push('rgba(253, 126, 20, 1)');
+                    }
+                }
+
+                labels.push(category);
+            }
+        }
+
+        // Final point (0)
+        data.push(0);
+        backgroundColors.push('rgba(0, 0, 0, 0)'); // Transparent
+        borderColors.push('rgba(0, 0, 0, 0)'); // Transparent
+        labels.push('End');
+
+        return {
+            labels: labels,
+            data: data,
+            backgroundColors: backgroundColors,
+            borderColors: borderColors
+        };
+    }
+
+    function formatCurrency(value) {
+        const absValue = Math.abs(value);
+        if (absValue >= 1000000) {
+            return (value / 1000000).toFixed(2) + 'M';
+        } else if (absValue >= 1000) {
+            return (value / 1000).toFixed(2) + 'K';
+        } else {
+            return value.toFixed(2);
+        }
+    }
+
+    // Refresh functions
+    function refreshAssetData() {
+        location.reload();
+    }
+
+    function refreshLiabilityData() {
+        location.reload();
+    }
+</script>
+{% endblock %}

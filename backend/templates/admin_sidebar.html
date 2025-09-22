@@ -1,0 +1,261 @@
+<!-- backend/templates/admin_sidebar.html -->
+<div class="adminuiux-sidebar">
+  <div class="adminuiux-sidebar-inner">
+    <div class="px-3 not-iconic mt-3">
+      <div class="row">
+        <div class="col align-self-center">
+          <h6 class="fw-medium">Main Menu</h6>
+        </div>
+        <div class="col-auto">
+          <a class="btn btn-link btn-square" data-bs-toggle="collapse" data-bs-target="#usersidebarprofile" aria-expanded="false" role="button" aria-controls="usersidebarprofile">
+            <i data-feather="user"></i>
+          </a>
+        </div>
+      </div>
+      <div class="text-center collapse" id="usersidebarprofile">
+        <figure class="avatar avatar-100 rounded-circle coverimg my-3">
+          <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" />
+        </figure>
+        <h5 class="mb-1 fw-medium">{{ session.get('username', 'Admin') }}</h5>
+        <p class="small">Administrator</p>
+      </div>
+    </div>
+    <ul class="nav flex-column menu-active-line">
+      <li class="nav-item">
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+          <i class="menu-icon bi bi-columns-gap"></i>
+          <span class="menu-name">Dashboard</span>
+        </a>
+      </li>
+       <li class="nav-item">
+        <a href="{{ url_for('admin_cash_bank') }}" class="nav-link">
+          <i class="menu-icon bi bi-wallet"></i>
+          <span class="menu-name">Cash & Bank
+        </a>
+      </li>
+      <!-- <li class="nav-item">
+        <a href="{{ url_for('admin_users') }}" class="nav-link">
+          <i class="menu-icon bi bi-people"></i>
+          <span class="menu-name">Users</span>
+        </a>
+      </li> -->
+      <li class="nav-item">
+        <a href="{{ url_for('admin_projects') }}" class="nav-link">
+          <i class="menu-icon bi bi-kanban"></i>
+          <span class="menu-name">Projects</span>
+        </a>
+      </li>
+      <li class="nav-item dropdown">
+        <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+          <i class="menu-icon bi bi-graph-up"></i>
+          <span class="menu-name">Investments</span>
+        </a>
+        <div class="dropdown-menu">
+          <div class="nav-item">
+            <a href="{{ url_for('admin_investments') }}" class="nav-link">
+              <i class="menu-icon bi bi-bank"></i>
+              <span class="menu-name">Investments</span>
+            </a>
+          </div>
+          <div class="nav-item">
+           <a href="{{ url_for('admin_dividends') }}" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+          <span class="menu-name">FV Investments</span>
+        </a>
+          </div>
+          <div class="nav-item">
+            <a href="{{ url_for('admin_stock_view') }}" class="nav-link">
+              <i class="menu-icon bi bi-bank"></i>
+              <span class="menu-name">FV Portfolio</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="{{ url_for('admin_matual_fund') }}" class="nav-link">
+          <i class="menu-icon bi bi-cash-coin"></i>
+          <span class="menu-name">Equity Investments</span>
+        </a>
+          </div>
+          <div class="nav-item">
+            <a href="{{ url_for('admin_mutual_funds') }}" class="nav-link">
+              <i class="menu-icon bi bi-cash-coin"></i>
+              <span class="menu-name">Equity Portfolio</span>
+            </a>
+          </div>
+          <!-- <div class="nav-item">
+            <a href="{{ url_for('admin_deposit') }}" class="nav-link">
+          <i class="menu-icon bi bi-clipboard-check"></i>
+          <span class="menu-name">Investments In OCI</span>
+        </a>
+          </div> -->
+        </div>
+      </li>
+           
+      <li class="nav-item dropdown">
+        <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+    <i class="menu-icon bi bi-piggy-bank"></i>
+    <span class="menu-name">Associates</span>
+  </a>
+  <div class="dropdown-menu">
+     <div class="nav-item">
+            <a href="#" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">RTCC</span>
+        </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">Abetong</span>
+        </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link">
+            <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">SSEM</span>
+        </a>
+          </div>
+           <div class="nav-item">
+            <a href="#" class="nav-link">
+             <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">Golden Chicken</span>
+        </a>
+          </div>
+           <div class="nav-item">
+            <a href="#" class="nav-link">
+            <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">PPC</span>
+        </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link">
+             <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">Razin</span>
+        </a>
+          </div>
+  </div>
+</li>
+      
+<li class="nav-item dropdown">
+  <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+    <i class="menu-icon bi bi-layers"></i>
+    <span class="menu-name">Subsidiaries</span>
+  </a>
+  <div class="dropdown-menu">
+     <div class="nav-item">
+            <a href="#" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">Murooj</span>
+        </a>
+          </div>
+           <div class="nav-item">
+            <a href="#" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">Food Aroma</span>
+        </a>
+          </div>
+            <div class="nav-item">
+            <a href="#" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">Impulse</span>
+        </a>
+          </div>
+           <div class="nav-item">
+            <a href="#" class="nav-link">
+          <i class="menu-icon bi bi-bank"></i>
+      <span class="menu-name">SARPCO</span>
+        </a>
+          </div>
+           
+  </div>
+</li>
+<li class="nav-item">
+  <a href="{{url_for('investor_relations')}}" class="nav-link">
+    <i class="menu-icon bi bi-bar-chart-line"></i>
+    <span class="menu-name">Results & Presentation
+  </a>
+</li>
+<li class="nav-item">
+  <a href="{{ url_for('admin_financial_performance') }}" class="nav-link">
+    <i class="menu-icon bi bi-bar-chart-line"></i>
+    <span class="menu-name">Financial Performance
+  </a>
+</li>
+      <li class="nav-item">
+        <a href="{{ url_for('admin_profit_loss') }}" class="nav-link">
+          <i class="menu-icon bi bi-wallet"></i>
+          <span class="menu-name">Profit & Loss Statement
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ url_for('admin_balance_sheet') }}" class="nav-link">
+          <i class="menu-icon bi bi-wallet"></i>
+          <span class="menu-name">Balance Sheet
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="{{ url_for('odoo.odoo_data') }}" class="nav-link">
+          <i class="menu-icon bi bi-cash-stack"></i>
+          <span class="menu-name">Odoo Data
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="{{ url_for('admin_view') }}" class="nav-link">
+          <i class="menu-icon bi bi-cash-stack"></i>
+          <span class="menu-name">Odoo GL Transactions
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a href="{{ url_for('admin_personalization') }}" class="nav-link">
+          <i class="menu-icon bi bi-palette h4"></i>
+          <span class="menu-name">Personalize ❤️
+        </a>
+      </li>
+     
+    </ul>
+    <div class="mt-auto"></div>
+    <div class="px-3 mb-3 not-iconic">
+      <h6 class="mb-3 fw-medium">Quick Actions</h6>
+      <div class="card adminuiux-card">
+        <div class="card-body p-2">
+          <div class="row gx-2">
+            <div class="col-12 d-flex justify-content-between">
+              <a href="#" class="btn btn-square btn-link theme-red">
+                <span class="position-relative">
+                  <i data-feather="plus"></i>
+                </span>
+              </a>
+              <a href="{{ url_for('admin_schedule_calendar') }}" class="btn btn-square btn-link">
+                <span class="position-relative">
+                  <i data-feather="calendar"></i>
+                </span>
+              </a>
+              <a href="#" class="btn btn-square btn-link">
+                <i data-feather="inbox"></i>
+              </a>
+              <a href="#" class="btn btn-square btn-link">
+                <i data-feather="help-circle"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="nav flex-column menu-active-line">
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="menu-icon" data-feather="help-circle"></i>
+          <span class="menu-name">Help Center</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ url_for('admin_logout') }}" class="nav-link">
+          <i class="menu-icon" data-feather="log-out"></i>
+          <span class="menu-name">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

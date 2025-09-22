@@ -1,0 +1,1002 @@
+<!-- backend/templates/admin_cash_bank.html -->
+
+{% extends "admin_base.html" %}
+
+{% block title %}Cash Flow - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  .height-250 {
+    height: 250px;
+    position: relative;
+  }
+
+  .height-250.loading:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+  }
+
+  .height-250.loading:before {
+    content: 'Loading...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    font-weight: bold;
+  }
+
+  #main-content.loading:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+  }
+
+  #main-content.loading:before {
+    content: 'Loading...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row gx-3 align-items-center">
+    <div class="col-12 col-sm">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item bi">
+            <a href="{{ url_for('admin_dashboard') }}"><i class="bi bi-house-door me-1 fs-14"></i> Dashboard</a>
+          </li>
+          <li class="breadcrumb-item active bi" aria-current="page">
+            Cash & Bank
+          </li>
+        </ol>
+      </nav>
+      <h5>Cash & Bank Accounts</h5>
+    </div>
+    <div class="col-12 col-sm-auto text-end py-3 py-sm-0">
+      <form method="GET" action="{{ url_for('admin_cash_bank') }}" id="dateFilterForm">
+        <input type="hidden" name="start_date" id="startDate" value="2020-12-31">
+        <input type="hidden" name="end_date" id="endDate">
+        <input class="form-control d-inline-block w-auto align-middle mx-3" id="singleDatePicker"
+          placeholder="Select end date" />
+        <button type="submit" class="btn btn-square btn-theme d-inline-block">
+          <i data-feather="filter"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+  <!-- Summary Cards -->
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="card adminuiux-card bg-theme-1">
+        <div class="card-body z-index-1">
+          <div class="row gx-2 align-items-center mb-4">
+            <div class="col-auto py-1">
+              <div class="avatar avatar-60 bg-white-opacity rounded">
+                <i class="bi bi-wallet h2"></i>
+              </div>
+            </div>
+            <div class="col px-0"></div>
+          </div>
+          {% if grand_total %}
+          <h1>{{ "{:,.0f}".format(grand_total.total_balance / 1000) }} K</h1>
+          {% else %}
+          <h1>0.00</h1>
+          {% endif %}
+          <h5 class="opacity-75 fw-normal mb-1">Total Cash Balance</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-12">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body z-index-1">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-success-subtle text-success rounded">
+                    <i class="bi bi-graph-down-arrow h4"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h4 class="fw-medium">{{ "{:,.0f}".format(current_account / 1000) }} K</h4>
+                  <p class="text-secondary">
+                    Current Accounts
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-12">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body z-index-1">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-danger-subtle text-danger rounded">
+                    <i class="bi bi-graph-up-arrow h4"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h4 class="fw-medium">{{ "{:,.0f}".format(investment_account / 1000) }} K</h4>
+                  <p class="text-secondary">Investment Accounts</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-12 col-lg-4">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-lg-12">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body z-index-1">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-info-subtle text-info rounded">
+                    <i class="bi bi-bank h4"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h4 class="fw-medium">{{ "{:,.0f}".format(deposit_account / 1000) }} K</h4>
+                  <p class="text-secondary">Deposit</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="col-12 col-sm-6 col-lg-12">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body z-index-1">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-warning-subtle text-warning rounded">
+                    <i class="bi bi-cash-coin h4"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h4 class="fw-medium">{{ "{:,.0f}".format((total_loans|abs) / 1000) }} K</h4>
+                  <p class="text-secondary">Total Loans</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="col-12 col-sm-6 col-lg-12">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body z-index-1">
+              <div class="row">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-warning-subtle text-warning rounded">
+                    <i class="bi bi-calendar-event h4"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h4 class="fw-medium">{{ "{:,.0f}".format(petty_cash_account / 1000) }} K</h4>
+                  <p class="text-secondary">Petty Cash</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-12 col-lg-12 mb-4">
+      <div class="card adminuiux-card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <h6>Cash Flow</h6>
+            </div>
+            <div class="col-auto">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Chart filter buttons">
+                <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                <button type="button" class="btn btn-outline-primary" data-filter="net">Net Cash</button>
+                <button type="button" class="btn btn-outline-primary" data-filter="in">Cash In</button>
+                <button type="button" class="btn btn-outline-primary" data-filter="out">Cash Out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="height-250 mb-3">
+            <canvas id="cashFlowComboChart"></canvas>
+          </div>
+          <div class="row align-items-center">
+            <div class="col-6 col-md-6 col-lg-6">
+              <div class="card adminuiux-card bg-theme-1 theme-teal">
+                <div class="card-body z-index-1">
+                  {% if grand_total %}
+                  <h4 class="fw-medium text">{{ "{:,.2f}".format(grand_total.debit / 1000000) }}M </h4>
+                  {% else %}
+                  <h4 class="fw-medium text">0.00M </h4>
+                  {% endif %}
+                  <p class="opacity-75">
+                    Total Cash In
+                    <span class="fs-14 {% if debit_percentage >= 0 %}text-black{% else %}text-danger{% endif %}">
+                      <i class="bi bi-arrow-{% if debit_percentage >= 0 %}up{% else %}down{% endif %}"></i>
+                      {{ "{:.1f}".format(debit_percentage|abs) }}%
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-6 col-lg-6">
+              <div class="card adminuiux-card bg-theme-1-subtle">
+                <div class="card-body z-index-1">
+                  {% if grand_total %}
+                  <h4 class="fw-medium">{{ "{:,.2f}".format(grand_total.credit / 1000000) }}M </h4>
+                  {% else %}
+                  <h4 class="fw-medium">0.00M </h4>
+                  {% endif %}
+                  <p class="text-secondary">
+                    Total Cash Out
+                    <span class="fs-14 {% if credit_percentage >= 0 %}text-success{% else %}text-danger{% endif %}">
+                      <i class="bi bi-arrow-{% if credit_percentage >= 0 %}up{% else %}down{% endif %}"></i>
+                      {{ "{:.1f}".format(credit_percentage|abs) }}%
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="col-12 col-md-6 col-lg-6">
+    <div class="card adminuiux-card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h6>Deposits vs Loans</h6>
+          </div>
+          <div class="col-auto px-0"></div>
+          <div class="col-auto">
+            <button class="btn btn-sm btn-square btn-link" onclick="refreshDepositLoanChart()">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="height-330 mb-3">
+          <canvas id="depositLoanChart"></canvas>
+        </div>
+        <div class="row text-center">
+          <div class="row align-items-center">
+            <div class="col-12 col-md-12 col-lg-12 mb-3">
+              <div class="card adminuiux-card bg-theme-1 theme-teal">
+                <div class="card-body z-index-1">
+                  {% if grand_total %}
+                  <h4 class="fw-medium text">{{ "{:,.0f}".format(deposit_account / 1000) }} K</h4>
+                  {% else %}
+                  <h4 class="fw-medium text">0.00 K</h4>
+                  {% endif %}
+                  <p class="opacity-75">
+                    Total Deposits
+                  </p>
+                </div>
+              </div>
+              </div>
+              <div class="col-12 col-md-12 col-lg-12 mb-3">
+                <div class="card adminuiux-card bg-theme-1-subtle">
+                  <div class="card-body z-index-1">
+                    {% if grand_total %}
+                    <h4 class="fw-medium">{{ "{:,.0f}".format((total_loans|abs) / 1000) }} K </h4>
+                    {% else %}
+                    <h4 class="fw-medium">0.00 K</h4>
+                    {% endif %}
+                    <p class="text-secondary">
+                      Total Loans
+                    </p>
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+
+<div class="col-12 col-md-6 col-lg-6 mb-4">
+  <div class="card adminuiux-card">
+    <div class="card-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h6>Recent Transaction</h6>
+        </div>
+      </div>
+    </div>
+    <ul class="list-group list-group-flush border-top bg-none">
+      {% for transaction in recent_transactions %}
+      <li class="list-group-item {% if transaction.total_balance > 0 %}theme-green{% endif %}">
+        <div class="row gx-3 align-items-center">
+          <div class="col-auto">
+            <div
+              class="avatar avatar-40 rounded-circle border {% if transaction.total_balance > 0 %}border-theme-1 bg-theme-1-subtle text-theme-1{% endif %}">
+              <i
+                class="bi {% if transaction.total_balance > 0 %}bi-arrow-down-left{% else %}bi-arrow-up-right{% endif %} h5"></i>
+            </div>
+          </div>
+          <div class="col">
+            <p class="mb-1 fw-medium">{{ transaction.cash_flow_names or transaction.account_name }}</p>
+            <p class="text-secondary small">
+              {{ transaction.txn_date.strftime('%d %B %Y, %I:%M %p') if transaction.txn_date else 'No date' }}
+            </p>
+          </div>
+          <div class="col-auto">
+            <h6 class="{% if transaction.total_balance > 0 %}text-theme-1{% endif %}">
+              {% if transaction.total_balance > 0 %}+{% else %}-{% endif %}
+              {{ "{:,.2f}".format(transaction.total_balance|abs) }}
+            </h6>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+      {% if not recent_transactions %}
+      <li class="list-group-item">
+        <div class="row gx-3 align-items-center">
+          <div class="col text-center py-3">
+            <p class="text-secondary">No recent transactions</p>
+          </div>
+        </div>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+  
+    <!-- Cash Flow Accounts Table -->
+    <div class="col-12 mb-4">
+      <div class="card adminuiux-card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <h6>Cash Flow Accounts (000)</h6>
+            </div>
+            <div class="col-auto">
+              <span class="text-secondary small">As of {{ current_time.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Account Name</th>
+                  <th class="text-end">Debit</th>
+                  <th class="text-end">Credit</th>
+                  <th class="text-end">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for account in cash_flow_accounts %}
+                <tr>
+                  <td>{{ account.account_name if account.account_name else account.cash_flow_name }}</td>
+                  <td class="text-end">{{ "{:,.2f}".format(account.debit / 1000) }}</td>
+                  <td class="text-end">{{ "{:,.2f}".format(account.credit / 1000) }}</td>
+                  <td class="text-end {% if account.total_balance < 0 %}text-danger{% else %}text-success{% endif %}">
+                    {{ "{:,.2f}".format(account.total_balance / 1000) }}
+                  </td>
+                </tr>
+                {% endfor %}
+                {% if grand_total %}
+                <tr class="table-active fw-bold">
+                  <td colspan="1">GRAND TOTAL</td>
+                  <td class="text-end">{{ "{:,.2f}".format(grand_total.debit / 1000) }}</td>
+                  <td class="text-end">{{ "{:,.2f}".format(grand_total.credit / 1000) }}</td>
+                  <td
+                    class="text-end {% if grand_total.total_balance < 0 %}text-danger{% else %}text-success{% endif %}">
+                    {{ "{:,.2f}".format(grand_total.total_balance / 1000) }}
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-12 col-lg-12 col-xl-12">
+      <div class="card adminuiux-card mb-4">
+        <div class="card-header">
+          <h6>Recent Transactions</h6>
+        </div>
+        <div class="card-body">
+          <table class="table responsive nowrap mb-0" id="dataTable">
+            <thead>
+              <tr>
+                <th data-priority="1">Account Code</th>
+                <th data-priority="1">Account Name</th>
+                <th>Description</th>
+                <th data-priority="2">Date</th>
+                <th data-priority="3">Balance</th>
+                <th data-priority="4">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for transaction in recent_transactions %}
+              <tr>
+                <td>
+                  <div class="d-inline-block align-middle">
+                    <p class="small text-theme-1">{{ transaction.cash_flow_names }}</p>
+                  </div>
+                </td>
+                <td>
+                  <p class="mb-0">{{ transaction.account_name }}</p>
+    
+                </td>
+                <td>
+                  <p class="mb-0">{{ transaction.label or 'No description' }}</p>
+                </td>
+                <td>
+                  <p class="mb-0">{{ transaction.txn_date.strftime('%Y-%m-%d') if transaction.txn_date else 'No date' }}</p>
+                </td>
+                <td>
+                  <p class="mb-0 {% if transaction.total_balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{ "{:,.2f}".format(transaction.total_balance) }}
+                  </p>
+                </td>
+                <td>
+                  <p class="mb-0 {% if transaction.total_balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    <i
+                      class="bi {% if transaction.total_balance >= 0 %}bi-caret-up-fill{% else %}bi-caret-down-fill{% endif %}"></i>
+                    {% if transaction.total_balance >= 0 %}Credit{% else %}Debit{% endif %}
+                  </p>
+                </td>
+              </tr>
+              {% endfor %}
+              {% if not recent_transactions %}
+              <tr>
+                <td colspan="6" class="text-center py-3">
+                  <p class="text-secondary">No recent transactions found</p>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let chartData = null;
+  function initDepositLoanChart() {
+      const ctx = document.getElementById('depositLoanChart');
+      if (!ctx) {
+        console.error("Deposit/Loan chart canvas not found!");
+        return;
+      }
+
+      // Destroy previous chart if it exists
+      if (window.depositLoanChart instanceof Chart) {
+        window.depositLoanChart.destroy();
+      }
+
+      // Create new chart
+      window.depositLoanChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Deposits', 'Loans'],
+          datasets: [{
+            label: 'Amount (K)',
+            data: [
+              {{ deposit_account / 1000 }},
+                    {{ (total_loans| abs) / 1000 }}
+                ],
+    backgroundColor: [
+      'rgba(23, 162, 184, 0.7)', // Info color for deposits
+      'rgba(255, 193, 7, 0.7)'   // Warning color for loans
+    ],
+      borderColor: [
+        'rgba(23, 162, 184, 1)',
+        'rgba(255, 193, 7, 1)'
+      ],
+        borderWidth: 1
+            }]
+        },
+    options: {
+      responsive: true,
+        maintainAspectRatio: false,
+          scales: {
+        y: {
+          beginAtZero: true,
+            title: {
+            display: true,
+              text: 'Amount (Thousands SAR)',
+                font: { weight: 'bold', size: 12 }
+          },
+          ticks: {
+            callback: function(value) {
+              return value.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              });
+            }
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += new Intl.NumberFormat('en-US', {
+                  style: 'currency',
+                  currency: 'SAR',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                }).format(context.parsed.y) + 'K';
+              }
+              return label;
+            }
+          }
+        }
+      },
+      animation: {
+        duration: 1000,
+          easing: 'easeOutQuart'
+      }
+    }
+    });
+}
+
+    // Function to refresh the deposit/loan chart
+    function refreshDepositLoanChart() {
+      // You can add logic here to refresh the chart data if needed
+      // For now, we'll just reinitialize it
+      initDepositLoanChart();
+    }
+
+  $(document).ready(function () {
+    // Initialize single date picker for end date only
+    $('#singleDatePicker').daterangepicker({
+      singleDatePicker: true,
+      opens: 'left',
+      startDate: '{{ end_date }}',
+      locale: {
+        format: 'YYYY-MM-DD'
+      }
+    }, function (date, label) {
+      $('#endDate').val(date.format('YYYY-MM-DD'));
+    });
+
+    // Set initial values
+    $('#startDate').val('2020-12-31');
+    $('#endDate').val('{{ end_date }}');
+
+    // Initialize the combo chart
+    initCashFlowComboChart();
+
+    // Initialize the deposit vs loan chart
+    initDepositLoanChart();
+
+  });
+
+  // Function to initialize the combo chart
+  function initCashFlowComboChart() {
+    // Fetch cash flow data for the chart
+    fetchCashFlowData();
+  }
+
+  // Function to fetch cash flow data
+  function fetchCashFlowData() {
+    // Show loading state
+    $('#cashFlowComboChart').closest('.height-250').addClass('loading');
+
+    // Get the date range
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+
+    // Make AJAX request to get cash flow data
+    $.ajax({
+      url: "{{ url_for('admin_cash_bank') }}",
+      type: "GET",
+      data: {
+        start_date: startDate,
+        end_date: endDate,
+        chart_data: true
+      },
+      success: function (response) {
+        processCashFlowData(response);
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching chart data:", error);
+        // Remove loading state
+        $('#cashFlowComboChart').closest('.height-250').removeClass('loading');
+        alert('Error loading chart data. Please try again.');
+      }
+    });
+  }
+
+  // Process cash flow data for the chart
+  function processCashFlowData(chartData) {
+    if (!chartData || chartData.labels.length === 0) {
+      console.warn("No chart data available");
+      // Remove loading state
+      $('#cashFlowComboChart').closest('.height-250').removeClass('loading');
+
+      // Display a message
+      const ctx = document.getElementById('cashFlowComboChart');
+      if (ctx) {
+        ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+        ctx.insertAdjacentHTML('afterend',
+          '<div class="alert alert-info text-center mt-3">No data available for the selected period</div>'
+        );
+      }
+      return;
+    }
+
+    // Create the combo chart
+    createComboChart(chartData);
+
+    // Remove loading state
+    $('#cashFlowComboChart').closest('.height-250').removeClass('loading');
+  }
+
+  // Function to create the combo chart
+  function createComboChart(chartData) {
+    const ctx = document.getElementById('cashFlowComboChart');
+    if (!ctx) {
+      console.error("Chart canvas not found!");
+      return;
+    }
+
+    // Destroy previous chart if it exists
+    if (window.cashFlowChart instanceof Chart) {
+      window.cashFlowChart.destroy();
+    }
+
+    // Create new chart
+    window.cashFlowChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: 'Cash In',
+            data: chartData.debit,
+            backgroundColor: 'rgba(40, 167, 69, 0.7)', // Green
+            borderColor: 'rgba(40, 167, 69, 1)',
+            borderWidth: 1,
+            order: 2,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Cash Out',
+            data: chartData.credit,
+            backgroundColor: 'rgba(220, 53, 69, 0.7)', // Red
+            borderColor: 'rgba(220, 53, 69, 1)',
+            borderWidth: 1,
+            order: 3,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Net Cash ',
+            data: chartData.balance,
+            type: 'line',
+            fill: false,
+            backgroundColor: 'rgba(0, 123, 255, 0.7)', // Blue
+            borderColor: 'rgba(0, 123, 255, 1)',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            order: 1,
+            yAxisID: 'y'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Amount (Million SAR)',
+              font: { weight: 'bold', size: 12 }
+            },
+            ticks: {
+              callback: function (value) {
+                return value.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+              }
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.1)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Account Names',
+              font: { weight: 'bold', size: 12 }
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              maxRotation: 45,
+              minRotation: 45
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'SAR',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(context.parsed.y) + 'M';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart'
+        }
+      }
+    });
+  }
+</script>
+<script>
+  // Function to process cash flow data
+  function processCashFlowData(response) {
+    if (!response || response.labels.length === 0) {
+      console.warn("No chart data available");
+      $('#cashFlowComboChart').closest('.height-250').removeClass('loading');
+
+      const ctx = document.getElementById('cashFlowComboChart');
+      if (ctx) {
+        ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+        ctx.insertAdjacentHTML('afterend',
+          '<div class="alert alert-info text-center mt-3">No data available for the selected period</div>'
+        );
+      }
+      return;
+    }
+
+    // Store the chart data globally
+    chartData = response;
+
+    // Create the chart with all data initially
+    createComboChart(chartData, 'all');
+
+    // Remove loading state
+    $('#cashFlowComboChart').closest('.height-250').removeClass('loading');
+  }
+
+  // Function to create the combo chart with filtering
+  function createComboChart(data, filterType = 'all') {
+    const ctx = document.getElementById('cashFlowComboChart');
+    if (!ctx) {
+      console.error("Chart canvas not found!");
+      return;
+    }
+
+    // Destroy previous chart if it exists
+    if (window.cashFlowChart instanceof Chart) {
+      window.cashFlowChart.destroy();
+    }
+
+    // Prepare datasets based on filter type
+    let datasets = [];
+
+    if (filterType === 'all' || filterType === 'in') {
+      datasets.push({
+        label: 'Cash In',
+        data: data.debit,
+        backgroundColor: 'rgba(40, 167, 69, 0.7)',
+        borderColor: 'rgba(40, 167, 69, 1)',
+        borderWidth: 1,
+        order: (filterType === 'all') ? 2 : 1,
+        yAxisID: 'y'
+      });
+    }
+
+    if (filterType === 'all' || filterType === 'out') {
+      datasets.push({
+        label: 'Cash Out',
+        data: data.credit,
+        backgroundColor: 'rgba(220, 53, 69, 0.7)',
+        borderColor: 'rgba(220, 53, 69, 1)',
+        borderWidth: 1,
+        order: (filterType === 'all') ? 3 : 1,
+        yAxisID: 'y'
+      });
+    }
+
+    if (filterType === 'all' || filterType === 'net') {
+      datasets.push({
+        label: 'Net Cash',
+        data: data.balance,
+        type: 'line',
+        fill: false,
+        backgroundColor: 'rgba(0, 123, 255, 0.7)',
+        borderColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        order: (filterType === 'all') ? 1 : 2,
+        yAxisID: 'y'
+      });
+    }
+
+    // Create new chart
+    window.cashFlowChart = new Chart(ctx, {
+      type: (filterType === 'net' && filterType !== 'all') ? 'line' : 'bar',
+      data: {
+        labels: data.labels,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: filterType !== 'net',
+            title: {
+              display: true,
+              text: 'Amount (Million SAR)',
+              font: { weight: 'bold', size: 12 }
+            },
+            ticks: {
+              callback: function (value) {
+                return value.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                });
+              }
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.1)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Account Names',
+              font: { weight: 'bold', size: 12 }
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              maxRotation: 45,
+              minRotation: 45
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'SAR',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }).format(context.parsed.y) + 'M';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart'
+        }
+      }
+    });
+  }
+
+  // Add button click handlers
+  $(document).ready(function () {
+    // Initialize the chart
+    initCashFlowComboChart();
+
+    // Add click event handlers to filter buttons
+    $('.btn-group button[data-filter]').on('click', function () {
+      // Remove active class from all buttons
+      $('.btn-group button[data-filter]').removeClass('active');
+      // Add active class to clicked button
+      $(this).addClass('active');
+
+      // Get the filter type
+      const filterType = $(this).data('filter');
+
+      // Recreate the chart with the selected filter
+      if (chartData) {
+        createComboChart(chartData, filterType);
+      }
+    });
+  });
+</script>
+
+{% endblock %}

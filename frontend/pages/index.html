@@ -1,0 +1,737 @@
+{% extends "base.html" %}
+
+{% block title %} Home{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="wrapper ccm-page page-type-home page-template-home">
+
+<main>
+    <div class="cursor"></div>
+
+    <section class="section home-banner-slider" style="display: none;">
+        <div class="swiper-container banner-slider js-banner-image-slider parallax-img-slider">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/910c4ac49b3a6226999ee962b3e10aca.jpg')}}"
+                            alt="banner-1-new.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/3367f4d27f43d65811df4ea7de6ab07f.jpg')}}"
+                            alt="banner-2-new.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/3367f4d27f43d65811df4ea7de6ab07f.jpg')}}"
+                            alt="banner-2-new.jpg" />
+                    </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/3367f4d27f43d65811df4ea7de6ab07f.jpg')}}"
+                            alt="banner-2-new.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/c543bf9249e9b6fb62551958b8eb7c1b.jpg')}}"
+                            alt="businesses.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/910c4ac49b3a6226999ee962b3e10aca.jpg')}}"
+                            alt="banner-1-new.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <img src="{{ url_for('frontend_static', filename='img/910c4ac49b3a6226999ee962b3e10aca.jpg')}}"
+                            alt="banner-1-new.jpg" />
+                    </picture>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-wrappers">
+            <div class="stock-data">
+                <div class="each_tab" id="">
+                    <iframe
+                        src="https://tools.eurolandir.com/tools/ticker/html/?companycode=AE-MULTI&amp;v=static&amp;lang=en-gb"
+                        scrolling="no" frameborder="0"></iframe>
+                </div>
+            </div>
+            <div class="content-slider">
+                <div class="blur-overlay"></div>
+                <div class="swiper-container js-content-slider">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <h1>Unlocking exceptional value in promising companies</h1>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('home') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>RSR Group</span> </a></p>
+                        </div>                   
+                        <div class="swiper-slide">
+                            <h2>Diversified Investment Portfolio</h2>
+
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Businesses</span> </a></p>
+                        </div>
+                        <div class="swiper-slide">
+                            <h2>Leaders in media and communications</h2>
+                            <p><a class="mutiply-cta arrowed light" href="businesses.html#media-communications"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Top-quality food &amp; beverage</span> </a></p>
+                            <!--  -->
+                        </div>
+
+                        <div class="swiper-slide">
+                            <h2>Experience it all at Draft</h2>
+                            <p><a class="mutiply-cta arrowed light" href="businesses.html#utilities"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Draft</span> </a></p>
+                            <!--  -->
+                        </div>
+
+                        <div class="swiper-slide">
+                            <h2>High-growth companies with proven track records</h2>
+                            <p><a class="mutiply-cta arrowed light"
+                                    href="http://multiply.1020dev.com/businesses#ventures"><span class="arrow"><svg
+                                            fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Saudi Rubber</span> </a></p>
+
+                        </div>
+                        <div class="swiper-slide">
+                            <h2>Leading wellness and beauty companies</h2>
+                            <p><a class="mutiply-cta arrowed light"
+                                    href="http://multiply.1020dev.com/businesses#wellness-beauty"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Wellness &amp; Beauty</span> </a></p>
+                        </div>
+                        <div class="swiper-slide">
+                            <h2>Digital-led, tech-centric businesses</h2>
+                            <p><a class="mutiply-cta arrowed light" href="businesses.html#digital-economy"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Digital Economy</span> </a></p>
+                        </div>
+                    </div>
+                    <div class="navigation">
+                        <div class="swiper-button-prev">
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                    fill="white" />
+                            </svg>
+                        </div>
+                        <div class="swiper-button-next">
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                    fill="white" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="news-slider">
+                <div class="blur-overlay"></div>
+                <div class="title">
+                    <svg width="23" height="17" viewBox="0 0 23 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.07812 6.6543H17.1552" stroke="white" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M9.07812 9.88477H17.1552" stroke="white" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path
+                            d="M2.61523 15.5387C3.04367 15.5387 3.45456 15.3685 3.75751 15.0656C4.06045 14.7626 4.23065 14.3518 4.23065 13.9233V1.80771C4.23065 1.59349 4.31575 1.38805 4.46722 1.23657C4.6187 1.0851 4.82414 1 5.03836 1H21.1925C21.4067 1 21.6122 1.0851 21.7636 1.23657C21.9151 1.38805 22.0002 1.59349 22.0002 1.80771V13.9233C22.0002 14.3518 21.83 14.7626 21.5271 15.0656C21.2241 15.3685 20.8132 15.5387 20.3848 15.5387H2.61523Z"
+                            stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M2.61542 15.5384C2.18698 15.5384 1.77609 15.3682 1.47314 15.0652C1.17019 14.7623 1 14.3514 1 13.923V4.23047"
+                            stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <h5>Latest News</h5>
+                </div>
+                <div class="swiper-container js-banner-news-slider">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <a
+                                href="news-insights/news/multiply-group-registers-aed-214-million-group-net-profit-excluding-fair-value-changes.html">
+                                <h4>RSR Group registers SAR 214 million in Group net profit excluding fair value
+                                    changes in Q2 2025, with 39% revenue growth across the operating portfolio; signs
+                                    the SPA for the sale of PAL Cooling Holding for c. SAR 3.8 billion</h4>
+                                <span>29 Jul 2025</span>
+                            </a>
+                        </div>
+                        <div class="swiper-slide">
+                            <a
+                                href="news-insights/news/multiply-group-completes-acquisition-tendam-doubling-operational-ebitda-and-expanding-global-footprint.html">
+                                <h4>RSR Group Completes Acquisition of Tendam, Doubling Operational EBITDA and
+                                    Expanding Global Footprint</h4>
+                                <span>23 Jul 2025</span>
+                            </a>
+                        </div>
+                        <div class="swiper-slide">
+                            <a
+                                href="news-insights/news/multiply-groups-emirates-driving-company-invests-mwasalat-holdings-solidifying-its-position-uae-mobility-champion.html">
+                                <h4>RSR Group’s Emirates Driving Company invests in Mwasalat Holdings, solidifying
+                                    its position as a UAE Mobility Champion</h4>
+                                <span>07 Jul 2025</span>
+                            </a>
+                        </div>
+                        <div class="swiper-slide">
+                            <a
+                                href="news-insights/news/multiply-group-agrees-sell-pal-cooling-holding-consortium-formed-tabreed-and-cvc-dif-c-aed-38-billion.html">
+                                <h4>RSR Group agrees to sell PAL Cooling Holding to a Consortium formed by Tabreed
+                                    and CVC DIF for c. SAR 3.8 Billion</h4>
+                                <span>30 Jun 2025</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="navigation">
+                        <div class="swiper-button-prev">
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                    fill="white" />
+                            </svg>
+                        </div>
+                        <div class="swiper-button-next">
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                    fill="white" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a class="scrollTo" href="#businesses">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <mask id="mask0_426_5912" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
+                    height="24">
+                    <rect width="24" height="24" fill="white" />
+                </mask>
+                <g mask="url(#mask0_426_5912)">
+                    <path
+                        d="M12 20.9992C10.3333 20.9992 8.91667 20.4159 7.75 19.2492C6.58333 18.0826 6 16.6659 6 14.9992V9.07422C6 7.40755 6.58333 5.99089 7.75 4.82422C8.91667 3.65755 10.3333 3.07422 12 3.07422C13.6667 3.07422 15.0833 3.65755 16.25 4.82422C17.4167 5.99089 18 7.40755 18 9.07422V14.9992C18 16.6659 17.4167 18.0826 16.25 19.2492C15.0833 20.4159 13.6667 20.9992 12 20.9992ZM12.5 9.07422H17C17 7.75755 16.5627 6.62822 15.688 5.68622C14.8127 4.74489 13.75 4.21589 12.5 4.09922V9.07422ZM7 9.07422H11.5V4.09922C10.25 4.21589 9.18733 4.74489 8.312 5.68622C7.43733 6.62822 7 7.75755 7 9.07422ZM12 19.9992C13.3833 19.9992 14.5627 19.5119 15.538 18.5372C16.5127 17.5619 17 16.3826 17 14.9992V10.0742H7V14.9992C7 16.3826 7.48767 17.5619 8.463 18.5372C9.43767 19.5119 10.6167 19.9992 12 19.9992Z"
+                        fill="white" />
+                </g>
+            </svg>
+            <span>Scroll To Explore</span>
+
+        </a>
+    </section>
+
+    <section class="section home-video-banner-slider">
+        <!-- <div class="banner-overlay-top"></div> -->
+        <!-- <div class="banner-overlay-bottom"></div> -->
+        <div class="video-slider">
+            <div class="swiper-container js-banner-video-slider">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/annual_report.mp4') }}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/empowering.mp4') }}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source  src="{{ url_for('frontend_static', filename='videos/diversified.mp4') }}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/annual_report.mp4') }}" type="video/mp4">
+                            <!-- <source
+                                src="https://player.vimeo.com/progressive_redirect/playback/784365041/rendition/1080p/file.mp4?loc=external&amp;signature=5c7e18c8c7b68ce853439fc2c2319ad9283ab9ed563d0842c4ae968540be7d72"
+                                type="video/mp4"> -->
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/empowering.mp4') }}" type="video/mp4">
+                            <!-- <source
+                                src="https://player.vimeo.com/progressive_redirect/playback/784355453/rendition/720p/file.mp4?loc=external&amp;signature=8422bc5aa1a8282c5216893eef352dddfdc565a8f05b914ab381ff51084fa81c"
+                                type="video/mp4"> -->
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/diversified.mp4') }}" type="video/mp4">
+                            <!-- <source
+                                src="https://player.vimeo.com/progressive_redirect/playback/1049300620/rendition/1080p/file.mp4?loc=external&amp;log_user=0&amp;signature=92f1ebd9c049a26c9a9608010f2e64cb243c237424a6295426e44d5af0ae54fa"
+                                type="video/mp4"> -->
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/annual_report.mp4') }}" type="video/mp4">
+                            <!-- <source
+                                src="https://player.vimeo.com/progressive_redirect/playback/1065391329/rendition/1080p/file.mp4?loc=external&amp;log_user=0&amp;signature=09248b65c4861428ed0a497687d9c943da0380580c1802101d8f55169d2990a3&amp;user_id=182253434"
+                                type="video/mp4"> -->
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/empowering.mp4') }}" type="video/mp4">
+                            <!-- <source
+                                src="https://player.vimeo.com/progressive_redirect/playback/1059742801/rendition/1080p/file.mp4?loc=external&amp;log_user=0&amp;signature=f098bfd154899d108927447026bcef11baae9ff965eb2025aa8fef2652877a04&amp;user_id=182253434"
+                                type="video/mp4"> -->
+                        </video>
+                    </div>
+                    <div class="swiper-slide video">
+                        <video muted preload="metadata" poster="#" playsinline>
+                            <!-- <source src="https://videos.ctfassets.net/ckso4uqg4vio/J3PqiXvewahaGsBkPfUDx/7a88b0f7a5410f6f034451ed70c50393/Coke_.mp4" type="video/mp4" /> -->
+                            <source src="{{ url_for('frontend_static', filename='videos/diversified.mp4') }}" type="video/mp4">
+                            <!-- <source
+                                src="https://player.vimeo.com/progressive_redirect/playback/838952303/rendition/1080p/file.mp4?loc=external&amp;signature=80ace4825715b2f8a997dc27169041a841a673947e7ce63deee7d7cffe7693a7"
+                                type="video/mp4"> -->
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slider-wrappers">
+            <div class="stock-data">
+            </div>
+            <div class="content-slider">
+                <div class="blur-overlay"></div>
+                <div class="swiper-container js-content-slider ">
+                    <div class="swiper-wrapper" style="height: 232px;">
+                        <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Diversified Investment Portfolio</h2>
+                            <p><a class="mutiply-cta arrowed light"
+                                    href="{{ url_for('about') }}"
+                                    target="_blank"><span class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13"
+                                            width="16" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span style="padding-right:25px;">Investment</span> </a></p>
+                        </div>
+                        <div class="swiper-slide">
+                            <h1 style="line-height: 1;">Empowering good companies&nbsp;to become great</h1>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('about') }}"><span class="arrow"><svg
+                                            fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>RSR Group</span> </a></p>
+                        </div>
+
+                         <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Strategic Wealth Creation</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span class="arrow"><svg
+                                            fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Businesses</span> </a></p>
+                        </div> 
+                     <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Prudent capital, exceptional returns</h2>
+                            <p><br />
+                                <a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>capital</span> </a>
+                            </p>
+                        </div>
+                        <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Growth Beyond Limits</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Growth </span> </a></p>
+                        </div>
+                       <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Invest in great companies</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Companies</span> </a></p>
+                        </div>
+                        <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Empowering Smart <br />
+                                Investments</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Empowering</span> </a></p>
+                        </div>
+                        <div class="swiper-slide">
+                            <h1 style="line-height: 1;">Value-Driven Growth</h1>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span class="arrow"><svg
+                                            fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>Growth</span> </a></p>
+                        </div> 
+                        <div class="swiper-slide">
+                            <h2 style="line-height: 1;">Growth Potential</h2>
+                            <p><a class="mutiply-cta arrowed light"
+                                    href="{{ url_for('businesses') }}"
+                                    target="_blank"><span class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13"
+                                            width="16" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span style="padding-right:25px;">Potential</span> </a></p>
+                        </div> 
+                    </div>
+                    <div class="navigation">
+                        <div class="swiper-button-prev swiper-button-disabled">
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                    fill="white"></path>
+                            </svg>
+                        </div>
+                        <div class="swiper-button-next">
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                    fill="white"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a class="scrollTo" href="#businesses">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <mask id="mask0_426_5912" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
+                    height="24">
+                    <rect width="24" height="24" fill="white"></rect>
+                </mask>
+                <g mask="url(#mask0_426_5912)">
+                    <path
+                        d="M12 20.9992C10.3333 20.9992 8.91667 20.4159 7.75 19.2492C6.58333 18.0826 6 16.6659 6 14.9992V9.07422C6 7.40755 6.58333 5.99089 7.75 4.82422C8.91667 3.65755 10.3333 3.07422 12 3.07422C13.6667 3.07422 15.0833 3.65755 16.25 4.82422C17.4167 5.99089 18 7.40755 18 9.07422V14.9992C18 16.6659 17.4167 18.0826 16.25 19.2492C15.0833 20.4159 13.6667 20.9992 12 20.9992ZM12.5 9.07422H17C17 7.75755 16.5627 6.62822 15.688 5.68622C14.8127 4.74489 13.75 4.21589 12.5 4.09922V9.07422ZM7 9.07422H11.5V4.09922C10.25 4.21589 9.18733 4.74489 8.312 5.68622C7.43733 6.62822 7 7.75755 7 9.07422ZM12 19.9992C13.3833 19.9992 14.5627 19.5119 15.538 18.5372C16.5127 17.5619 17 16.3826 17 14.9992V10.0742H7V14.9992C7 16.3826 7.48767 17.5619 8.463 18.5372C9.43767 19.5119 10.6167 19.9992 12 19.9992Z"
+                        fill="white"></path>
+                </g>
+            </svg>
+            <span>Scroll To Explore</span>
+
+        </a>
+    </section>
+
+    <section class="section stats-block section_dark">
+        <div class="container-fluid title">
+            <div class="row">
+                <div class="col-sm-6 title-left">
+                    <h2>Riyadh-based investment holding company</h2>
+                        <div class="circle"></div>
+                        <!-- <h2>TECH-focused holding company</h2> -->
+                </div>
+                <div class="col-sm-6 description-right">
+                    <p class="p">RSR Group invests in, and operates, businesses around the globe where we see the
+                        opportunity to catalyse profitable growth</p>
+                    <p><a class="read-more" href="#">read more</a></p>
+                    <a class="mutiply-cta arrowed dark" href="{{ url_for('about') }}">
+                        <span class="arrow">
+                            <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <!-- <span></span> -->
+                        <span>about us</span>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="statistics">
+            <div class="container-fluid">
+                <div class="relative">
+                    <div class="centered-img">
+                        <div class="img-wrapper">
+                            <ul>
+                                <li class="rotating-circle-1"></li>
+                                <li class="rotating-circle-2"></li>
+                            </ul>
+                            <div class="overflow-img">
+                                <!-- <img src="https://multiply.1020dev.com/application/files/2616/5807/6839/stats.jpg" alt=""> -->
+                                <img class="lazy"
+                                    data-src="{{ url_for('frontend_static', filename='img/Overview_InvestmentHolding.jpg')}}"
+                                    alt="About_us_circle_image.jpg" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats stat_block_1">
+                        <div class="circle"></div>
+                        <p class="aed">Total Assets (Bn SAR)</p>
+                        <h2>43</h2>
+                        <p class="pos">(As of 30 June 2025)</p>
+                    </div>
+                    <div class="stats stat_block_2">
+                        <p class="aed hide">bln aed</p>
+                        <h2>04</h2>
+                        <p class="pos">Subsidiaries and Investments</p>
+                    </div>
+                    <div class="stats stat_block_3">
+                        <div class="circle"></div>
+                        <p class="aed hide">mln aed</p>
+                        <h2>3000+</h2>
+                        <p class="pos">Employees</p>                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section businesses section_dark" id="businesses">
+        <div class="swiper-container js-parallax-bg-slider parallax-img-slider">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <!-- <img class="overlay-img" src="https://multiply.1020dev.com/application/files/8316/5779/2154/eleni-afiontzi-gLU8GZpHtRA-unsplash_2_1.jpg" alt=""> -->
+                        <img class="lazy" data-src="{{ url_for('frontend_static', filename='img/Food_aroma.png')}}"
+                            alt="Home_page-ventures__Mobility_.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <!-- <img class="overlay-img" src="https://multiply.1020dev.com/application/files/8316/5779/2154/eleni-afiontzi-gLU8GZpHtRA-unsplash_2_1.jpg" alt=""> -->
+                        <img class="lazy"
+                            data-src="{{ url_for('frontend_static', filename='img/golden chicken.png')}}"
+                            alt="Home_page-ventures__Mobility_.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <!-- <img class="overlay-img" src="https://multiply.1020dev.com/application/files/8316/5779/2154/eleni-afiontzi-gLU8GZpHtRA-unsplash_2_1.jpg" alt=""> -->
+                        <img class="lazy"
+                            data-src="{{ url_for('frontend_static', filename='img/rizan.webp')}}"
+                            alt="Beauty & Wellness.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <!-- <img class="overlay-img" src="https://multiply.1020dev.com/application/files/8316/5779/2154/eleni-afiontzi-gLU8GZpHtRA-unsplash_2_1.jpg" alt=""> -->
+                        <img class="lazy"
+                            data-src="{{ url_for('frontend_static', filename='img/Draft Cafe 2.png')}}"
+                            alt="businesses.jpg" />
+                    </picture>
+                </div>
+                <div class="swiper-slide">
+                    <picture class="media-wrapper slide-inner">
+                        <!-- <img class="overlay-img" src="https://multiply.1020dev.com/application/files/8316/5779/2154/eleni-afiontzi-gLU8GZpHtRA-unsplash_2_1.jpg" alt=""> -->
+                        <img class="lazy"
+                            data-src="{{ url_for('frontend_static', filename='img/smc.jpg')}}"
+                            alt="Retail & Apparel -Homepage.jpeg" />
+                    </picture>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="title">
+                <!-- <h2>Business</h2> -->
+                <h2>Businesses</h2>
+            </div>
+        </div>
+        <div class="bussiness-slider">
+            <div class="swiper-container js-business-slider">
+                <div class="navigation">
+                    <div class="swiper-button-prev">
+                        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M5.89844 11.1889L6.59844 10.4889L2.52344 6.38887H15.3984V5.38887H2.52344L6.59844 1.28887L5.89844 0.588867L0.598438 5.88887L5.89844 11.1889Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                    <div class="swiper-button-next">
+                        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10.1016 11.1889L9.40156 10.4889L13.4766 6.38887H0.601562V5.38887H13.4766L9.40156 1.28887L10.1016 0.588867L15.4016 5.88887L10.1016 11.1889Z"
+                                fill="white" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="pagination-wrapper">
+                    <div class="swiper-progress-bar">
+                        <span class="slide_progress-bar"></span>
+                    </div>
+                    <div class="swiper-counter"></div>
+                </div>
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="blur-overlay"></div>
+                        <div class="content-box">
+                            <h2 style="line-height: 1;">Food &amp; Aroma</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>explore</span> </a></p>                          
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="blur-overlay"></div>
+                        <div class="content-box">
+                            <h2>Golden &amp; Chicken</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>explore</span> </a></p>
+                           
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="blur-overlay"></div>
+                        <div class="content-box">
+                            <h2 style="line-height: 1;">Razin</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>explore</span> </a></p>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="blur-overlay"></div>
+                        <div class="content-box">
+                            <h2 style="line-height: 1;">Draft &amp; Cafe </h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span
+                                        class="arrow"><svg fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>explore</span> </a></p>
+   
+                        </div>
+                    </div>
+
+                    <div class="swiper-slide">
+                        <div class="blur-overlay"></div>
+                        <div class="content-box">
+                            <h2 style="line-height: 1;">Specialised Medical Center</h2>
+                            <p><a class="mutiply-cta arrowed light" href="{{ url_for('businesses') }}"><span class="arrow"><svg
+                                            fill="none" height="13" viewbox="0 0 16 13" width="16"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg> </span> <span>explore</span> </a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="push"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

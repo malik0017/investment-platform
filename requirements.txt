@@ -1,0 +1,60 @@
+#requirement.txt
+
+# Core Flask
+Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
+
+# Database
+Flask-SQLAlchemy==3.0.5
+pymysql==1.0.2
+requests>=2.28.0
+Flask-Migrate==4.0.5
+mysqlclient==2.1.1; sys_platform != 'win32'  # Skip on Windows
+
+# Data processing
+numpy==1.24.3; python_version < '3.12' and sys_platform == 'win32'
+pandas==1.5.3; python_version < '3.12' and sys_platform == 'win32'
+scipy==1.10.1; python_version < '3.12' and sys_platform == 'win32'
+scikit-learn==1.3.2; python_version < '3.12' and sys_platform == 'win32'
+
+# Visualization
+plotly==5.15.0
+matplotlib==3.7.2; python_version < '3.12' and sys_platform == 'win32'
+seaborn==0.12.2
+statsmodels==0.14.0; python_version < '3.12' and sys_platform == 'win32'
+
+# Utilities
+python-dotenv==1.0.0
+celery==5.3.4
+redis==5.0.1
+APScheduler==3.10.4
+
+# Odoo connection
+xmlrpc-client==1.0.2
+
+#email validator
+email-validator==2.0.0
+
+Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
+Flask-SQLAlchemy==3.0.5
+pymysql==1.0.2
+requests>=2.28.0
+Flask-Migrate==4.0.5
+mysqlclient==2.1.1; sys_platform != 'win32' 
+numpy==1.24.3; python_version < '3.12' and sys_platform == 'win32'
+pandas==1.5.3; python_version < '3.12' and sys_platform == 'win32'
+scipy==1.10.1; python_version < '3.12' and sys_platform == 'win32'
+scikit-learn==1.3.2; python_version < '3.12' and sys_platform == 'win32'
+plotly==5.15.0
+matplotlib==3.7.2; python_version < '3.12' and sys_platform == 'win32'
+seaborn==0.12.2
+statsmodels==0.14.0; python_version < '3.12' and sys_platform == 'win32'
+python-dotenv==1.0.0
+celery==5.3.4
+redis==5.0.1
+APScheduler==3.10.4
+xmlrpc-client==1.0.2
+email-validator==2.0.0

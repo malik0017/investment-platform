@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %} Vacancy Listing - RSR Group{% endblock %}
+{% block extra_css %} {% endblock %}
+{% block content %}
+<div class="wrapper ccm-page page-type-whistleblower-form page-template-whistleblower-form">
+
+<main>
+    <section class="whistleblower-page">
+        <div class="whistleblower-block">
+            <div class="whistleblower-content">
+                <div class="breadcrumb block-fade-up">
+                    <nav role="navigation" aria-label="breadcrumb">
+                        <ul class="nav">
+                            <li class="old-navLink"><a href="{{ url_for('home') }}" target="_self">RSR  Group |
+                                    Riyadh</a></li>
+                            <li class="active">Whistle-blower</li>
+                        </ul>
+                    </nav>
+                </div>
+                <h1 class="block-fade-up">Whistle-blower</h1>
+
+                <div class="whistleblower-form custom-formidable block-fade-up">
+                    <div class="content">
+                        <p>This secure form allows you to report concerns regarding business violations, suspicious practices, or illegal or
+                        unethical conduct related to RSR Group and its subsidiaries.
+                        <br><br>
+                        Your report is confidential. Only our dedicated Legal and Compliance team has access. You are encouraged to remain
+                        anonymous and should not disclose any information that could reveal your identity. All reports are handled with strict
+                        confidentiality in accordance with Saudi Arabian laws and corporate governance standards.</p>
+                        <p>Please provide detailed information and evidence if possible. Please note:</p>
+                        <ul class="ml-20">
+                            <li>
+                                <p>This portal is for reporting suspected fraud, financial misconduct, or illegal acts, not for general feedback on company
+                                policies.</p>
+                            </li>
+                            <li>
+                                <p>Do not discuss the report or investigation with other employees or third parties.</p>
+                            </li>
+                            <li>
+                                <p>Your communication is protected under the RSR Group Whistleblower Policy.
+                                </p>
+                            </li>
+                            <li>
+                                <p>You will receive a unique case ID and password; please retain them for future correspondence.</p>
+                            </li>
+                            <li>
+                                <p>A team member will respond to your report within 72 hours.</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="formidable_container_3" class="formidable newsletter-form ">
+                        <div id="formidable_message_3" class="formidable_message">
+                        </div>
+                        <form id="ff_3" name="formidable_form" method="post" class=""
+                            action="https://multiply.ae/formidable/dialog/formidable">
+                            <input type="hidden" name="formID" id="formID" value="3">
+                            <input type="hidden" name="cID" id="cID" value="227">
+                            <input type="hidden" name="bID" id="bID" value="1920">
+                            <input type="hidden" name="resolution" id="resolution" value="">
+                            <input type="hidden" name="ccm_token" id="ccm_token"
+                                value="1756141971:c7a48f01a50ea84b54e7d538cbc0bd6f">
+                            <input type="hidden" name="locale" id="locale" value="en_AE">
+                            <div class="formidable_row">
+                                <div class="formidable_column width-12  last">
+                                    <div>
+                                        <div class="element name-of-violation-30">
+                                            <label for="name-of-violation-30">
+                                                Name of violation <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+                                                <input type="text" id="name-of-violation-30" name="name-of-violation-30"
+                                                    value="" class="form-control ccm-input-text" />
+                                            </div>
+                                        </div>
+                                        <div class="element type-of-violation-31">
+                                            <label for="type-of-violation-31">
+                                                Type of violation <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+
+                                                <select name="type-of-violation-31[]" id="type-of-violation-31"
+                                                    placeholder='Select' class=' form-control'>
+                                                    <option value="">Select</option>
+                                                    <option
+                                                        value="Financial irregularities, including fraud, kickbacks and embezzlement">
+                                                        Financial irregularities, including fraud, kickbacks and
+                                                        embezzlement</option>
+                                                    <option
+                                                        value="Unauthorised disclosure or pilfering of confidential information">
+                                                        Unauthorised disclosure or pilfering of confidential information
+                                                    </option>
+                                                    <option value="Wastage/misappropriation of company funds/assets">
+                                                        Wastage/misappropriation of company funds/assets</option>
+                                                    <option value="Violation of regulations and legislation">Violation
+                                                        of regulations and legislation</option>
+                                                    <option value="Money laundering">Money laundering</option>
+                                                    <option value="Social media abuse">Social media abuse</option>
+                                                    <option value="Sexual harassment or misconduct">Sexual harassment or
+                                                        misconduct</option>
+                                                    <option value="Non-disclosure of conflict of interest">
+                                                        Non-disclosure of conflict of interest</option>
+                                                    <option value="Bribery and corruption of any other nature">Bribery
+                                                        and corruption of any other nature</option>
+                                                    <option value="Discrimination against employees or customers">
+                                                        Discrimination against employees or customers</option>
+                                                    <option
+                                                        value="Solicitation or acceptance of gifts, entertainment and hospitality">
+                                                        Solicitation or acceptance of gifts, entertainment and
+                                                        hospitality</option>
+                                                    <option
+                                                        value="Negligence that poses danger to the health, safety and well-being of employees, the public and the environment">
+                                                        Negligence that poses danger to the health, safety and
+                                                        well-being of employees, the public and the environment</option>
+                                                    <option
+                                                        value="Breach of RSR  Group internal policies and procedures including the company&rsquo;s Code of Ethics Policy">
+                                                        Breach of RSR  Group internal policies and procedures
+                                                        including the company&rsquo;s Code of Ethics Policy</option>
+                                                    <option
+                                                        value="Any other unethical, biased, favoured, imprudent practises">
+                                                        Any other unethical, biased, favoured, imprudent practises
+                                                    </option>
+                                                    <option
+                                                        value="Any attempt to conceal any of the above or other wrongdoing">
+                                                        Any attempt to conceal any of the above or other wrongdoing
+                                                    </option>
+                                                    <option value="Others">Others</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="element other-type-of-violation-32">
+                                            <label for="other-type-of-violation-32">
+                                                Other type of violation <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+                                                <input type="text" id="other-type-of-violation-32"
+                                                    name="other-type-of-violation-32" value=""
+                                                    class="form-control ccm-input-text" />
+                                            </div>
+                                        </div>
+                                        <div class="element company-name-33">
+                                            <label for="company-name-33">
+                                                Company Name <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+
+                                                <select name="company-name-33[]" id="company-name-33"
+                                                    placeholder='Select' class=' form-control'>
+                                                    <option value="">Select</option>
+                                                    <option value="RSR  Group">RSR  Group</option>
+                                                    <!-- <option value="Viola communication">Viola communication</option>
+                                                    <option value="PAL Cooling Holding">PAL Cooling Holding</option>
+                                                    <option value="Emirates Driving Company">Emirates Driving Company
+                                                    </option>
+                                                    <option value="HealtheirU">HealtheirU</option>
+                                                    <option value="Bedashing Beauty Lounge">Bedashing Beauty Lounge
+                                                    </option>
+                                                    <option value="Tips &amp; Toes">Tips &amp; Toes</option>
+                                                    <option value="Jazz Lounge Spa">Jazz Lounge Spa</option>
+                                                    <option value="Creative Beauty Source">Creative Beauty Source
+                                                    </option> -->
+                                                    <option value="Others">Others</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="element other-company-name-34">
+                                            <label for="other-company-name-34">
+                                                Other Company Name <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+                                                <input type="text" id="other-company-name-34"
+                                                    name="other-company-name-34" value=""
+                                                    class="form-control ccm-input-text" />
+                                            </div>
+                                        </div>
+                                        <div class="element violation-details-35">
+                                            <label for="violation-details-35">
+                                                Violation details <span class="required">*</span>
+                                            </label>
+                                            <div class="input">
+                                                <textarea id="violation-details-35" name="violation-details-35"
+                                                    class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="element file-upload-36">
+                                            <div class="label-hidden"></div>
+                                            <div class="input">
+                                                <div class="file_upload counter_disabled">
+                                                    <div class="message alert hide"></div>
+                                                    <div id="file-upload-36">
+                                                        <div class="dz-message">Drag 'n Drop your files here!</div>
+                                                        <div class="fallback"><input name="file-upload-36" type="file"
+                                                                multiple /></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <!-- <div class="element upload-text-37">
+                                            <div class="label-hidden"></div>
+                                            <div class="input">
+
+                                                <p class="" name="upload-text-37">Max Upload 2 MB</p>
+                                            </div>
+                                        </div> -->
+                                        <div class="captcha_holder ">
+                                            <div id="captcha-38" class="captcha_input"></div>
+                                        </div>
+                                        <div class="dummyFormidableClick" style="display: none;"></div>
+                                        <script async defer>
+                                            var head = document.getElementsByTagName('head')[0];
+                                            var js = document.createElement("script");
+                                            js.type = "text/javascript";
+                                            js.setAttribute("async", "");
+                                            js.setAttribute("defer", "");
+                                            js.src = "{{ url_for('frontend_static', filename='recaptcha/api.js')}}";
+                                            var initializedCaptcha = 0;
+
+                                            $(window).on("scroll load", function () {
+                                                setTimeout(function () {
+                                                    if ($(".formidable").hasClass("formInview")) {
+                                                        if (!initializedCaptcha) {
+                                                            head.appendChild(js);
+                                                            initializedCaptcha = 1;
+                                                        }
+                                                    }
+                                                }, 100);
+                                            });
+
+                                            var widgetId = [];
+                                            function onloadCallback() {
+                                                var i = 0;
+                                                $(".captcha--buttons").each(function () {
+                                                    var object = $(this);
+                                                    widgetId[i] = grecaptcha.render(object.attr("id"), {
+                                                        "size": "invisible",
+                                                        "sitekey": "6LfuvMEhAAAAACe6QytsmWtn75c0nEQLWtRHQ8OT",
+                                                        "callback": function (token) {
+                                                            object.parents('form').find(".g-recaptcha-response").val(token);
+                                                            //console.log(object.parents('form').find('.dummyFormidableClick'));
+                                                            object.parents('form').find('.dummyFormidableClick').trigger('click');
+                                                        }
+                                                    });
+                                                    i++;
+                                                });
+                                            }
+                                        </script><input type="hidden" id="others-input-39" name="others-input-39" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formidable_row submit-row flex-fix">
+                                <div class="mutiply-cta arrowed dark">
+                                    <span class="arrow">
+                                        <svg width="35" height="34" viewBox="0 0 35 34" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path class="circle"
+                                                d="M17.2546 32.7797C26.2318 32.7797 33.5093 25.6656 33.5093 16.8899C33.5093 8.11413 26.2318 1 17.2546 1C8.27745 1 1 8.11413 1 16.8899C1 25.6656 8.27745 32.7797 17.2546 32.7797Z"
+                                                fill="white" stroke="white" stroke-miterlimit="10" />
+                                            <path class="lines" d="M18.2852 22.5015L24.0251 16.8904L18.2852 11.2793"
+                                                stroke="#1D2428" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path class="lines" d="M10.4805 16.8906H24.026" stroke="#1D2428"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </span>
+                                    <span>SUBMIT<input type="submit"
+                                            class="btn ccm-input-submit submit btn btn-success button button-violet-dark captcha--buttons"
+                                            id="btnSubmit_3" name="btnSubmit_3" value="" /></span>
+                                </div>
+                                <!-- <div>
+                                    <a class="mutiply-cta arrowed dark"
+                                        href="https://multiply.ae/mg-whistleblower/login" target="_blank">
+                                        <span class="arrow">
+                                            <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </span>
+                                        <span>Login</span>
+                                    </a>
+                                </div> -->
+                            </div>
+                        </form>
+                    </div>
+
+                    <script>
+                        $(function () {
+                            $('form[id="ff_3"]').formidable({
+                                'error_messages_on_top': false,
+                                'error_messages_on_top_class': 'error',
+                                'warning_messages_class': 'warning',
+                                'error_messages_beneath_field': true,
+                                'error_messages_beneath_field_class': 'error',
+                                'success_messages_class': 'success',
+                                'remove_form_on_success': true,
+                                errorCallback: function () {
+                                    //Uncomment for invisible recaptcha
+                                    var c = $('.captcha--buttons').length;
+                                    for (var i = 0; i < c; i++) {
+                                        grecaptcha.reset(i);
+                                    }
+                                },
+                                successCallback: function () { }
+                            });
+                            if (($('[name="other-type-of-violation-32"], [name^="other-type-of-violation-32["]').length > 0) && ($.fn.dependsOn)) { $('[name="other-type-of-violation-32"], [name^="other-type-of-violation-32["]').dependsOn({ '[name="type-of-violation-31"], [name^="type-of-violation-31["], [name^="type-of-violation-31_"]:first': { values: ['Others'] } }, { disable: false, hide: false, onEnable: function (e, selector) { if (selector == $('[name="type-of-violation-31"], [name^="type-of-violation-31["], [name^="type-of-violation-31_"]:first').eq(0).attr('id')) { ccmFormidableUpdateDependency('other-type-of-violation-32', [['show', true]]); } }, onDisable: function (e) { ccmFormidableUpdateDependency('other-type-of-violation-32', [['hide', true]]); } }); }
+                            if (($('[name="other-company-name-34"], [name^="other-company-name-34["]').length > 0) && ($.fn.dependsOn)) { $('[name="other-company-name-34"], [name^="other-company-name-34["]').dependsOn({ '[name="company-name-33"], [name^="company-name-33["], [name^="company-name-33_"]:first': { values: ['Others'] } }, { disable: false, hide: false, onEnable: function (e, selector) { if (selector == $('[name="company-name-33"], [name^="company-name-33["], [name^="company-name-33_"]:first').eq(0).attr('id')) { ccmFormidableUpdateDependency('other-company-name-34', [['show', true]]); } }, onDisable: function (e) { ccmFormidableUpdateDependency('other-company-name-34', [['hide', true]]); } }); }
+                            if ($.fn.dropzone) {
+                                var mocks36 = []; $('div[id="file-upload-36"]').dropzone({
+                                    url: "https://multiply.ae/formidable/dialog/formidable", method: "POST", uploadMultiple: false, addRemoveLinks: true, maxFiles: 10, acceptedFiles: ".flv,.jpg,.gif,.jpeg,.ico,.docx,.xla,.png,.psd,.swf,.doc,.txt,.xls,.xlsx,.csv,.pdf,.tiff,.rtf,.m4a,.mov,.wmv,.mpeg,.mpg,.wav,.3gp,.avi,.m4v,.mp4,.mp3,.qt,.ppt,.pptx,.kml,.xml,.svg,.webm,.ogg,.ogv", init: function () {
+                                        var counter = $('[id="file-upload-36_counter"]'); this.on("sending", function (file, json, formData) { formData.append("formID", "3"); formData.append("action", "upload_file"); formData.append("ccm_token", "1756141971:c7a48f01a50ea84b54e7d538cbc0bd6f"); formData.append("locale", "en_AE"); formData.append("elementID", "36"); }), this.on("success", function (file, json) {
+                                            var holder = $('.message', this.target); if (!json.success) {
+                                                holder.append('<div>' + json.error + '</div>').addClass('alert alert-danger').removeClass('hide')
+                                                this.removeFile(file);
+                                            }
+                                            else { var holder = $('.file_upload', this.target); holder.append($('<input>').attr({ type: 'hidden', value: json.file, name: 'file-upload-36[]' })); $(file.previewElement).find('.dz-error-message').remove(); this.removeButton(); this.doCount(-1); }
+                                        }), this.on("error", function (file, json) { $(file.previewElement).find('.dz-error-message').addClass('alert alert-danger'); this.removeButton(); }), this.on("removedfile", function (file) { var response = file; if (file.xhr) response = $.parseJSON(file.xhr.responseText); if (response !== false) { $('input[value="' + response.file + '"], input[value="' + response.fileID + '"]', this.target).remove(); $.ajax({ type: "POST", url: "https://multiply.ae/formidable/dialog/formidable", data: { formID: 3, action: "delete_file", ccm_token: "1756141971:c7a48f01a50ea84b54e7d538cbc0bd6f", elementID: 36, file: response.file, fileID: response.fileID }, success: function () { var holder = $('.file_upload', this.target); holder.append($('<input>').attr({ type: 'hidden', value: response.fileID, name: 'file-upload-36-d[]' })); } }); this.doCount(1); } }), this.removeButton = function () { $('.formidable .file_upload .dz-preview .dz-remove', this.target).addClass('btn btn-danger btn-sm'); }; this.doCount = function (add) { if (counter.length <= 0) return; if (counter.attr('current') == undefined) counter.attr('current', parseInt(counter.attr('max'))); var new_current = parseInt(counter.attr('current')) + add; $('span', counter).text(new_current); counter.attr('current', new_current); }; if (mocks36.length > 0) { for (var i = 0; i < mocks36.length; i++) { var mock = mocks36[i]; mock.accepted = true; mock.isMock = true; mock.status = Dropzone.ADDED; this.files.push(mock); this.emit('addedfile', mock); this.createThumbnailFromUrl(mock, mock.url); this.emit('complete', mock); var holder = $('.file_upload', this.target); holder.append($('<input>').attr({ type: 'hidden', value: mock.fileID, name: 'file-upload-36[]' })); this.doCount(-1); } }
+                                        this.removeButton();
+                                    },
+                                });
+                            }
+                        });
+                    </script>
+
+                </div>
+            </div>
+            <div class="whistleblower-illustration block-fade-up">
+
+
+                <img src="{{ url_for('frontend_static', filename='img/whistle_blower.jpg')}}" alt="" width="1218" height="2284"
+                    class="ccm-image-block img-responsive bID-1922">
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<div class="push"></div>
+
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %} {% endblock %}

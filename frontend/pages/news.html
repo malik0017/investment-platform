@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}News - RSR Group{% endblock %}
+{% block extra_css %}{% endblock %}
+{% block content %}
+<div class="wrapper ccm-page page-type-news-listing page-template-news">
+<main>
+    <section class="news-page">
+        <div class="banner-block white-banner-block">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb block-fade-up">
+                            <nav role="navigation" aria-label="breadcrumb">
+                                <ul class="nav">
+                                    <li class="old-navLink"><a href="{{ url_for('home') }}" target="_self">RSR Group
+                                            | Riyadh</a></li>
+                                    <li class="old-navLink"><a href="{{url_for('news_insights')}}"
+                                            target="_self">News &amp; Insights</a></li>
+                                    <li class="active">News</li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <h1 class="block-fade-up">News</h1>
+                        <!-- <div class="filter-block">
+                            <div class="filter-elements block-fade-up">
+                                <div class="form-element filter-class">
+                                    <input class="search-input" type="text" placeholder="Search" value="">
+                                </div>
+                                <select id="sector-filter" class="filter-class">
+                                    <option value="hide">Sectors</option>
+                                    <option value="">All</option>
+                                    <option value="Media & Communications">Media & Communications</option>
+                                    <option value="Energy & Utilities">Energy & Utilities</option>
+                                    <option value="Mobility">Mobility</option>
+                                    <option value="Wellness & Beauty">Wellness & Beauty</option>
+                                    <option value="General">General</option>
+                                </select>
+                                <select id="sort-by" class="filter-class">
+                                    <option value="">Sort By</option>
+                                    <option value="titleAsc">A-Z </option>
+                                    <option value="titleDesc">Z-A</option>
+                                    <option value="latest">Latest first</option>
+                                    <option value="oldest">Oldest first</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="news-block news-insights-slider">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="news-container">
+                            <div class="news-holder block-fade-up">
+                                <picture class="media-wrapper slide-inner">
+                                    <img class="lazy"
+                                        data-src="{{ url_for('frontend_static', filename='img/fb5e377950140cea4dabea0cc2acc6a6.jpg')}}"
+                                        alt="RSR Group registers RSR 214 million in Group net profit excluding fair value changes in Q2 2025, with 39% revenue growth across the operating portfolio; signs the SPA for the sale of PAL Cooling Holding for c. RSR 3.8 billion">
+                                </picture>
+                                <a
+                                    href="#">
+                                    <div class="content-wrapper">
+                                        <h3>RSR Group posted a Q2 2025 net profit of RSR 214M, with 39% revenue growth, and finalized a RSR 3.8B divestment.</h3>
+                                        <p class="p">29 Jul 2025</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="news-listing-wrapper">
+                            <div class="news-listing">
+                                <div class="each-news block-fade-up" data-sector="Global Footprint">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group's Tendam acquisition doubles EBITDA and expands global reach.</h4>
+                                        <p class="p">23 Jul 2025</p>
+
+                                    </a>
+                                </div>
+                                <div class="each-news block-fade-up" data-sector="Mobility">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>leading contractor RTCC powers Saudi infrastructure through key joint</h4>
+                                        <p class="p">07 Jul 2025</p>
+
+                                    </a>
+                                </div>
+                                <div class="each-news block-fade-up" data-sector="CVC DIF">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group announces a highlighting its disciplined capital
+                                        allocation beyond core assets like Golden Chicken.</h4>
+                                        <p class="p">30 Jun 2025</p>
+
+                                    </a>
+                                </div>
+                                <div class="each-news block-fade-up" data-sector="Media Powerhouse">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group launches RSR Media Group, a new Riyadh-headquartered powerhouse set to transform the Manage landscape.</h4>
+                                        <p class="p">06 Jun 2025</p>
+
+                                    </a>
+                                </div>
+                                <div class="each-news block-fade-up" data-sector="investment landscape">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group hosted an Economist Impact event, "Converting Change into Opportunities," exploring future investment
+                                        pathways.</h4>
+                                        <p class="p">09 May 2025</p>
+
+                                    </a>
+                                </div>
+                                <div class="each-news block-fade-up" data-sector="Tendam stake">
+                                    <div class="span"></div>
+                                    <a
+                                        href="#">
+                                        <h4>RSR Group reported strong Q1 2025 results with of RSR 572M (up 19% YoY) and 50% revenue growth, driven by its
+                                        global acquisition strategy including a majority stake in Tendam.
+                                        </h4>
+                                        <p class="p">28 Apr 2025</p>
+
+                                    </a>
+                                </div>
+                            </div>
+                            <a class="block-fade-up load-more-btn" href="javascript:void(0);">
+                                <svg width="35" height="34" viewBox="0 0 35 34" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M17.2546 32.7797C26.2318 32.7797 33.5093 25.6656 33.5093 16.8899C33.5093 8.11413 26.2318 1 17.2546 1C8.27745 1 1 8.11413 1 16.8899C1 25.6656 8.27745 32.7797 17.2546 32.7797Z"
+                                        fill="white" stroke="#323E48" stroke-miterlimit="10" />
+                                    <path d="M17.2266 10.4414V23.9869" stroke="#323E48" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M24 17.2207L10.4545 17.2207" stroke="#323E48" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                <span>Load More</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <div class="spinner-block" style="display:none;">
+        <div class="loader">Loading...</div>
+    </div>
+
+</main>
+
+<div class="push"></div>
+
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        // News Filtering
+        var NewsFilter = function () {
+            this.init();
+            this.bindEvents();
+        };
+
+        NewsFilter.prototype.init = function () {
+            this.searchInput = $(".search-input");
+            this.sectorFilter = $("#sector-filter");
+            this.sortFilter = $("#sort-by");
+            this.newsItems = $(".each-news");
+            this.loadMoreBtn = $(".load-more-btn");
+            this.visibleItems = 6; // Initial number of items to show
+
+            // Store all news items data for filtering
+            this.allNewsData = this.newsItems.map(function () {
+                var $item = $(this);
+                return {
+                    element: $item,
+                    title: $item.find("h4").text().toLowerCase(),
+                    date: new Date($item.find("p").text()),
+                    sector: $item.data("sector") || "General" // You'll need to add data-sector attributes
+                };
+            }).get();
+
+            // Initially show only the first few items
+            this.updateVisibleItems();
+        };
+
+        NewsFilter.prototype.bindEvents = function () {
+            var self = this;
+
+            // Search input
+            this.searchInput.on("keyup", function () {
+                self.filterNews();
+            });
+
+            // Sector filter
+            this.sectorFilter.change(function () {
+                self.filterNews();
+            });
+
+            // Sort filter
+            this.sortFilter.change(function () {
+                self.filterNews();
+            });
+
+            // Load more button
+            this.loadMoreBtn.click(function () {
+                self.visibleItems += 6;
+                self.updateVisibleItems();
+            });
+        };
+
+        NewsFilter.prototype.filterNews = function () {
+            var searchTerm = this.searchInput.val().toLowerCase();
+            var sector = this.sectorFilter.val();
+            var sortBy = this.sortFilter.val();
+
+            // Filter news
+            var filteredNews = this.allNewsData.filter(function (news) {
+                var matchesSearch = searchTerm === "" || news.title.includes(searchTerm);
+                var matchesSector = sector === "" || sector === "hide" || news.sector === sector;
+
+                return matchesSearch && matchesSector;
+            });
+
+            // Sort news
+            if (sortBy) {
+                filteredNews.sort(function (a, b) {
+                    switch (sortBy) {
+                        case "titleAsc":
+                            return a.title.localeCompare(b.title);
+                        case "titleDesc":
+                            return b.title.localeCompare(a.title);
+                        case "latest":
+                            return b.date - a.date;
+                        case "oldest":
+                            return a.date - b.date;
+                        default:
+                            return 0;
+                    }
+                });
+            }
+
+            // Hide all items first
+            this.newsItems.hide();
+
+            // Show filtered items
+            filteredNews.forEach(function (news) {
+                news.element.show();
+            });
+
+            // Reset visible items count
+            this.visibleItems = 6;
+            this.updateVisibleItems();
+        };
+
+        NewsFilter.prototype.updateVisibleItems = function () {
+            var visibleItems = this.newsItems.slice(0, this.visibleItems);
+            var hiddenItems = this.newsItems.slice(this.visibleItems);
+
+            visibleItems.show();
+            hiddenItems.hide();
+
+            // Show/hide load more button
+            if (this.visibleItems >= this.newsItems.length) {
+                this.loadMoreBtn.hide();
+            } else {
+                this.loadMoreBtn.show();
+            }
+        };
+
+        // Initialize the news filter
+        if ($(".news-listing").length) {
+            new NewsFilter();
+        }
+    });
+</script>
+{% endblock %}

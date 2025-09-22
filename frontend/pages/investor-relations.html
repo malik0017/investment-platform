@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Investor - Relations - RSR Group{% endblock %}
+{% block extra_css %}
+
+
+{% endblock %}
+{% block content %}
+<div class="wrapper ccm-page page-type-investor-relations-detail page-template-iframe-and-tabs">
+
+    <main>
+        <section class="ir-detail-page">
+            <div class="common-banner-block">
+                <div class="bg-img"
+                    style="background-image: url('{{ url_for('frontend_static', filename='img/32f839dab494d32444ea38967338ca72.jpg') }}')">
+                </div>
+                <div class="container-fluid">
+                    <div class="content-container">
+                        <div class=" banner-content">
+                            <div class="breadcrumb">
+                                <nav role="navigation" aria-label="breadcrumb">
+                                    <ul class="nav">
+                                        <li class="old-navLink"><a href="{{ url_for('home') }}" target="_self">RSR Group
+                                                | Riyadh</a></li>
+                                        <li class="old-navLink"><a href="{{url_for('overviews')}}"
+                                                target="_self">Investor Relations</a></li>
+                                        <li class="active">Results &amp; Presentation</li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <h1>
+                                Results & Presentation
+                            </h1>
+                        </div>
+                        <a class="scrollTo" href="#explore">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_426_5912" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                    width="24" height="24">
+                                    <rect width="24" height="24" fill="white" />
+                                </mask>
+                                <g mask="url(#mask0_426_5912)">
+                                    <path
+                                        d="M12 20.9992C10.3333 20.9992 8.91667 20.4159 7.75 19.2492C6.58333 18.0826 6 16.6659 6 14.9992V9.07422C6 7.40755 6.58333 5.99089 7.75 4.82422C8.91667 3.65755 10.3333 3.07422 12 3.07422C13.6667 3.07422 15.0833 3.65755 16.25 4.82422C17.4167 5.99089 18 7.40755 18 9.07422V14.9992C18 16.6659 17.4167 18.0826 16.25 19.2492C15.0833 20.4159 13.6667 20.9992 12 20.9992ZM12.5 9.07422H17C17 7.75755 16.5627 6.62822 15.688 5.68622C14.8127 4.74489 13.75 4.21589 12.5 4.09922V9.07422ZM7 9.07422H11.5V4.09922C10.25 4.21589 9.18733 4.74489 8.312 5.68622C7.43733 6.62822 7 7.75755 7 9.07422ZM12 19.9992C13.3833 19.9992 14.5627 19.5119 15.538 18.5372C16.5127 17.5619 17 16.3826 17 14.9992V10.0742H7V14.9992C7 16.3826 7.48767 17.5619 8.463 18.5372C9.43767 19.5119 10.6167 19.9992 12 19.9992Z"
+                                        fill="white" />
+                                </g>
+                            </svg>
+                            <span>Scroll To Explore</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- <div class="ir-area block-fade-up">
+                    <ul class="ir-list">
+                        <li class="">
+                            <a href="{{url_for('overviews')}}">Overview</a>
+                        </li>
+                        <li class="active">
+                            <a href="{{url_for('investor_relations')}}">Results &
+                                Presentation</a>
+                        </li>
+                    </ul>
+                </div> -->
+            </div>
+    
+            <div class="ir-detail-block" id="explore">
+                <div class="container-fluid">
+                    <div class="row reports-block">
+                        <div class="col-lg-12">
+                            <div class="tab-area">
+                                <div class="tab-list-block ">
+                                    <div class="tab-list-container ">
+                                        <ul class="tab-list block-fade-up">
+                                            <li data-tab="tab1" class="tab_js active">
+                                                <!-- <a href="#"> -->
+                                                <a href="javascript:void(0);">
+                                                    Reports &amp; Presentations </a>
+                                            </li>
+                                            <li data-tab="tab2" class="tab_js ">
+                                                <!-- <a href="#"> -->
+                                                <a href="javascript:void(0);">
+                                                    Financial Results </a>
+                                            </li>
+                                            <li data-tab="tab3" class="tab_js ">
+                                                <!-- <a href="#"> -->
+                                                <a href="javascript:void(0);">
+                                                    Annual Report </a>
+                                            </li>
+                                            <!-- <li data-tab="tab4" class="tab_js ">
+                                                <a href="javascript:void(0);">
+                                                    ESG Report </a>
+                                            </li> -->
+                                        </ul>
+                                    </div>
+                                </div>
+                                <script>
+                                    function explode() {
+                                        $("#tab2").appendTo(".content-area");
+                                        $("#tab3").appendTo(".content-area");
+                                        // $("#tab4").appendTo(".content-area");
+                                    }
+                                    setTimeout(explode, 500);
+                                </script>
+                                <div class="content-area">
+                                    <div class="nl-content-block section-detect each_tab" id="tab1">
+                                        <h3>Presentations</h3>
+                                        <ul class="newsletter-list">
+                                            <li>
+                                                <a target="_blank"
+                                                    href="#"><span>Investor
+                                                        Presentation</span></a>
+                                            </li>
+                                            <li>
+                                                <a target="_blank"
+                                                    href="#"><span>Corporate
+                                                        Presentation</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="financeResults-main-container nl-content-block section-detect each_tab"
+                                        id="tab2">
+                                        <div class="ir-detail-page">
+                                            <div class="ir-detail-block">
+                                                <div class="nl-content-block">
+                                                    <h3> Financial Results</h3>
+                                                    <div class="tabs-group">
+                                                        <div class="tab yearsFilter active" data-value="2025">2025</div>
+                                                        <div class="tab yearsFilter " data-value="2024">2024</div>
+                                                        <div class="tab yearsFilter " data-value="2023">2023</div>
+                                                        <div class="tab yearsFilter " data-value="2022">2022</div>
+                                                        <div class="tab yearsFilter " data-value="2021">2021</div>
+                                                        <div class="tab yearsFilter " data-value="2020">2020</div>
+                                                        <div class="tab yearsFilter " data-value="2019">2019</div>
+                                                    </div>
+                                                    <select id="quarter" name="quarter" class="quarterFilter form-control">
+                                                        <option value="" selected="selected">ALL</option>
+                                                        <option value="Q1">Q1</option>
+                                                        <option value="Q2">Q2</option>
+                                                        <option value="Q3">Q3</option>
+                                                        <option value="Q4">Q4</option>
+                                                    </select>
+                                                    <ul class="files-list newsletter-list">
+                                                        <li data-year="2025" data-quarter="Q2">
+                                                            <a href="#"
+                                                                target="_blank">Q2 2025 Webcast (reply)</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q2">
+                                                            <a href="#"
+                                                                target="_blank">Q2 2025 Results Call Presentation</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q2">
+                                                            <a href="#"
+                                                                target="_blank">Q2 2025 Financial Statements</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q2">
+                                                            <a href="#"
+                                                                target="_blank">Q2 2025 Press Release</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q1">
+                                                            <a href="#"
+                                                                target="_blank">Q1 2025 Webcast (reply)</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q1">
+                                                            <a href="#"
+                                                                target="_blank">Q1 2025 Results Call Presentation</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q1">
+                                                            <a href="#"
+                                                                target="_blank">Q1 2025 Financial Statements</a>
+                                                        </li>
+                                                        <li data-year="2025" data-quarter="Q1">
+                                                            <a href="#"
+                                                                target="_blank">Q1 2025 Press Release</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <input type="hidden" id="folderName" name="folderName" value="Related PR" />
+                                                <input type="hidden" id="selectedYear" name="selectedYear" value="2025" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="nl-content-block section-detect each_tab" id="tab3">
+                                    <h3>Annual Reports</h3>
+    
+                                    <ul class="newsletter-list">
+                                        <li>
+    
+                                            <a target="_blank"
+                                                href="# "><span>Annual
+                                                    Report 2024</span></a>
+                                        </li>
+                                        <li>
+    
+                                            <a target="_blank"
+                                                href="# "><span>Annual
+                                                    Report 2023</span></a>
+                                        </li>
+                                        <li>
+    
+                                            <a target="_blank"
+                                                href="# "><span>Annual
+                                                    Report 2022</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- <div class="nl-content-block section-detect each_tab" id="tab4">
+                                    <h3>ESG Reports</h3>
+                                    <ul class="newsletter-list">
+                                        <li>
+                                            <a target="_blank"
+                                                href="#"><span>ESG
+                                                    Report 2024</span></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank"
+                                                href="#"><span>ESG
+                                                    Report 2023</span></a>
+                                        </li>
+                                        <li>
+                                            <a target="_blank"
+                                                href="#"><span>ESG
+                                                    Report 2022</span></a>
+                                        </li>
+                                    </ul>
+                                </div> -->
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+        </section>
+    
+    </main>
+    
+    <div class="push"></div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+   // Financial Results Filter - Client-side implementation
+    var FinancialResultsFilter = (function () {
+        function FinancialResultsFilter() {
+            this.init();
+            this.bindEvents();
+        }
+
+        FinancialResultsFilter.prototype.init = function () {
+            this.mainContainer = $(".financeResults-main-container");
+            this.itemList = this.mainContainer.find(".files-list");
+            this.yearFilter = this.mainContainer.find(".yearsFilter");
+            this.qtrFilter = this.mainContainer.find(".quarterFilter");
+            this.selectedYear = this.mainContainer.find("#selectedYear").val();
+            this.allItems = this.itemList.find("li"); // Store all items for filtering
+        };
+
+        FinancialResultsFilter.prototype.bindEvents = function () {
+            var self = this;
+
+            // Year filter click event
+            this.yearFilter.click(function (e) {
+                var target = $(e.currentTarget);
+                var year = target.data("value");
+
+                self.yearFilter.removeClass("active");
+                target.addClass("active");
+
+                if (self.selectedYear !== year) {
+                    self.selectedYear = year;
+                    self.filterSearch();
+                }
+            });
+
+            // Quarter filter change event
+            this.qtrFilter.change(function () {
+                self.filterSearch();
+            });
+        };
+
+        FinancialResultsFilter.prototype.filterSearch = function () {
+            var selectedQuarter = this.qtrFilter.val();
+            var selectedYear = this.selectedYear;
+
+            // Show all items if no filters are selected
+            if (!selectedQuarter && !selectedYear) {
+                this.allItems.show();
+                return;
+            }
+
+            // Hide all items first
+            this.allItems.hide();
+
+            // Filter and show matching items
+            this.allItems.each(function () {
+                var item = $(this);
+                var itemYear = item.data("year");
+                var itemQuarter = item.data("quarter");
+
+                var yearMatch = !selectedYear || itemYear == selectedYear;
+                var quarterMatch = !selectedQuarter || itemQuarter == selectedQuarter;
+
+                if (yearMatch && quarterMatch) {
+                    item.show();
+                }
+            });
+        };
+
+        return FinancialResultsFilter;
+    })();
+
+    // Initialize the filter when document is ready
+    $(document).ready(function () {
+        new FinancialResultsFilter();
+    });
+</script>
+{% endblock %}

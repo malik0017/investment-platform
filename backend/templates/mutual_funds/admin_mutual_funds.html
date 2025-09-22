@@ -1,0 +1,967 @@
+<!-- backend/templates/admin_mutual_funds.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Mutual Funds Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mutual-fund-card {
+        transition: all 0.3s ease;
+    }
+
+    .mutual-fund-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-trend-up {
+        color: #28a745;
+    }
+
+    .nav-trend-down {
+        color: #dc3545;
+    }
+
+    .performance-positive {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .performance-negative {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row gx-3 align-items-center">
+        <div class="col-12 col-sm">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="#"><i class="bi bi-house-door me-1 fs-14"></i> Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Mutual Funds Management
+                    </li>
+                </ol>
+            </nav>
+            <h5>Mutual Funds Portfolio</h5>
+        </div>
+        <div class="col-12 col-sm-auto text-end py-3 py-sm-0">
+            <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addFundModal">
+                <i class="bi bi-plus-circle me-1"></i> Add Fund
+            </button>
+            <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addHoldingModal">
+                <i class="bi bi-plus-circle me-1"></i> Add Holding
+            </button>
+            <button class="btn btn-outline-theme ms-2" data-bs-toggle="modal" data-bs-target="#updateNavModal">
+                <i class="bi bi-graph-up me-1"></i> Update NAV
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+    <!-- Summary Cards -->
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card mutual-fund-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-wallet2 display-4 text-theme-1"></i>
+                    <h3 class="mt-2">SAR {{ "%.2f"|format(performance_data.total_investment/1000000) }}M</h3>
+                    <p class="text-secondary">Total Investment</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card mutual-fund-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up display-4 text-success"></i>
+                    <h3 class="mt-2">SAR {{ "%.2f"|format(performance_data.total_current_value/1000000) }}M</h3>
+                    <p class="text-secondary">Current Value</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card mutual-fund-card">
+                <div class="card-body text-center">
+                    <i
+                        class="bi bi-heart display-4 {% if performance_data.total_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}"></i>
+                    <h3
+                        class="mt-2 {% if performance_data.total_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        SAR {{ "%.2f"|format(performance_data.total_gain_loss/1000000) }}M
+                    </h3>
+                    <p class="text-secondary">Profit/Loss</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mb-4">
+            <div class="card mutual-fund-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-collection display-4 text-info"></i>
+                    <h3 class="mt-2">{{ performance_data.count }}</h3>
+                    <p class="text-secondary">Total Holdings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this after the summary cards section -->
+    {% if not all_funds %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <h4 class="mt-3 text-muted">No Mutual Funds Found</h4>
+                    <p class="text-muted">You haven't added any mutual funds yet. Click the "Add Fund" button to get
+                        started.</p>
+                    <button class="btn btn-theme mt-3" data-bs-toggle="modal" data-bs-target="#addFundModal">
+                        <i class="bi bi-plus-circle me-1"></i> Add Your First Fund
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Category Summary -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Performance by Category</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Holdings</th>
+                                    <th>Investment</th>
+                                    <th>Current Value</th>
+                                    <th>P&L</th>
+                                    <th>Return %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in category_summary %}
+                                <tr>
+                                    <td><strong>{{ category.fund_name }}</strong>
+                                        <br><small class="text-muted">{{ category.category }}</small>
+                                    </td>
+                                    <td>{{ category.count }}</td>
+                                    <td>SAR {{ "%.2f"|format(category.total_investment/1000000) }}M</td>
+                                    <td>SAR {{ "%.2f"|format(category.total_current_value/1000000) }}M</td>
+                                    <td
+                                        class="{% if category.total_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        SAR {{ "%.2f"|format(category.total_gain_loss/1000000) }}M
+                                    </td>
+                                    <td
+                                        class="{% if category.gain_loss_percent >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ "%.2f"|format(category.gain_loss_percent) }}%
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Holdings Table -->
+    {% if performance_data.holdings %}
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6>Mutual Fund Holdings</h6>
+                        </div>
+                        <div class="col-auto">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-primary active" data-filter="all">
+                                    All Holdings
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" data-filter="profit">
+                                    Profitable
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" data-filter="loss">
+                                    Loss Making
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="holdingsTable">
+                            <thead>
+                                <tr>
+                                    <th>Fund Name</th>
+                                    <th>Category</th>
+                                    <th>Purchase Date</th>
+                                    <th>Units</th>
+                                    <th>Avg. Cost</th>
+                                    <th>Investment</th>
+                                    <th>Current NAV</th>
+                                    <th>Current Value</th>
+                                    <th>P&L</th>
+                                    <th>Return %</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for holding in performance_data.holdings %}
+                                <tr class="holding-row"
+                                    data-profit="{{ 'true' if holding.holding.unrealized_gain_loss >= 0 else 'false' }}">
+                                    <td>
+                                        <strong>{{ holding.fund_name }}</strong>
+                                        <br><small class="text-muted">{{ holding.fund_code }}</small>
+                                    </td>
+                                    <td>{{ holding.fund_category }}</td>
+                                    <td>{{ holding.holding.purchase_date.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ "%.4f"|format(holding.holding.units) }}</td>
+                                    <td>SAR {{ "%.4f"|format(holding.holding.purchase_nav) }}</td>
+                                    <td>SAR {{ "%.2f"|format(holding.holding.purchase_value) }}</td>
+                                    <td>
+                                        SAR {{ "%.4f"|format(holding.current_nav or 0) }}
+                                        {% if holding.current_nav and holding.holding.purchase_nav %}
+                                        {% if holding.current_nav > holding.holding.purchase_nav %}
+                                        <i class="bi bi-arrow-up-short nav-trend-up"></i>
+                                        {% else %}
+                                        <i class="bi bi-arrow-down-short nav-trend-down"></i>
+                                        {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>SAR {{ "%.2f"|format(holding.holding.current_value or 0) }}</td>
+                                    <td
+                                        class="{% if holding.holding.unrealized_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        SAR {{ "%.2f"|format(holding.holding.unrealized_gain_loss or 0) }}
+                                    </td>
+                                    <td
+                                        class="{% if holding.holding.unrealized_gain_loss_percent is not none and holding.holding.unrealized_gain_loss_percent >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ "%.2f"|format(holding.holding.unrealized_gain_loss_percent or 0) }}%
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal"
+                                                data-holding-id="{{ holding.holding.id }}" data-fund-id="{{ holding.holding.fund_id }}">
+                                                <i class="bi bi-plus-circle"></i>
+                                            </button>
+                                            <button class="btn btn-outline-info view-transactions-btn" data-holding-id="{{ holding.holding.id }}">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning edit-holding-btn" data-holding-id="{{ holding.holding.id }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger delete-holding-btn" data-holding-id="{{ holding.holding.id }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Your existing holdings table code -->
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-wallet2 display-4 text-muted"></i>
+                    <h4 class="mt-3 text-muted">No Holdings Found</h4>
+                    <p class="text-muted">You have mutual funds but no holdings yet. Click the "Add Holding" button to add
+                        your first investment.</p>
+                    <button class="btn btn-theme mt-3" data-bs-toggle="modal" data-bs-target="#addHoldingModal">
+                        <i class="bi bi-plus-circle me-1"></i> Add Your First Holding
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+   
+    {% endif %}
+
+</div>
+
+<!-- Add Fund Modal -->
+<div class="modal fade" id="addFundModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Mutual Fund</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addFundForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fund Code *</label>
+                                <input type="text" class="form-control" name="fund_code" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fund Name *</label>
+                                <input type="text" class="form-control" name="fund_name" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fund Type *</label>
+                                <select class="form-select" name="fund_type" required>
+                                    <option value="">Select type...</option>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Fund">Fund</option>
+                                    <option value="Debt">Debt</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="Solution Oriented">Solution Oriented</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Category *</label>
+                                <input type="text" class="form-control" name="category">
+                                <!-- <select class="form-select" name="category" required>
+                                    <option value="">Select category...</option>
+                                    <option value="Large Cap">Large Cap</option>
+                                    <option value="Mid Cap">Mid Cap</option>
+                                    <option value="Small Cap">Small Cap</option>
+                                    <option value="Flexi Cap">Flexi Cap</option>
+                                    <option value="Sectoral">Sectoral</option>
+                                    <option value="Thematic">Thematic</option>
+                                    <option value="ELSS">ELSS</option>
+                                    <option value="Index">Index</option>
+                                    <option value="ETF">ETF</option>
+                                    <option value="Other">Other</option>
+                                </select> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fund Manager</label>
+                                <input type="text" class="form-control" name="fund_manager">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fund House</label>
+                                <input type="text" class="form-control" name="fund_house">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Inception Date</label>
+                                <input type="date" class="form-control" name="inception_date">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Expense Ratio (%)</label>
+                                <input type="number" class="form-control" name="expense_ratio" step="0.0001" min="0"
+                                    max="10">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Exit Load (%)</label>
+                                <input type="number" class="form-control" name="exit_load" step="0.0001" min="0"
+                                    max="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Minimum Investment (SAR)</label>
+                                <input type="number" class="form-control" name="minimum_investment" step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">SIP Minimum (SAR)</label>
+                                <input type="number" class="form-control" name="sip_minimum" step="0.01" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Risk Level</label>
+                        <select class="form-select" name="risk_level">
+                            <option value="">Select risk level...</option>
+                            <option value="Low">Low</option>
+                            <option value="Low to Moderate">Low to Moderate</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="Moderately High">Moderately High</option>
+                            <option value="High">High</option>
+                            <option value="Very High">Very High</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-theme" id="saveFundBtn">Save Fund</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Holding Modal -->
+<div class="modal fade" id="addHoldingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Mutual Fund Holding</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addHoldingForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select Fund</label>
+                        <select class="form-select" name="fund_id" required>
+                            <option value="">Choose a fund...</option>
+                            {% for fund in all_funds %}
+                            <option value="{{ fund.id }}">{{ fund.fund_code }} - {{ fund.fund_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Purchase Date</label>
+                        <input type="date" class="form-control" name="purchase_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Units</label>
+                        <input type="number" class="form-control" name="units" step="0.0001" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Purchase NAV</label>
+                        <input type="number" class="form-control" name="purchase_nav" step="0.0001" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Folio Number (Optional)</label>
+                        <input type="text" class="form-control" name="folio_number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-theme" id="saveHoldingBtn">Save Holding</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update NAV Modal -->
+<div class="modal fade" id="updateNavModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Mutual Fund NAV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateNavForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select Fund</label>
+                        <select class="form-select" name="fund_id" required>
+                            <option value="">Choose a fund...</option>
+                            {% for fund in all_funds %}
+                            <option value="{{ fund.id }}">{{ fund.fund_code }} - {{ fund.fund_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">NAV Date</label>
+                        <input type="date" class="form-control" name="nav_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">NAV Value</label>
+                        <input type="number" class="form-control" name="nav_value" step="0.0001" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Repurchase Price (Optional)</label>
+                                <input type="number" class="form-control" name="repurchase_price" step="0.0001">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Sale Price (Optional)</label>
+                                <input type="number" class="form-control" name="sale_price" step="0.0001">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-theme" id="updateNavBtn">Update NAV</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Fund Modal -->
+<div class="modal fade" id="editFundModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Mutual Fund</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editFundForm">
+                    <input type="hidden" id="edit_fund_id" name="fund_id">
+                    <!-- Same fields as add fund form but pre-populated -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteFundBtn">Delete Fund</button>
+                <button type="button" class="btn btn-theme" id="updateFundBtn">Update Fund</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addTransactionForm">
+                    <input type="hidden" name="holding_id" id="transactionHoldingId">
+                    <input type="hidden" name="fund_id" id="transactionFundId">
+
+                    <div class="mb-3">
+                        <label class="form-label">Transaction Type</label>
+                        <select class="form-select" name="transaction_type" required>
+                            <option value="">Select type...</option>
+                            <option value="PURCHASE">Purchase</option>
+                            <option value="REDEMPTION">Redemption</option>
+                            <option value="DIVIDEND">Dividend</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Transaction Date</label>
+                        <input type="date" class="form-control" name="transaction_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Units</label>
+                        <input type="number" class="form-control" name="units" step="0.0001">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">NAV</label>
+                        <input type="number" class="form-control" name="nav" step="0.0001">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control" name="amount" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reference Number (Optional)</label>
+                        <input type="text" class="form-control" name="reference_number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-theme" id="saveTransactionBtn">Save Transaction</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Transactions Modal -->
+<div class="modal fade" id="viewTransactionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Transaction History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="transactionHistoryContent">
+                    <p class="text-center">Loading transaction history...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Holding Modal -->
+<div class="modal fade" id="editHoldingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Mutual Fund Holding</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editHoldingForm">
+                    <input type="hidden" id="edit_holding_id" name="holding_id">
+                    <div class="mb-3">
+                        <label class="form-label">Purchase Date</label>
+                        <input type="date" class="form-control" id="edit_purchase_date" name="purchase_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Units</label>
+                        <input type="number" class="form-control" id="edit_units" name="units" step="0.0001" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Purchase NAV</label>
+                        <input type="number" class="form-control" id="edit_purchase_nav" name="purchase_nav"
+                            step="0.0001" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Folio Number (Optional)</label>
+                        <input type="text" class="form-control" id="edit_folio_number" name="folio_number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-theme" id="updateHoldingBtn">Update Holding</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        // Filter holdings table - Fixed version
+        $(document).on('click', '[data-filter]', function () {
+            const filter = $(this).data('filter');
+
+            // Remove active class from all filter buttons
+            $('[data-filter]').removeClass('active');
+            // Add active class to clicked button
+            $(this).addClass('active');
+
+            // Show all rows first
+            $('#holdingsTable .holding-row').show();
+
+            if (filter !== 'all') {
+                $('#holdingsTable .holding-row').each(function () {
+                    const isProfit = $(this).data('profit');
+
+                    // Handle both string 'true'/'false' and boolean values
+                    const isProfitBool = (isProfit === 'true' || isProfit === true);
+
+                    if (filter === 'profit' && !isProfitBool) {
+                        $(this).hide();
+                    } else if (filter === 'loss' && isProfitBool) {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+
+        // Add holding form submission
+        $('#saveHoldingBtn').on('click', function () {
+            const formData = $('#addHoldingForm').serializeArray();
+            const data = {};
+
+            formData.forEach(field => {
+                data[field.name] = field.value;
+            });
+
+            // Calculate purchase value
+            data.purchase_value = (parseFloat(data.units) * parseFloat(data.purchase_nav)).toFixed(4);
+
+            $.ajax({
+                url: '/api/mutual_funds/add_holding',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        $('#addHoldingModal').modal('hide');
+                        showToast('Holding added successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Update NAV form submission
+        $('#updateNavBtn').on('click', function () {
+            const formData = $('#updateNavForm').serializeArray();
+            const data = {};
+
+            formData.forEach(field => {
+                data[field.name] = field.value;
+            });
+
+            $.ajax({
+                url: '/api/mutual_funds/update_nav',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        $('#updateNavModal').modal('hide');
+                        showToast('NAV updated successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+
+        // View transactions
+        $(document).on('click', '.view-transactions-btn', function () {
+            const holdingId = $(this).data('holding-id');
+
+            $.ajax({
+                url: `/api/mutual_funds/holding/${holdingId}/transactions`,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        let html = '<div class="table-responsive"><table class="table table-striped">';
+                        html += '<thead><tr><th>Date</th><th>Type</th><th>Units</th><th>NAV</th><th>Amount</th><th>Description</th></tr></thead>';
+                        html += '<tbody>';
+
+                        if (response.transactions.length > 0) {
+                            response.transactions.forEach(transaction => {
+                                html += `<tr>
+                            <td>${transaction.transaction_date}</td>
+                            <td>${transaction.transaction_type}</td>
+                            <td>${transaction.units || '-'}</td>
+                            <td>${transaction.nav ? 'SAR ' + transaction.nav : '-'}</td>
+                            <td>SAR ${transaction.amount}</td>
+                            <td>${transaction.description || '-'}</td>
+                        </tr>`;
+                            });
+                        } else {
+                            html += '<tr><td colspan="6" class="text-center">No transactions found</td></tr>';
+                        }
+
+                        html += '</tbody></table></div>';
+                        $('#transactionHistoryContent').html(html);
+                        $('#viewTransactionsModal').modal('show');
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Delete holding
+        $(document).on('click', '.delete-holding-btn', function () {
+            const holdingId = $(this).data('holding-id');
+
+            if (confirm('Are you sure you want to delete this holding? This action cannot be undone.')) {
+                $.ajax({
+                    url: `/api/mutual_funds/delete_holding/${holdingId}`,
+                    type: 'DELETE',
+                    success: function (response) {
+                        if (response.success) {
+                            showToast('Holding deleted successfully!', 'success');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            showToast('Error: ' + response.error, 'error');
+                        }
+                    },
+                    error: function () {
+                        showToast('Network error. Please try again.', 'error');
+                    }
+                });
+            }
+        });
+
+        // Add transaction form setup
+        $('#addTransactionModal').on('show.bs.modal', function (event) {
+            const button = $(event.relatedTarget);
+            const holdingId = button.data('holding-id');
+            const fundId = button.data('fund-id');
+
+            $('#transactionHoldingId').val(holdingId);
+            $('#transactionFundId').val(fundId);
+        });
+
+        // Add this to your existing JavaScript
+        $('#saveFundBtn').on('click', function () {
+            const formData = $('#addFundForm').serializeArray();
+            const data = {};
+
+            formData.forEach(field => {
+                data[field.name] = field.value;
+            });
+
+            $.ajax({
+                url: '/api/mutual_funds/add_fund',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        $('#addFundModal').modal('hide');
+                        showToast('Fund added successfully!', 'success');
+                        // Refresh the page to update the fund dropdowns
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Edit holding - load data
+        $(document).on('click', '.edit-holding-btn', function () {
+            const holdingId = $(this).data('holding-id');
+
+            $.ajax({
+                url: `/api/mutual_funds/holding/${holdingId}`,
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        const holding = response.holding;
+
+                        // Populate the edit form
+                        $('#edit_holding_id').val(holding.id);
+                        $('#edit_purchase_date').val(holding.purchase_date);
+                        $('#edit_units').val(holding.units);
+                        $('#edit_purchase_nav').val(holding.purchase_nav);
+                        $('#edit_folio_number').val(holding.folio_number || '');
+
+                        // Show the edit modal
+                        $('#editHoldingModal').modal('show');
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Update holding
+        $('#updateHoldingBtn').on('click', function () {
+            const formData = $('#editHoldingForm').serializeArray();
+            const data = {};
+            const holdingId = $('#edit_holding_id').val();
+
+            formData.forEach(field => {
+                data[field.name] = field.value;
+            });
+
+            // Calculate purchase value
+            data.purchase_value = (parseFloat(data.units) * parseFloat(data.purchase_nav)).toFixed(4);
+
+            $.ajax({
+                url: `/api/mutual_funds/update_holding/${holdingId}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        $('#editHoldingModal').modal('hide');
+                        showToast('Holding updated successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+        // Add transaction form submission
+        $('#saveTransactionBtn').on('click', function () {
+            const formData = $('#addTransactionForm').serializeArray();
+            const data = {};
+
+            formData.forEach(field => {
+                data[field.name] = field.value;
+            });
+
+            $.ajax({
+                url: '/api/mutual_funds/add_transaction',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.success) {
+                        $('#addTransactionModal').modal('hide');
+                        showToast('Transaction added successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showToast('Error: ' + response.error, 'error');
+                    }
+                },
+                error: function () {
+                    showToast('Network error. Please try again.', 'error');
+                }
+            });
+        });
+
+        // Helper function to show toast notifications
+        function showToast(message, type = 'info') {
+            // Implement your toast notification system here
+            console.log(`${type.toUpperCase()}: ${message}`);
+            alert(`${type.toUpperCase()}: ${message}`);
+        }
+    });
+</script>
+{% endblock %}

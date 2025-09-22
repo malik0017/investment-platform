@@ -1,0 +1,681 @@
+<!-- backend/templates/admin_compant_share.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+{% block extra_css %}
+<style>
+  .filter-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .filter-controls select {
+    min-width: 120px;
+  }
+
+  .text-small {
+    font-size: 0.875rem;
+  }
+
+  #dividendsChart {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+  }
+
+  .chart-filter-buttons .btn {
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .currency-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+
+  .badge-pill {
+    border-radius: 10rem;
+    padding: 0.35em 0.65em;
+  }
+</style>
+
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+  <div class="row gx-3 align-items-center">
+    <div class="col-12 col-sm">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item bi">
+            <a href="{{ url_for('admin_dashboard') }}"><i class="bi bi-house-door me-1 fs-14"></i> Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active bi" aria-current="page">
+              Company Shares
+            </li>
+            </ol>
+            </nav>
+            <h5>Company Shares</h5>
+            </div>
+            <div class="col-12 col-sm-auto text-end py-3 py-sm-0"></div>
+            </div>
+            </div>
+            <div class="container-fluid mt-4">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h6 class="mb-0">Updates:</h6>
+                  <p class="small text-secondary">
+                    Today <span class="text-danger">Live</span>
+                  </p>
+                </div>
+                <div class="col-12 col-sm-10 col-xxl-11 py-2">
+                  <div class="swiper swipernav">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide width-200">
+                        <h6 class="mb-0 text-success">24,806.00</h6>
+                        <p class="small">
+                          <span class="text-secondary">GIFTS NIFTYS:</span>
+              <span class="text-success"><i class="bi bi-caret-up-fill"></i> 1.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-success">41,118.13</h6>
+                <p class="small">
+                  <span class="text-secondary">Nikkies 2250:</span>
+              <span class="text-success"><i class="bi bi-caret-up-fill"></i> 0.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-danger">30,006.00</h6>
+                <p class="small">
+                  <span class="text-secondary">JOHN DOUES:</span>
+              <span class="text-danger"><i class="bi bi-caret-down-fill"></i> 0.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-success">90,105.00</h6>
+                <p class="small">
+                  <span class="text-secondary">Adminuiux Love:</span>
+              <span class="text-success"><i class="bi bi-caret-up-fill"></i> 1.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-success">24,806.00</h6>
+                <p class="small">
+                  <span class="text-secondary">GIFTS NIFTYS:</span>
+              <span class="text-success"><i class="bi bi-caret-up-fill"></i> 1.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-success">41,118.13</h6>
+                <p class="small">
+                  <span class="text-secondary">Nikkies 2250:</span>
+              <span class="text-success"><i class="bi bi-caret-up-fill"></i> 0.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-danger">30,006.00</h6>
+                <p class="small">
+                  <span class="text-secondary">JOHN DOUES:</span>
+              <span class="text-danger"><i class="bi bi-caret-down-fill"></i> 0.40%</span>
+              </p>
+              </div>
+              <div class="swiper-slide width-200">
+                <h6 class="mb-0 text-success">90,105.00</h6>
+                <p class="small">
+                  <span class="text-secondary">Adminuiux Love:</span>
+              <span class="text-success"><i class="bi bi-caret-up-fill"></i> 1.40%</span>
+              </p>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              <div class="container mt-4" id="main-content">
+                <div class="row">
+    <!-- Right Column with the summary card -->
+    <div class="col-12 col-lg-4">
+      <div class="card adminuiux-card">
+        <div class="card-body pb-0">
+          <div class="avatar avatar-60 bg-theme-1-subtle text-theme-1 rounded mb-4">
+            <i class="bi bi-bar-chart-line h4"></i>
+          </div>
+          <h5 class="fw-medium">Your FV Investment value</h5>
+          <h1 class="fw-medium">
+            {{ "%.2f"|format(investment_fair_value_total) }}M
+          </h1>
+          <div class="row">
+            <div class="col">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <p class="text-secondary mb-2">Total Dividend</p>
+                  <h4 class="fw-medium">{{ "%.2f"|format(total_dividends) }}M</h4>
+                  <p class="text-small text-muted mb-0">
+                    {{ current_year }}: {{ "%.2f"|format(current_year_dividends) }}M
+                  </p>
+                  </div>
+                  </div>
+                  </div>
+            <div class="col">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <p class="text-secondary mb-2">Total Realised Gains</p>
+                  <h4 class="fw-medium">{{ "%.2f"|format(total_realised_gains) }}M</h4>
+                  <p class="text-small text-muted mb-0">
+                    {{ current_year }}: {{ "%.2f"|format(current_year_realised) }}M
+                  </p>
+                  </div>
+                  </div>
+                  </div>
+          </div>
+          </div>
+          </div>
+          </div>
+    <!-- Left Column with 4 small cards -->
+    <div class="col-12 col-lg-8">
+      <div class="row">
+        <!-- DPM Dividends Card -->
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body">
+              <div class="row gx-3 align-items-center mb-3">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-theme-1 text-white rounded">
+                    <i class="h5 bi bi-building"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h5 class="fw-medium mb-1">DPM Dividends</h5>
+                  <p class="text-secondary">Dividend Income</p>
+                </div>
+              </div>
+              <h4 class="fw-medium">{{ "%.2f"|format(dividends_snb_total) }}M</h4>
+              <p class="text-secondary">
+                Portfolio
+                <span class="text-success fs-14">
+                  <i class="bi bi-arrow-up"></i>
+                  {{ "%.1f"|format((dividends_snb_total/total_dividends)*100 if total_dividends > 0 else 0) }}%
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Total Dividends Card -->
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body">
+              <div class="row gx-3 align-items-center mb-3">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-info text-white rounded">
+                    <i class="h5 bi bi-graph-up-arrow"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h5 class="fw-medium mb-1">Total Dividends</h5>
+                  <p class="text-secondary">All Sources</p>
+                </div>
+              </div>
+              <h4 class="fw-medium">{{ "%.2f"|format(total_dividends) }}M</h4>
+              <p class="text-secondary">
+                YTD
+                <span class="text-success fs-14">
+                  <i class="bi bi-arrow-up"></i>
+                  {{ "%.1f"|format((current_year_dividends/total_dividends)*100 if total_dividends > 0 else 0) }}%
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Total Realised Gains Card -->
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body">
+              <div class="row gx-3 align-items-center mb-3">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-indigo text-white rounded">
+                    <i class="h5 bi bi-pie-chart"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h5 class="fw-medium mb-1">Realised Gains</h5>
+                  <p class="text-secondary">Realized Profits</p>
+                </div>
+              </div>
+              <h4 class="fw-medium">{{ "%.2f"|format(total_realised_gains_chart) }}M</h4>
+              <p class="text-secondary">
+                YTD
+                <span class="text-success fs-14">
+                  <i class="bi bi-arrow-up"></i>
+                  {{ "%.1f"|format((current_year_realised/total_realised_gains_chart)*100 if total_realised_gains_chart
+                  > 0
+                  else 0) }}%
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Total Unrealised Gains Card -->
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+          <div class="card adminuiux-card mb-4">
+            <div class="card-body">
+              <div class="row gx-3 align-items-center mb-3">
+                <div class="col-auto">
+                  <div class="avatar avatar-60 bg-success text-white rounded">
+                    <i class="h5 bi bi-bar-chart"></i>
+                  </div>
+                </div>
+                <div class="col">
+                  <h5 class="fw-medium mb-1">Unrealised Gains</h5>
+                  <p class="text-secondary">Paper Profits</p>
+                </div>
+              </div>
+              <h4 class="fw-medium">{{ "%.2f"|format(total_unrealised_gains_chart) }}M</h4>
+              <p class="text-secondary">
+                Portfolio
+                <span class="text-success fs-14">
+                  <i class="bi bi-arrow-up"></i>
+                  {{ "%.1f"|format((total_unrealised_gains_chart/investment_fair_value_total)*100 if
+                  investment_fair_value_total > 0 else 0) }}%
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-12 col-lg-6 col-xl-12 mb-4">
+    <div class="card adminuiux-card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h6>Dividends & Gains Overview</h6>
+            </div>
+          <div class="col-auto">
+            <div class="btn-group btn-group-sm chart-filter-buttons" role="group" aria-label="Chart filter buttons">
+              <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+              <button type="button" class="btn btn-outline-primary" data-filter="dividends">Dividends</button>
+              <button type="button" class="btn btn-outline-primary" data-filter="realised">Realised</button>
+              <button type="button" class="btn btn-outline-primary" data-filter="unrealised">Unrealised</button>
+            </div>
+            </div>
+            </div>
+            </div>
+      <div class="card-body">
+        <canvas id="dividendsChart" height="400"></canvas>
+        </div>
+        </div>
+        </div>
+  <div class="col-12 col-lg-12 col-xl-12">
+    <div class="card adminuiux-card mb-4">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h6>Realised & Unrealised Gain</h6>
+            </div>
+            <div class="col-auto">
+            <div class="d-flex gap-2">
+              <!-- Search Filter -->
+              <div class="input-group input-group-sm me-2">
+                <input type="text" class="form-control" placeholder="Search..." id="searchFilter">
+                <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+              <!-- Year Filter -->
+              <select class="form-select form-select-sm me-2" id="yearFilter">
+                <option value="all">All Years</option>
+                {% for year in unique_years %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+              </select>
+              <!-- Type Filter -->
+              <select class="form-select form-select-sm" id="typeFilter">
+                <option value="all">All Types</option>
+                <option value="dividend">Dividend</option>
+                <option value="realised">Realised Gain</option>
+                <option value="unrealised">Unrealised Gain</option>
+              </select>
+              </div>
+              </div>
+              </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0" id="transactionsTable">
+            <thead>
+              <tr>
+                <th data-priority="1">Year</th>
+                <th data-priority="1">Type</th>
+                <th>Account Name</th>
+                <th data-priority="2">Balance (M SAR)</th>
+                <th data-priority="3">Report Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for transaction in combined_data %}
+              {# Hide Summary entries AND entries with empty account names #}
+              {% if transaction.report_level != 'Summary' and transaction.analytic_account_names and
+              transaction.analytic_account_names.strip() %}
+              <tr data-year="{{ transaction.year }}"
+                data-type="{% if transaction.account_code == '6818.77.EX.GL.02' %}dividend{% elif transaction.account_code == '6818.77.EX.GL.23' %}realised{% elif transaction.account_code == '6818.77.EX.GL.22' %}unrealised{% else %}other{% endif %}">
+                <td>{{ transaction.year }}</td>
+                <td>
+                  {% if transaction.account_code == '6818.77.EX.GL.02' %}
+                  <span class="badge bg-primary">Dividend</span>
+                  {% elif transaction.account_code == '6818.77.EX.GL.23' %}
+                  <span class="badge bg-warning">Realised Gain</span>
+                  {% elif transaction.account_code == '6818.77.EX.GL.22' %}
+                  <span class="badge bg-danger">Unrealised Gain</span>
+                  {% else %}
+                  <span class="badge bg-secondary">Other</span>
+                  {% endif %}
+                </td>
+                <td>{{ transaction.analytic_account_names }}</td>
+                <td class="{% if transaction.total_balance >= 0 %}text-danger{% else %}text-success{% endif %}">
+                  {% if transaction.total_balance < 0 %} {{ "{:,.0f}" .format(transaction.total_balance * -1) }} {% else %} ({{ "{:,.0f}"
+                    .format(transaction.total_balance) }}) {% endif %} </td>
+                    <td>
+                      <span class="badge {% if transaction.report_level == 'Summary' %}bg-info{% else %}bg-secondary{% endif %}">
+                        {{ transaction.report_level }}
+                      </span>
+                    </td>
+                    </tr>
+              {% endif %} {# End of condition to hide Summary entries and empty names #}
+              {% endfor %}
+              {# Check if there are any valid rows to display #}
+              {% set has_valid_rows = false %}
+              {% for transaction in combined_data %}
+              {% if transaction.report_level != 'Summary' and transaction.analytic_account_names and
+              transaction.analytic_account_names.strip() %}
+              {% set has_valid_rows = true %}
+              {% endif %}
+              {% endfor %}
+              
+              {% if not has_valid_rows %}
+              <tr>
+                <td colspan="5" class="text-center py-3">
+                  <p class="text-secondary">No transactions found</p>
+                </td>
+              </tr>
+              {% endif %}
+              </tbody>
+              </table>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize chart
+    const ctx = document.getElementById('dividendsChart').getContext('2d');
+    const chartData = {{ chart_data | tojson | safe
+  }};
+
+    // Professional chart configuration
+    const dividendsChart = new Chart(ctx, {
+      type: 'bar',
+    data: {
+      labels: chartData.labels,
+      datasets: chartData.datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Dividends & Gains Overview (Millions SAR)',
+          font: {
+            size: 16,
+            weight: 'bold'
+          },
+          padding: 20
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          titleFont: {
+            size: 14,
+            weight: 'bold'
+          },
+          bodyFont: {
+            size: 13
+          },
+          padding: 10,
+          callbacks: {
+            label: function (context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += new Intl.NumberFormat('en-US', {
+                  style: 'currency',
+                  currency: 'SAR',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                }).format(context.parsed.y);
+              }
+              return label;
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+          labels: {
+            font: {
+              size: 12,
+              weight: 'bold'
+            },
+            padding: 20,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: {
+            display: false
+          },
+          ticks: {
+            font: {
+              size: 11,
+              weight: 'bold'
+            }
+          }
+        },
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          stacked: true,
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Dividends & Realised Gains (Million SAR)',
+            font: {
+              size: 12,
+              weight: 'bold'
+            }
+          },
+          ticks: {
+            callback: function (value) {
+              return ' ' + value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }) + '';
+            },
+            font: {
+              size: 11
+            }
+          },
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Unrealised Gains (Million SAR)',
+            font: {
+              size: 12,
+              weight: 'bold'
+            }
+          },
+          grid: {
+            drawOnChartArea: false,
+          },
+          ticks: {
+            callback: function (value) {
+              return ' ' + value.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              }) + '';
+            },
+            font: {
+              size: 11
+            }
+          }
+        }
+      },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart'
+      },
+      interaction: {
+        mode: 'index',
+        intersect: false
+      }
+    }
+  });
+
+    // Chart filter buttons functionality - FIXED
+    const chartButtons = document.querySelectorAll('.chart-filter-buttons button');
+    let currentFilter = 'all';
+
+    chartButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        // Remove active class from all buttons
+        chartButtons.forEach(btn => btn.classList.remove('active'));
+
+      // Add active class to clicked button
+      this.classList.add('active');
+
+      const filterType = this.getAttribute('data-filter');
+      currentFilter = filterType;
+
+      // Show/hide datasets based on filter
+      dividendsChart.data.datasets.forEach(dataset => {
+        if (filterType === 'all') {
+          dataset.hidden = false;
+        } else if (filterType === 'dividends') {
+          dataset.hidden = !(dataset.label.includes('Dividends'));
+        } else if (filterType === 'realised') {
+          dataset.hidden = !(dataset.label.includes('Realised'));
+        } else if (filterType === 'unrealised') {
+          dataset.hidden = !(dataset.label.includes('Unrealised'));
+        }
+      });
+
+      dividendsChart.update();
+    });
+  });
+
+    // Table filtering functionality
+    const yearFilter = document.getElementById('yearFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const searchFilter = document.getElementById('searchFilter');
+    const clearSearch = document.getElementById('clearSearch');
+    const tableRows = document.querySelectorAll('#transactionsTable tbody tr');
+    const originalTableContent = document.querySelector('#transactionsTable tbody').innerHTML;
+
+    function filterTable() {
+      const selectedYear = yearFilter.value;
+      const selectedType = typeFilter.value;
+    const searchText = searchFilter.value.toLowerCase().trim();
+
+    let hasVisibleRows = false;
+
+    tableRows.forEach(row => {
+      if (row.cells.length < 5) return;
+
+      const rowYear = row.getAttribute('data-year');
+      const rowType = row.getAttribute('data-type');
+      const accountName = row.cells[2].textContent.toLowerCase();
+      const balance = row.cells[3].textContent.toLowerCase();
+      const reportLevel = row.cells[4].textContent.toLowerCase();
+
+      const yearMatch = selectedYear === 'all' || rowYear === selectedYear;
+      const typeMatch = selectedType === 'all' || rowType === selectedType;
+      const searchMatch = searchText === '' ||
+        accountName.includes(searchText) ||
+        balance.includes(searchText) ||
+        reportLevel.includes(searchText);
+
+      if (yearMatch && typeMatch && searchMatch) {
+        row.style.display = '';
+        hasVisibleRows = true;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    // Show no results message if needed
+    const tbody = document.querySelector('#transactionsTable tbody');
+    const noDataRow = tbody.querySelector('tr td[colspan="5"]');
+
+    if (!hasVisibleRows) {
+      if (!noDataRow || noDataRow.textContent !== 'No transactions match the selected filters') {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3"><p class="text-secondary">No transactions match the selected filters</p></td></tr>';
+      }
+    } else if (noDataRow) {
+      // Restore original content if we have visible rows
+      if (tbody.querySelectorAll('tr').length === 1 && noDataRow) {
+        document.querySelector('#transactionsTable tbody').innerHTML = originalTableContent;
+        // Re-attach event listeners if needed
+      }
+    }
+  }
+
+    // Event listeners for filters
+    yearFilter.addEventListener('change', filterTable);
+    typeFilter.addEventListener('change', filterTable);
+    searchFilter.addEventListener('input', filterTable);
+
+    // Clear search functionality - FIXED
+    clearSearch.addEventListener('click', function () {
+      searchFilter.value = '';
+      filterTable();
+    });
+
+    // Initialize table filtering
+    filterTable();
+});
+</script>
+{% endblock %}

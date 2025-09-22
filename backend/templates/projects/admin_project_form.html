@@ -1,0 +1,165 @@
+<!-- backend/templates/projects/admin_project_form.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}{% if project %}Edit{% else %}Create{% endif %} Project - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>{% if project %}Edit{% else %}Create New{% endif %} Project</h2>
+                <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Projects
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="card-body">
+                        <form method="POST" id="projectForm"
+                            action="{% if project %}{{ url_for('admin_project_edit', project_id=project.id) }}{% else %}{{ url_for('admin_project_create') }}{% endif %}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Project Title *</label>
+                                    <input type="text" class="form-control" id="title" name="title"
+                                        value="{{ project.title if project else '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="category_id" class="form-label">Category *</label>
+                                    <select class="form-select" id="category_id" name="category_id" required>
+                                        <option value="">Select Category</option>
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if project and
+                                            project.category_id==category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="company_id" class="form-label">Company</label>
+                                    <select class="form-select" id="company_id" name="company_id">
+                                        <option value="">Select Company</option>
+                                        {% for company in companies %}
+                                        <option value="{{ company.company_id }}" {% if project and project.company_id==company.company_id
+                                            %}selected{% endif %}>
+                                            {{ company.company_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="company_name_manual" class="form-label">Or Enter Company Name Manually</label>
+                                    <input type="text" class="form-control" id="company_name_manual" name="company_name_manual"
+                                        placeholder="Enter company name manually"
+                                        value="{{ project.company_investment.company_name if project and project.company_investment else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="priority" class="form-label">Priority</label>
+                                    <select class="form-select" id="priority" name="priority">
+                                        <option value="Medium" {% if project and project.priority=='Medium' %}selected{%
+                                            endif %}>Medium</option>
+                                        <option value="Low" {% if project and project.priority=='Low' %}selected{% endif
+                                            %}>Low</option>
+                                        <option value="High" {% if project and project.priority=='High' %}selected{%
+                                            endif %}>High</option>
+                                        <option value="Critical" {% if project and project.priority=='Critical'
+                                            %}selected{% endif %}>Critical</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description"
+                                rows="3">{{ project.description if project else '' }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="start_date" name="start_date"
+                                        value="{{ project.start_date if project and project.start_date else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="end_date" name="end_date"
+                                        value="{{ project.end_date if project and project.end_date else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="budget" class="form-label">Budget (SAR)</label>
+                                    <input type="number" step="0.01" class="form-control" id="budget" name="budget"
+                                        value="{{ project.budget if project and project.budget else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="Planning" {% if project and project.status=='Planning'
+                                            %}selected{% endif %}>Planning</option>
+                                        <option value="Active" {% if project and project.status=='Active' %}selected{%
+                                            endif %}>Active</option>
+                                        <option value="On Hold" {% if project and project.status=='On Hold' %}selected{%
+                                            endif %}>On Hold</option>
+                                        <option value="Completed" {% if project and project.status=='Completed'
+                                            %}selected{% endif %}>Completed</option>
+                                        <option value="Cancelled" {% if project and project.status=='Cancelled'
+                                            %}selected{% endif %}>Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary me-md-2" onclick="resetForm()">Reset</button>
+                            <button type="submit" class="btn btn-primary">
+                                {% if project %}Update{% else %}Create{% endif %} Project
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function resetForm() {
+        document.getElementById('projectForm').reset();
+
+        // Clear date fields manually (they don't always reset properly)
+        document.getElementById('start_date').value = '';
+        document.getElementById('end_date').value = '';
+        document.getElementById('due_date').value = '';
+
+        // Reset select elements to their first option
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.selectedIndex = 0;
+        });
+    }
+</script>
+
+{% endblock %}

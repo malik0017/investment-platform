@@ -1,0 +1,156 @@
+<!-- admin_balance_sheet.html -->
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Balance Sheet</h2>
+
+    <!-- Filter Form -->
+    <form method="POST" id="filterForm" class="mb-4 p-3 border rounded bg-light shadow-sm">
+        <div class="row g-3 mb-4">
+            <!-- Header -->
+            <div class="col-12">
+                <h5 class="text-muted mb-3"><i class="bi bi-funnel me-2"></i> Report Filters</h5>
+                <p class="small text-muted">Start date is fixed at 30-12-2020</p>
+            </div>
+
+            <!-- Time Period -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <label class="form-label small text-uppercase text-muted fw-bold mb-2">Time Period</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" name="period" id="periodSelect">
+                                <option value="">Select Period...</option>
+                                <option value="last_month" {% if period=='last_month' %}selected{% endif %}>Last Month
+                                </option>
+                                <option value="last_quarter" {% if period=='last_quarter' %}selected{% endif %}>Last
+                                    Quarter</option>
+                                <option value="last_year" {% if period=='last_year' %}selected{% endif %}>Last Year
+                                </option>
+                                <option value="custom" {% if period=='custom' or end_date %}selected{% endif %}>Custom
+                                    Date</option>
+                            </select>
+                            <input type="date" class="form-control" name="end_date" id="endDate" value="{{ end_date }}"
+                                {% if not end_date and not period=='custom' %}style="display:none;" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <label class="form-label small text-uppercase text-muted fw-bold mb-2">Compare With</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-select" name="compare_period" id="compareSelect">
+                                <option value="">No comparison</option>
+                                <option value="last_month" {% if compare_period=='last_month' %}selected{% endif %}>
+                                    Previous Month</option>
+                                <option value="last_quarter" {% if compare_period=='last_quarter' %}selected{% endif %}>
+                                    Previous Quarter</option>
+                                <option value="last_year" {% if compare_period=='last_year' %}selected{% endif %}>
+                                    Previous Year</option>
+                                <option value="custom" {% if compare_period=='custom' or compare_end %}selected{% endif
+                                    %}>Custom Date</option>
+                            </select>
+                            <input type="date" class="form-control" name="compare_end" id="compareEndDate"
+                                value="{{ compare_end }}" {% if not compare_end and not compare_period=='custom'
+                                %}style="display:none;" {% endif %}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Apply Button -->
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Balance Sheet Table -->
+    <table class="table table-bordered shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Description</th>
+                <th class="text-end">{{ current_label }} (SAR 000)</th>
+                {% if compare_period %}
+                <th class="text-end">{{ compare_label }} (SAR 000)</th>
+                <th class="text-end">% Change</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in balance_totals %}
+            {% set head = row.head %}
+            {% set current = row.current %}
+            {% set previous = row.previous %}
+            {% set change = row.change_pct %}
+
+            {# Apply Excel-style row formatting #}
+            {% set row_class = "" %}
+            {% if head in ["Current Assets","Non-Current Assets","Current Liabilities","Non-Current
+            Liabilities","Equity","LIABILITIES & EQUITY"] %}
+            {% set row_class = "table-primary fw-bold" %}
+            {% elif "Total" in head and head not in ["Total Assets","Total Liabilities and Equity"] %}
+            {% set row_class = "table-secondary fw-bold" %}
+            {% elif head in ["Total Assets","Total Liabilities and Equity"] %}
+            {% set row_class = "table-dark text-white fw-bold" %}
+            {% endif %}
+
+            <tr class="{{ row_class }}">
+                <td class="{% if row_class == '' %}ps-4{% endif %}">{{ head }}</td>
+                <td class="text-end">{{ current }}</td>
+                {% if compare_period %}
+                <td class="text-end">{{ previous }}</td>
+                <td class="text-end">
+                    {% if change is not none %}
+                    {{ change|round(2) }}%
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Show/hide date inputs based on selection
+    document.getElementById('periodSelect').addEventListener('change', function () {
+        const endDateInput = document.getElementById('endDate');
+        endDateInput.style.display = this.value === 'custom' ? 'block' : 'none';
+        if (this.value !== 'custom') {
+            endDateInput.value = '';
+        }
+    });
+
+    document.getElementById('compareSelect').addEventListener('change', function () {
+        const compareEndInput = document.getElementById('compareEndDate');
+        compareEndInput.style.display = this.value === 'custom' ? 'block' : 'none';
+        if (this.value !== 'custom') {
+            compareEndInput.value = '';
+        }
+    });
+
+    // Initialize visibility on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const periodSelect = document.getElementById('periodSelect');
+        const endDateInput = document.getElementById('endDate');
+        const compareSelect = document.getElementById('compareSelect');
+        const compareEndInput = document.getElementById('compareEndDate');
+
+        endDateInput.style.display = periodSelect.value === 'custom' ? 'block' : 'none';
+        compareEndInput.style.display = compareSelect.value === 'custom' ? 'block' : 'none';
+
+        if (compareSelect.value === 'custom' && compareEndInput.value) {
+            compareEndInput.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,280 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Odoo GL Transactions{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Odoo GL Transactions</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Connection Form -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Connection Details</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="url">URL:</label>
+                        <input type="text" id="url" class="form-control" placeholder="https://your-odoo-instance.com">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="db">Database:</label>
+                        <input type="text" id="db" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button onclick="connect()" class="btn btn-primary form-control">Connect to Odoo</button>
+                    </div>
+                </div>
+            </div>
+            <div id="connection-status" class="mt-2"></div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filters</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" class="form-control" value="2002-12-31">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="end-date">End Date:</label>
+                        <input type="date" id="end-date" class="form-control" value="{{ current_date }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="record-limit">Record Limit:</label>
+                        <select id="record-limit" class="form-control">
+                            <option value="100">100 records</option>
+                            <option value="500" selected>500 records</option>
+                            <option value="1000">1000 records</option>
+                            <option value="5000">5000 records</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button onclick="fetchTransactions()" id="fetch-btn" disabled
+                            class="btn btn-success form-control">Fetch GL Transactions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress -->
+    <div id="progress-container" class="card shadow mb-4" style="display: none;">
+        <div class="card-body">
+            <div id="progress-text">Processing...</div>
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">GL Transactions</h6>
+        </div>
+        <div class="card-body">
+            <div id="data-status"></div>
+            <div id="results-info"></div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" width="100%" cellspacing="0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Company</th>
+                            <th>Account/Code</th>
+                            <th>Account</th>
+                            <th>Amount in Currency</th>
+                            <th>Credit</th>
+                            <th>Debit</th>
+                            <th>Balance</th>
+                            <th>Label</th>
+                            <th>Number</th>
+                            <th>Partner</th>
+                            <th>Analytic Amount</th>
+                            <th>Analytic Department</th>
+                            <th>Analytic Employees</th>
+                            <th>Analytic HO</th>
+                            <th>Analytic Inter-companies</th>
+                            <th>Analytic Investment At Cost</th>
+                            <th>Analytic Investment At FV</th>
+                            <th>Analytic Investment At OCI</th>
+                            <th>Analytic Investment In Fund</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Set current date as default end date
+    document.getElementById('end-date').value = new Date().toISOString().split('T')[0];
+
+    function setStatus(elementId, message, isError = false) {
+        const element = document.getElementById(elementId);
+        element.innerHTML = message ? `<div class="alert alert-${isError ? 'danger' : 'success'}">${message}</div>` : '';
+    }
+
+    function showProgress(message, value) {
+        const progressContainer = document.getElementById('progress-container');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+
+        progressText.textContent = message;
+        progressBar.style.width = value + '%';
+        progressBar.setAttribute('aria-valuenow', value);
+        progressContainer.style.display = 'block';
+    }
+
+    function hideProgress() {
+        document.getElementById('progress-container').style.display = 'none';
+    }
+
+    function connect() {
+        const url = document.getElementById('url').value;
+        const db = document.getElementById('db').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        setStatus('connection-status', 'Connecting...');
+
+        fetch('/connect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url, db, username, password }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setStatus('connection-status', data.message);
+                    document.getElementById('fetch-btn').disabled = false;
+                } else {
+                    setStatus('connection-status', data.error, true);
+                }
+            })
+            .catch(error => {
+                setStatus('connection-status', 'Connection error: ' + error, true);
+            });
+    }
+
+    function fetchTransactions() {
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
+        const limit = document.getElementById('record-limit').value;
+
+        showProgress('Starting data fetch...', 10);
+        setStatus('data-status', '');
+        document.getElementById('fetch-btn').disabled = true;
+
+        // Build URL with parameters
+        const url = `/fetch_transactions?start_date=${startDate}&end_date=${endDate}&limit=${limit}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                hideProgress();
+                if (data.success) {
+                    setStatus('data-status', data.message);
+                    document.getElementById('results-info').innerHTML = `
+                        <div class="alert alert-info">
+                            ${data.message}
+                        </div>
+                    `;
+                    displayTransactions(data.records);
+                } else {
+                    setStatus('data-status', data.error, true);
+                }
+                document.getElementById('fetch-btn').disabled = false;
+            })
+            .catch(error => {
+                hideProgress();
+                setStatus('data-status', 'Fetch error: ' + error, true);
+                document.getElementById('fetch-btn').disabled = false;
+            });
+    }
+
+    function displayTransactions(records) {
+        const tbody = document.getElementById('transactions-table-body');
+        tbody.innerHTML = '';
+
+        if (!records || records.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="20" class="text-center">No transactions found</td>';
+            tbody.appendChild(row);
+            return;
+        }
+
+        records.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${record.date || ''}</td>
+                <td>${record.company || ''}</td>
+                <td>${record.account_code || ''}</td>
+                <td>${record.account_name || ''}</td>
+                <td>${record.amount_currency || ''}</td>
+                <td>${record.credit || ''}</td>
+                <td>${record.debit || ''}</td>
+                <td>${record.balance || ''}</td>
+                <td>${record.label || ''}</td>
+                <td>${record.number || ''}</td>
+                <td>${record.partner || ''}</td>
+                <td>${record.analytic_amount || ''}</td>
+                <td>${record.analytic_department || ''}</td>
+                <td>${record.analytic_employees || ''}</td>
+                <td>${record.analytic_ho || ''}</td>
+                <td>${record.analytic_inter_companies || ''}</td>
+                <td>${record.analytic_investment_at_cost || ''}</td>
+                <td>${record.analytic_investment_at_fv || ''}</td>
+                <td>${record.analytic_investment_at_oci || ''}</td>
+                <td>${record.analytic_investment_in_fund || ''}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+</script>
+{% endblock %}

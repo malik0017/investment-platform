@@ -1,0 +1,151 @@
+<!-- backend/templates/stock/admin_create_stock.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Add New Stock - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        border: none;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .calculated-field {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row gx-3 align-items-center">
+        <div class="col-12 col-sm">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_stock_view') }}">Stocks</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add New Stock</li>
+                </ol>
+            </nav>
+            <h5>Add New Stock</h5>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card form-card">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Stock Information</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('create_stock_post') }}">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="company_name" class="form-label">Company Name *</label>
+                                <input type="text" class="form-control" id="company_name" name="company_name" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="ticker_symbol" class="form-label">Ticker Symbol *</label>
+                                <input type="text" class="form-control" id="ticker_symbol" name="ticker_symbol"
+                                    required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="market" class="form-label">Market *</label>
+                                <input type="text" class="form-control" id="market" name="market" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="purchase_date" class="form-label">Purchase Date *</label>
+                                <input type="date" class="form-control" id="purchase_date" name="purchase_date"
+                                    required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="shares" class="form-label">Number of Shares *</label>
+                                <input type="number" class="form-control" id="shares" name="shares" step="0.0001"
+                                    min="0.0001" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Purchase Price per Share *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"></span>
+                                    <input type="number" class="form-control" id="price" name="price" step="0.0001"
+                                        min="0.0001" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label for="total_cost" class="form-label">Total Investment</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"></span>
+                                    <input type="text" class="form-control calculated-field" id="total_cost" readonly>
+                                </div>
+                                <div class="form-text">Calculated automatically as: Shares × Price</div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('admin_stock_view') }}" class="btn btn-secondary me-md-2">
+                                        <i class="bi bi-arrow-left me-1"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-1"></i> Add Stock
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function calculateTotalCost() {
+        const shares = parseFloat(document.getElementById('shares').value) || 0;
+        const price = parseFloat(document.getElementById('price').value) || 0;
+        const totalCost = shares * price;
+
+        document.getElementById('total_cost').value = totalCost.toFixed(4);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add event listeners to calculate total cost
+        document.getElementById('shares').addEventListener('input', calculateTotalCost);
+        document.getElementById('price').addEventListener('input', calculateTotalCost);
+
+        // Set today's date as default for purchase date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('purchase_date').value = today;
+
+        // Initialize calculation
+        calculateTotalCost();
+    });
+</script>
+{% endblock %}

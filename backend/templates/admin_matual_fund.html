@@ -1,0 +1,1046 @@
+<!-- backend/templates/admin_matual_fund.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Company Share {% endblock %}
+{% block extra_css %}
+<style>
+  /* Investment chart controls */
+.btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Chart container styling */
+.chart-container {
+  position: relative;
+  height: 370px;
+  width: 100%;
+}
+
+/* Loading overlay */
+.chart-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Summary card enhancements */
+.adminuiux-card .card-body {
+  padding: 1.5rem;
+}
+
+.theme-green {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.text-info {
+  color: #17a2b8 !important;
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+  <div class="row gx-3 align-items-center">
+    <div class="col-12 col-sm">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item bi">
+            <a href="#"><i class="bi bi-house-door me-1 fs-14"></i> Dashboard</a>
+          </li>
+          <li class="breadcrumb-item active bi" aria-current="page">
+            Mutual Funds
+          </li>
+        </ol>
+      </nav>
+      <h5>Mutual Funds - Equity Investments</h5>
+    </div>
+    <div class="col-12 col-sm-auto text-end py-3 py-sm-0"></div>
+  </div>
+</div>
+
+<div class="container mt-4" id="main-content">
+  <div class="row">
+    <!-- Equity Income Chart Section -->
+    <div class="col-12 col-lg-6 col-xl-8 col-xxl-8 mb-4">
+      <div class="card adminuiux-card">
+      <div class="card-header">
+      <div class="row align-items-center justify-content-center mb-3">
+      <div class="col-auto">
+        <div class="btn-group btn-group-sm" role="group" id="incomeExpenseToggle">
+          <button type="button" class="btn btn-outline-primary active" data-chart-type="all">
+            All Data
+          </button>
+          <button type="button" class="btn btn-outline-primary" data-chart-type="income">
+            Income Only
+          </button>
+          <button type="button" class="btn btn-outline-primary" data-chart-type="expense">
+            Expense Only
+          </button>
+        </div>
+      </div>
+      </div>
+        <div class="row align-items-center">
+          <div class="col-auto">
+            <nav aria-label="Time period navigation">
+              <ul class="pagination pagination-sm justify-content-end mb-0 time-period-nav">
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="1">1D</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="7">1W</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="30">1M</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="#" data-days="365">1Y</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link active" href="#" data-days="0">All</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="col position-relative text-end">
+            <form id="dateRangeForm" method="GET" action="{{ url_for('admin_matual_fund') }}" class="d-inline">
+              <input type="hidden" name="start_date" id="startDateInput" value="{{ start_date }}" />
+              <input type="hidden" name="end_date" id="endDateInput" value="{{ end_date }}" />
+              <input class="form-control d-inline-block w-auto align-middle mx-3" id="daterangepicker" readonly
+                style="cursor: pointer; background-color: white;" />
+              <button type="submit" class="btn btn-square btn-theme d-inline-block align-middle">
+                <i data-feather="calendar"></i> Apply
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+        <div class="card-body position-relative">
+          <div class="chart-loading d-none" id="chartLoading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <!-- Chart container -->
+          <div class="w-100" style="height: 370px">
+            <canvas id="summaryChart"></canvas>
+          </div>
+          <script id="timeSeriesData" type="application/json">
+              {{ time_series_data | tojson | safe }}
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profit & Loss Summary Card -->
+    <div class="col-12 col-lg-6 col-xl-4 col-xxl-4 mb-4">
+      <div class="card adminuiux-card">
+        <div class="card-body">
+          <p class="mb-4">
+            <span class="badge badge-light text-bg-theme-1 theme-green">Equity overview</span>
+          </p>
+          <h5 class="fw-medium">Your Equity Performance</h5>
+
+          <h1 class="fw-medium {% if net_income >= 0 %}text-success{% else %}text-danger{% endif %}">
+            SAR {{ "{:,.2f}".format(net_income) }} M
+          </h1>
+          <p class="text-secondary mb-4">
+            Net equity performance (Income from Funds + Income From Equity) for the selected period.
+          </p>
+          <div class="row border-top border-bottom mb-3">
+            <div class="col text-start py-3">
+              <p class="text-secondary mb-2">Income from Funds</p>
+              <h4 class="fw-medium {% if total_income >= 0 %}text-success{% else %}text-danger{% endif %}">
+                SAR {{ "{:,.2f}".format(total_income) }} M
+              </h4>
+            </div>
+            <div class="col text-end py-3">
+              <p class="text-secondary mb-2">Income From Equity </p>
+              <h4 class="fw-medium {% if total_expense >= 0 %}text-success{% else %}text-danger{% endif %}">
+                SAR {{ "{:,.2f}".format(total_expense) }} M
+              </h4>
+            </div>
+          </div>
+
+          <!-- Additional summary -->
+          <div class="row">
+            <div class="col-6">
+              <p class="text-secondary mb-1">Fund Income Items</p>
+              <h6 class="fw-medium">{{ equity_income_data | length }}</h6>
+            </div>
+            <div class="col-6 text-end">
+              <p class="text-secondary mb-1">Equity Income Items</p>
+              <h6 class="fw-medium">{{ equity_expense_data | length }}</h6>
+            </div>
+          </div>
+
+          <!-- Special account notice for Vision Bank -->
+          {% set vision_bank_balance = 0 %}
+          {% for item in equity_expense_data %}
+          {% if item['analytic_account_names'] == 'Vision Bank' %}
+          {% set vision_bank_balance = item['balance'] %}
+          {% endif %}
+          {% endfor %}
+
+          {% if vision_bank_balance != 0 %}
+          <div class="alert alert-info mt-3">
+            <i class="bi bi-info-circle"></i>
+            <strong>Vision Bank:</strong>
+            {% if vision_bank_balance > 0 %}
+            Profit of SAR {{ "{:,.2f}".format(vision_bank_balance) }}
+            {% else %}
+            Loss of SAR {{ "{:,.2f}".format(vision_bank_balance * -1) }}
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment Chart Section -->
+    <div class="col-12 col-lg-6 col-xl-8 col-xxl-8 mb-4">
+      <div class="card adminuiux-card">
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <h6>Investment Portfolio</h6>
+            </div>
+            <div class="col-auto">
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-chart-type="all">
+                  All Investments
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-chart-type="equity">
+                  Equity Only
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-chart-type="fund">
+                  Funds Only
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body position-relative">
+          <div class="chart-loading d-none" id="investmentChartLoading">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <!-- Chart container -->
+          <div class="w-100" style="height: 370px">
+            <canvas id="investmentChart"></canvas>
+          </div>
+          <script id="investmentChartData" type="application/json">
+        {{ investment_chart_data | tojson | safe }}
+      </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment Summary Card -->
+    <div class="col-12 col-lg-6 col-xl-4 col-xxl-4 mb-4">
+      <div class="card adminuiux-card">
+        <div class="card-body">
+          <p class="mb-4">
+            <span class="badge badge-light text-bg-theme-1 theme-green">Investment Summary</span>
+          </p>
+          <h5 class="fw-medium">Portfolio Value</h5>
+
+          <h1 class="fw-medium text-primary">
+            SAR {{ "{:,.2f}".format(total_investment) }} M
+          </h1>
+          <p class="text-secondary mb-4">
+            Total investment value for the selected period.
+          </p>
+          <div class="row border-top border-bottom mb-3">
+            <div class="col text-start py-3">
+              <p class="text-secondary mb-2">Equity Investments</p>
+              <h4 class="fw-medium text-primary">
+                SAR {{ "{:,.2f}".format(total_equity_investment) }} M
+              </h4>
+            </div>
+            <div class="col text-end py-3">
+              <p class="text-secondary mb-2">Fund Investments</p>
+              <h4 class="fw-medium text-info">
+                SAR {{ "{:,.2f}".format(total_fund_investment) }} M
+              </h4>
+            </div>
+          </div>
+
+          <!-- Additional summary -->
+          <div class="row">
+            <div class="col-6">
+              <p class="text-secondary mb-1">Equity Items</p>
+              <h6 class="fw-medium">{{ equity_investment_data | length }}</h6>
+            </div>
+            <div class="col-6 text-end">
+              <p class="text-secondary mb-1">Fund Items</p>
+              <h6 class="fw-medium">{{ fund_investment_data | length }}</h6>
+            </div>
+          </div>
+
+          <!-- Top investment notice -->
+          {% if equity_investment_data or fund_investment_data %}
+          <div class="alert alert-info mt-3">
+            <i class="bi bi-info-circle"></i>
+            <strong>Portfolio Breakdown:</strong>
+            {% if total_equity_investment > total_fund_investment %}
+            Equity investments represent {{ "%.1f"|format((total_equity_investment/total_investment)*100) }}% of your
+            portfolio
+            {% else %}
+            Fund investments represent {{ "%.1f"|format((total_fund_investment/total_investment)*100) }}% of your
+            portfolio
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+   
+  </div>
+</div>
+
+
+{% endblock %}
+{% block extra_js %}
+
+<script>
+  // Global variables to hold chart instances
+  let summaryChartInstance = null;
+  let currentActivePeriod = '0';
+  let investmentChartInstance = null;
+
+  // Add this function for filtering income/expense categories
+  function filterIncomeExpenseCategories(chart) {
+    const incomeVisible = chart.isDatasetVisible(0);
+    const expenseVisible = chart.isDatasetVisible(1);
+
+    // If both datasets are visible, show all categories
+    if (incomeVisible && expenseVisible) {
+      // Restore original data if needed
+      const timeSeriesDataElement = document.getElementById('timeSeriesData');
+      if (timeSeriesDataElement) {
+        let jsonText = timeSeriesDataElement.textContent;
+        jsonText = jsonText.replace(/&#34;/g, '"').replace(/&quot;/g, '"');
+        const originalData = JSON.parse(jsonText);
+
+        chart.data.labels = originalData.labels;
+        chart.data.datasets[0].data = originalData.datasets[0].data;
+        chart.data.datasets[1].data = originalData.datasets[1].data;
+      }
+      return;
+    }
+
+    // Get original data for filtering
+    const timeSeriesDataElement = document.getElementById('timeSeriesData');
+    if (!timeSeriesDataElement) return;
+
+    let jsonText = timeSeriesDataElement.textContent;
+    jsonText = jsonText.replace(/&#34;/g, '"').replace(/&quot;/g, '"');
+    const originalData = JSON.parse(jsonText);
+
+    // Filter categories based on which dataset is visible
+    const filteredLabels = [];
+    const filteredIncomeData = [];
+    const filteredExpenseData = [];
+
+    for (let i = 0; i < originalData.labels.length; i++) {
+      const incomeValue = originalData.datasets[0].data[i];
+      const expenseValue = originalData.datasets[1].data[i];
+
+      // Show category if it has data in the visible dataset
+      if ((incomeVisible && incomeValue > 0) || (expenseVisible && expenseValue > 0)) {
+        filteredLabels.push(originalData.labels[i]);
+        filteredIncomeData.push(incomeValue);
+        filteredExpenseData.push(expenseValue);
+      }
+    }
+
+    // Update chart data with filtered values
+    chart.data.labels = filteredLabels;
+    chart.data.datasets[0].data = filteredIncomeData;
+    chart.data.datasets[1].data = filteredExpenseData;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOM loaded, initializing charts...");
+
+    // Initialize the summary chart
+    initSummaryChart();
+
+    // Initialize date range picker
+    initDateRangePicker();
+
+    // Set up time period navigation
+    initTimePeriodNavigation();
+
+    // Initialize the investment chart
+    initInvestmentChart();
+  });
+
+  function initSummaryChart() {
+    const ctx = document.getElementById('summaryChart');
+    if (!ctx) {
+      console.error("Summary chart canvas not found!");
+      return;
+    }
+
+    // Check if canvas context can be obtained
+    let chartContext;
+    try {
+      chartContext = ctx.getContext('2d');
+    } catch (e) {
+      console.error("Cannot get canvas context:", e);
+      return;
+    }
+
+    if (summaryChartInstance) {
+      summaryChartInstance.destroy();
+    }
+
+    // Get the JSON data safely
+    const timeSeriesDataElement = document.getElementById('timeSeriesData');
+    if (!timeSeriesDataElement) {
+      console.error("Time series data element not found!");
+      return;
+    }
+
+    let timeSeriesData;
+    try {
+      // Clean the JSON string by replacing HTML entities
+      let jsonText = timeSeriesDataElement.textContent;
+      jsonText = jsonText.replace(/&#34;/g, '"').replace(/&quot;/g, '"');
+
+      timeSeriesData = JSON.parse(jsonText);
+      console.log("Parsed chart data:", timeSeriesData);
+    } catch (e) {
+      console.error("Error parsing JSON data:", e);
+      console.error("Raw JSON text:", timeSeriesDataElement.textContent);
+      ctx.style.display = "none";
+      ctx.insertAdjacentHTML("afterend", `
+          <div class="alert alert-danger text-center mt-3">
+              <h5><i class="bi bi-exclamation-triangle"></i> Chart Data Error</h5>
+              <p class="mb-0">There was an error loading the chart data.<br>
+              Please try refreshing the page or contact support.</p>
+          </div>
+      `);
+      return;
+    }
+
+    // Check if we have multiple datasets (income and expense)
+    const hasMultipleDatasets = timeSeriesData.datasets && timeSeriesData.datasets.length > 1;
+
+    if (hasMultipleDatasets) {
+      // Multiple datasets (income and expense)
+      summaryChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: timeSeriesData.labels,
+          datasets: timeSeriesData.datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Value (Million SAR)',
+                font: { weight: 'bold', size: 12 }
+              },
+              ticks: {
+                callback: function (value) {
+                  return ' ' + value.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  });
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Equity Categories',
+                font: { weight: 'bold', size: 12 }
+              },
+              grid: {
+                display: false
+              },
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              onClick: function (e, legendItem, legend) {
+                const index = legendItem.datasetIndex;
+                const ci = legend.chart;
+                const meta = ci.getDatasetMeta(index);
+
+                // Toggle visibility
+                meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+
+                // Filter categories based on visible datasets
+                filterIncomeExpenseCategories(ci);
+
+                // Update the chart
+                ci.update();
+
+                // Update button states to match legend changes
+                updateToggleButtonsFromLegend(ci);
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              callbacks: {
+                label: function (context) {
+                  const datasetLabel = context.dataset.label || '';
+                  const value = context.parsed.y;
+                  return datasetLabel + ': ' + value.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }) + 'M SAR';
+                }
+              }
+            }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+    } else {
+      // Single dataset (fallback)
+      const templateColors = ['#219EBC', '#588157', '#004557', '#1B263B', '#FB8500', '#8ECAE6'];
+
+      summaryChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: timeSeriesData.labels,
+          datasets: [{
+            label: 'Equity Data (Million SAR)',
+            data: timeSeriesData.datasets[0].data,
+            backgroundColor: timeSeriesData.labels.map((_, index) =>
+              templateColors[index % templateColors.length]
+            ),
+            borderColor: timeSeriesData.labels.map((_, index) =>
+              templateColors[index % templateColors.length]
+            ),
+            borderRadius: 8,
+            borderWidth: 0,
+            barPercentage: 0.6,
+            categoryPercentage: 0.8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Value (Million SAR)',
+                font: { weight: 'bold', size: 12 }
+              },
+              ticks: {
+                callback: function (value) {
+                  return ' ' + value.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  });
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Equity Categories',
+                font: { weight: 'bold', size: 12 }
+              },
+              grid: {
+                display: false
+              },
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              callbacks: {
+                label: function (context) {
+                  return 'Value: ' + context.parsed.y.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }) + 'M SAR';
+                }
+              }
+            }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+    }
+
+    // Set up income/expense chart type toggle buttons
+    const toggleButtons = document.querySelectorAll('#incomeExpenseToggle [data-chart-type]');
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const chartType = this.getAttribute('data-chart-type');
+
+        // Update button states
+        toggleButtons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        this.classList.add('active');
+
+        // Update chart visibility based on selection
+        if (summaryChartInstance) {
+          const incomeMeta = summaryChartInstance.getDatasetMeta(0);
+          const expenseMeta = summaryChartInstance.getDatasetMeta(1);
+
+          switch (chartType) {
+            case 'income':
+              incomeMeta.hidden = false;
+              expenseMeta.hidden = true;
+              break;
+            case 'expense':
+              incomeMeta.hidden = true;
+              expenseMeta.hidden = false;
+              break;
+            default: // 'all'
+              incomeMeta.hidden = false;
+              expenseMeta.hidden = false;
+              break;
+          }
+
+          // Filter categories based on selection
+          filterIncomeExpenseCategories(summaryChartInstance);
+
+          summaryChartInstance.update();
+        }
+      });
+    });
+
+    // Hide loading indicator
+    setTimeout(() => {
+      $('#chartLoading').addClass('d-none');
+    }, 500);
+  }
+
+  // Helper function to update toggle buttons based on legend changes
+  function updateToggleButtonsFromLegend(chart) {
+    const incomeVisible = chart.isDatasetVisible(0);
+    const expenseVisible = chart.isDatasetVisible(1);
+
+    const toggleButtons = document.querySelectorAll('#incomeExpenseToggle [data-chart-type]');
+
+    toggleButtons.forEach(button => {
+      button.classList.remove('active');
+    });
+
+    if (incomeVisible && expenseVisible) {
+      document.querySelector('#incomeExpenseToggle [data-chart-type="all"]').classList.add('active');
+    } else if (incomeVisible && !expenseVisible) {
+      document.querySelector('#incomeExpenseToggle [data-chart-type="income"]').classList.add('active');
+    } else if (!incomeVisible && expenseVisible) {
+      document.querySelector('#incomeExpenseToggle [data-chart-type="expense"]').classList.add('active');
+    }
+  }
+
+  function initInvestmentChart() {
+      const ctx = document.getElementById('investmentChart');
+      if (!ctx) {
+        console.error("Investment chart canvas not found!");
+        return;
+      }
+
+      if (investmentChartInstance) {
+        investmentChartInstance.destroy();
+      }
+
+      // Get the JSON data safely
+      const investmentChartDataElement = document.getElementById('investmentChartData');
+      if (!investmentChartDataElement) {
+        console.error("Investment chart data element not found!");
+        return;
+      }
+
+      let investmentChartData;
+      try {
+        // Clean the JSON string by replacing HTML entities
+        let jsonText = investmentChartDataElement.textContent;
+        jsonText = jsonText.replace(/&#34;/g, '"').replace(/&quot;/g, '"');
+        investmentChartData = JSON.parse(jsonText);
+        console.log("Parsed investment chart data:", investmentChartData);
+      } catch (e) {
+        console.error("Error parsing investment JSON data:", e);
+        ctx.style.display = "none";
+        ctx.insertAdjacentHTML("afterend", `
+      <div class="alert alert-danger text-center mt-3">
+        <h5><i class="bi bi-exclamation-triangle"></i> Investment Chart Data Error</h5>
+        <p class="mb-0">There was an error loading the investment chart data.</p>
+      </div>
+    `);
+        return;
+      }
+
+      // Store the original data for filtering
+      const originalData = JSON.parse(JSON.stringify(investmentChartData));
+
+      // Create the investment chart
+      investmentChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: investmentChartData.labels,
+          datasets: investmentChartData.datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Value (Million SAR)',
+                font: { weight: 'bold', size: 12 }
+              },
+              ticks: {
+                callback: function (value) {
+                  return ' ' + value.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  });
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Investment Categories',
+                font: { weight: 'bold', size: 12 }
+              },
+              grid: {
+                display: false
+              },
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              onClick: function (e, legendItem, legend) {
+                const index = legendItem.datasetIndex;
+                const ci = legend.chart;
+                const meta = ci.getDatasetMeta(index);
+
+                // Toggle visibility
+                meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+
+                // Filter categories based on visible datasets
+                filterCategories(ci);
+
+                // Update the chart
+                ci.update();
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.85)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              callbacks: {
+                label: function (context) {
+                  const datasetLabel = context.dataset.label || '';
+                  const value = context.parsed.y;
+                  return datasetLabel + ': ' + value.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  }) + 'M SAR';
+                }
+              }
+            }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+
+      // Function to filter categories based on visible datasets
+    function filterCategories(chart) {
+      const equityVisible = chart.isDatasetVisible(0);
+      const fundVisible = chart.isDatasetVisible(1);
+
+      // If both datasets are visible, show all categories
+      if (equityVisible && fundVisible) {
+        chart.data.labels = originalData.labels;
+        chart.data.datasets[0].data = originalData.datasets[0].data;
+        chart.data.datasets[1].data = originalData.datasets[1].data;
+        return;
+      }
+
+      // Filter categories based on which dataset is visible
+      const filteredLabels = [];
+      const filteredEquityData = [];
+      const filteredFundData = [];
+
+      for (let i = 0; i < originalData.labels.length; i++) {
+        const equityValue = originalData.datasets[0].data[i];
+        const fundValue = originalData.datasets[1].data[i];
+
+        // Show category if it has data in the visible dataset
+        if ((equityVisible && equityValue > 0) || (fundVisible && fundValue > 0)) {
+          filteredLabels.push(originalData.labels[i]);
+          filteredEquityData.push(equityValue);
+          filteredFundData.push(fundValue);
+        }
+      }
+
+      // Update chart data with filtered values
+      chart.data.labels = filteredLabels;
+      chart.data.datasets[0].data = filteredEquityData;
+      chart.data.datasets[1].data = filteredFundData;
+    }
+
+      // Set up chart type toggle buttons
+    document.querySelectorAll('[data-chart-type]').forEach(button => {
+      button.addEventListener('click', function () {
+        const chartType = this.getAttribute('data-chart-type');
+
+        // Update button states
+        document.querySelectorAll('[data-chart-type]').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        this.classList.add('active');
+
+        // Update chart visibility based on selection
+        if (investmentChartInstance) {
+          const equityMeta = investmentChartInstance.getDatasetMeta(0);
+          const fundMeta = investmentChartInstance.getDatasetMeta(1);
+
+          switch (chartType) {
+            case 'equity':
+              equityMeta.hidden = false;
+              fundMeta.hidden = true;
+              break;
+            case 'fund':
+              equityMeta.hidden = true;
+              fundMeta.hidden = false;
+              break;
+            default: // 'all'
+              equityMeta.hidden = false;
+              fundMeta.hidden = false;
+              break;
+          }
+
+          // Filter categories based on selection
+          filterCategories(investmentChartInstance);
+
+          investmentChartInstance.update();
+        }
+      });
+    });
+
+    // Hide loading indicator
+    setTimeout(() => {
+      $('#investmentChartLoading').addClass('d-none');
+    }, 500);
+  }
+
+    function updateCategoryVisibility(datasetIndex, isVisible) {
+        // This function would update any external category indicators
+        // based on the dataset visibility
+        console.log(`Dataset ${datasetIndex} visibility: ${isVisible}`);
+      }
+
+      function updateAllCategoriesVisibility() {
+        if (investmentChartInstance) {
+          const equityVisible = investmentChartInstance.isDatasetVisible(0);
+          const fundVisible = investmentChartInstance.isDatasetVisible(1);
+
+          // You can update any external UI elements here based on visibility
+          console.log(`Equity visible: ${equityVisible}, Fund visible: ${fundVisible}`);
+        }
+      }
+
+  // Rest of the JavaScript code remains the same...
+  function initDateRangePicker() {
+    const startDate = '{{ start_date }}' || moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const endDate = '{{ end_date }}' || moment().format('YYYY-MM-DD');
+
+    // Set initial values for hidden inputs
+    $('#startDateInput').val(startDate);
+    $('#endDateInput').val(endDate);
+
+    // Initialize date range picker with current values
+    $('#daterangepicker').daterangepicker({
+      startDate: moment(startDate),
+      endDate: moment(endDate),
+      ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      locale: {
+        format: 'DD/MM/YYYY'
+      }
+    });
+
+    // Set initial display value
+    $('#daterangepicker').val(moment(startDate).format('DD/MM/YYYY') + ' - ' + moment(endDate).format('DD/MM/YYYY'));
+
+    // Handle date range selection
+    $('#daterangepicker').on('apply.daterangepicker', function (ev, picker) {
+      // Update hidden inputs with selected dates
+      $('#startDateInput').val(picker.startDate.format('YYYY-MM-DD'));
+      $('#endDateInput').val(picker.endDate.format('YYYY-MM-DD'));
+
+      // Update display
+      $('#daterangepicker').val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+
+      // When using custom date range, remove active class from time period nav
+      $('.time-period-nav .page-link').removeClass('active');
+      currentActivePeriod = null;
+
+      // Remove any existing days parameter
+      $('#dateRangeForm').find('input[name="days"]').remove();
+    });
+
+    // Handle the Apply button click
+    $('#dateRangeForm').on('submit', function (e) {
+      e.preventDefault(); // Prevent default form submission
+
+      // Show loading indicator
+      $('#chartLoading').removeClass('d-none');
+
+      // Get the current values from the date picker
+      const picker = $('#daterangepicker').data('daterangepicker');
+      if (picker) {
+        $('#startDateInput').val(picker.startDate.format('YYYY-MM-DD'));
+        $('#endDateInput').val(picker.endDate.format('YYYY-MM-DD'));
+      }
+
+      // Remove any days parameter
+      $('#dateRangeForm').find('input[name="days"]').remove();
+
+      // Submit the form programmatically
+      this.submit();
+    });
+  }
+
+  function initTimePeriodNavigation() {
+    // Set active period based on current selection
+    const urlParams = new URLSearchParams(window.location.search);
+    const daysParam = urlParams.get('days');
+
+    if (daysParam !== null) {
+      currentActivePeriod = daysParam;
+      $('.time-period-nav .page-link').removeClass('active');
+      $(`.time-period-nav .page-link[data-days="${daysParam}"]`).addClass('active');
+    } else if (!daysParam) {
+      currentActivePeriod = '0';
+      $('.time-period-nav .page-link').removeClass('active');
+      $('.time-period-nav .page-link[data-days="0"]').addClass('active');
+    }
+
+    $('.time-period-nav .page-link').on('click', function (e) {
+      e.preventDefault();
+
+      // Update active state
+      $('.time-period-nav .page-link').removeClass('active');
+      $(this).addClass('active');
+
+      // Store the current active period
+      currentActivePeriod = $(this).data('days');
+
+      const days = $(this).data('days');
+      let startDate, endDate;
+
+      endDate = moment().format('YYYY-MM-DD');
+
+      if (days === 0) {
+        // For "All", set a very early start date
+        startDate = '2020-01-01';
+      } else {
+        startDate = moment().subtract(days, 'days').format('YYYY-MM-DD');
+      }
+
+      // Update the hidden inputs
+      $('#startDateInput').val(startDate);
+      $('#endDateInput').val(endDate);
+
+      // Also update the date range picker display
+      $('#daterangepicker').data('daterangepicker').setStartDate(moment(startDate));
+      $('#daterangepicker').data('daterangepicker').setEndDate(moment(endDate));
+      $('#daterangepicker').val(moment(startDate).format('DD/MM/YYYY') + ' - ' + moment(endDate).format('DD/MM/YYYY'));
+
+      // Show loading indicator
+      $('#chartLoading').removeClass('d-none');
+
+      // Add days parameter to the form
+      $('#dateRangeForm').find('input[name="days"]').remove();
+      $('<input>').attr({
+        type: 'hidden',
+        name: 'days',
+        value: days
+      }).appendTo('#dateRangeForm');
+
+      $('#dateRangeForm').submit();
+    });
+  }
+
+  // Hide loading indicator when page is fully loaded
+  window.addEventListener('load', function () {
+    $('#chartLoading').addClass('d-none');
+  });
+</script>
+
+{% endblock %}

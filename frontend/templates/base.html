@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Author -->
+    <meta name="author" content="Mudassir | Webdesign, Webdevelop | Saudi">
+
+    <!-- Below tag will be used for android mobile browser colors, change it to main logo color of the project -->
+    <meta name="theme-color" content="#393939">
+
+    <!-- Meta Tags for Social Media -->
+    <meta property="og:site_name" content="RSR Group | Riyadh, Saudi Arabia">
+    <meta property="og:image" content="{{ url_for('frontend_static', filename='img/RSR_Brand Logo.jpg')}}">
+    <meta property="og:title" content="Saudi-Arabia-based investment holding company">
+    <meta property="og:description" content="RSR Group invests in, and operates, businesses around the globe where we see the opportunity to catalyse profitable growth.">
+    <meta name="twitter:title" content="Saudi-Arabia-based investment holding company">
+    <meta name="twitter:image" content="{{ url_for('frontend_static', filename='img/RSR_Brand Logo.jpg')}}">
+    <meta name="twitter:description" content="RSR Group invests in, and operates, businesses around the globe where we see the opportunity to catalyse profitable growth.">
+    <meta name="twitter:card" content="summary_large_image"/>
+
+    <title>{% block title %}Rashid Saad Al Rashid{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,700,900" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('frontend_static', filename='img/RSR_Brand Logo.jpg')}}">
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="description" content="RSR Group invests in, and operates, businesses around the globe where we see the opportunity to catalyse profitable growth."/>
+    <link rel="shortcut icon" href="application/files/9016/6054/2231/Frame-12683-_1_.ico" type="image/x-icon"/>
+    <link rel="icon" href="application/files/9016/6054/2231/Frame-12683-_1_.ico" type="image/x-icon"/>
+    <link rel="canonical" href="{{ url_for('home') }}">
+    <script type="text/javascript">
+        var CCM_CID = 1;
+        var CCM_EDIT_MODE = false;
+        var CCM_ARRANGE_MODE = false;
+        var CCM_APPLICATION_URL = "{{ url_for('home') }}";
+        var CCM_REL = "";
+        var CCM_ACTIVE_LOCALE = "en_AE";
+    </script>
+
+    <link rel="stylesheet" href="{{ url_for('frontend_static', filename='css/view41e2.css') }}">
+    <script type="text/javascript" src="{{ url_for('frontend_static', filename='js/jquery1e8e.js') }}"></script>
+    <link href="{{ url_for('frontend_static', filename='css/jquery-ui1e8e.css') }}">
+    <link href="{{ url_for('frontend_static', filename='css/errors1e8e.css') }}" >
+    <link href="{{ url_for('frontend_static', filename='css/selectize1e8e.css') }}" >
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NS9939C38"></script>
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1NS9939C38');
+    </script>
+
+    <script async src="{{ url_for('frontend_static', filename='js/tarra.js') }} " type="text/javascript"></script> 
+    <link rel="stylesheet" href="{{ url_for('frontend_static', filename='css/app.minae52.css') }}">   
+    
+     <script>
+        if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+            var msViewportStyle = document.createElement('style');
+            msViewportStyle.appendChild(
+                document.createTextNode(
+                    '@-ms-viewport{width:auto!important}'
+                )
+            );
+            document.querySelector('head').appendChild(msViewportStyle);
+        }
+   
+        //set cookie for site
+        function setCookie(cname, cvalue) {
+            var d = new Date();
+            d.setTime(d.getTime() + 2160000000);
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+        }
+    </script>
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+<body class="default-page">
+   <div class="site-loader">
+        <div class="site-init-overlay"></div>
+        <div class="logo-middle">
+            <img src="{{ url_for('frontend_static', filename='img/RSR Logo_Legal.png')}}" alt="RSR Group | Riyadh, Saudi Arabia" />
+        </div>
+    </div>
+    <div class="init-overlay"></div>
+    <script>
+        if (document.cookie.indexOf("visited=") == -1) {
+            setCookie("visited", "1");
+            $('.site-loader').css({display : 'flex'});
+        } else {
+            $('.init-overlay').css({display : 'block'});
+           
+        }
+    </script>
+    
+    <div class="wrapper ccm-page page-type-home page-template-home">
+        <div class="mobile-nav ">
+            <div class="close-nav"></div>
+            <div class="blur-overlay"></div>
+            <div class="container-fluid">
+                <div class="mob-nav">       
+            <ul class="nav">
+                <li class=""><a href="{{ url_for('about') }}" target="_self" class="">About</a></li>
+                <li class=""><a href="{{ url_for('businesses') }}" target="_self" class="">Businesses</a></li>
+                <li class=""><a href="{{url_for('overviews')}}" target="_self" class="">Portfolio</a></li>
+                <li class=""><a href="{{url_for('news_insights')}}" target="_self" class="">News &amp; Insights</a></li>
+            </ul>
+                </div>
+            </div>
+        </div>
+
+        <section class="headerExpand headerExpand-one  submenu_sec test1">
+            <div class="container-fluid">
+                <div class="flex">
+                    <div class="mega-menu-desc business-desc">
+                        <div class="Multiply">
+                            <!-- <h5>RSR Group</h5> -->
+                            <p class="p">RSR Holding Company (Rashid Saad Al Rashid) is a dynamic investment group with a diversified portfolio
+                                spanning Saudi
+                                Arabia and beyond. We specialize in equities, private ventures, and partnerships, with a strong focus on long-term
+                                value
+                                creation.</p>
+                        </div>
+                        <div class="Multiply+">
+                            <h5>RSR Group+</h5>
+                            <p class="p">A flexible, sector-agnostic and opportunistic investment arm.</p>
+                        </div>
+                    </div>
+                    <div class="mega-menu-right business-nav">
+                        <ul>
+                            <li>
+                                <a href="{{ url_for('businesses') }}#tab1" class="active">RSR Group</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('businesses') }}#tab2">RSR Group+</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="headerExpand headerExpand-two  submenu_sec test2">
+            <div class="container-fluid">
+                <div class="flex">
+                    <div class="mega-menu-desc">
+                        <h5>Portfolio</h5>
+                        <p class="p">We deploy a global strategy to invest in and operate businesses, using technology as a
+                            catalyst to unlock their full
+                            potential and drive profitable growth. </p>
+                    </div>
+                    <div class="mega-menu-right">
+                        <ul>
+                            <li class="">
+                                <a href="{{url_for('overviews')}}">Overview</a>
+                            </li>
+                            <li>
+                                <a href="{{url_for('investor_relations')}}">Results & Presentation</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="headerExpand headerExpand-three  submenu_sec test3">
+            <div class="container-fluid">
+                <div class="flex">
+                    <div class="mega-menu-desc">
+                        <h5>Sustainability</h5>
+                        <p class="p"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        {% include 'header.html' %}
+        
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    
+    </div>
+
+    {% include 'footer.html' %}
+
+
+<!-- Go to top button -->
+<div id="gotoTop">
+    <div class="chevron-up"></div>
+</div>
+
+<!-- For Landscape Alert -->
+<div class="landscape-alert">
+    <p>For better web experience, please use the website in portrait mode </p>
+</div>
+
+	<!-- core js files -->
+	<script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/view41e2.js') }}"></script>
+	<script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/jquery-ui1e8e.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/tooltip1e8e.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/topjs') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/placeholder.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/dependson.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/mask.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/simplycountable.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/timepicker.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/dropzone0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/slider.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/rating.min0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/formidable0931.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/selectize1e8e.js') }}"></script>
+
+
+    <!-- <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/backstretch1e8e.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/boardMembers.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/boardMembers~projects.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/business.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/careers.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/contact.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/events1e8e.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/homeBannerSlider.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/homeBannerVideoSlider.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/missionVision.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/News.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/newsSlider.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/ourPrinciples.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/projects.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/reports.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/stats.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/teamMessages.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/twoColContent.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/vendors.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/videoBlock.bundle.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('frontend_static', filename='js/underscore1e8e.js') }}"></script> -->
+    
+
+
+    
+    <script>
+        var baseUrl = "{{ url_for('frontend_static', filename='js/')}}";
+        var baseUrlSRC = "{{ url_for('frontend_static', filename='js/')}}";
+    </script>
+    <!--comment below if you don't need maps-->
+    <script type="text/javascript" src="{{ url_for('frontend_static', filename='js/eurolandtoolsintegrationobject.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            if ($('iframe').length) {
+                $('iframe').EurolandIFrameAutoHeight();
+            }
+        });
+    </script>
+    <script src="{{ url_for('frontend_static', filename='js/app.minae52.js')}}"></script>
+{% block extra_js %}{% endblock %}
+
+
+
+</body>
+</html>

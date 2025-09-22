@@ -1,0 +1,840 @@
+{% extends "base.html" %}
+
+{% block title %}Overview - RSR Group{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+{% block content %}
+
+<div class="wrapper ccm-page page-type-investor-relations-detail page-template-container-v2">
+
+    <main>
+        <section class="ir-detail-page container-v2">
+            <div class="common-banner-block">
+                <div class="bg-img"
+                    style="background-image: url('{{ url_for('frontend_static', filename='img/8ec988621eb9e48482ee5f00be1452c3.jpg') }}')">
+                </div>
+                <div class="container-fluid">
+                    <div class="content-container">
+                        <div class=" banner-content">
+                            <div class="breadcrumb">
+                                <nav role="navigation" aria-label="breadcrumb">
+                                    <ul class="nav">
+                                        <li class="old-navLink"><a href="{{ url_for('home') }}" target="_self">RSR Group |
+                                                Riyadh</a></li>
+                                        <li class="old-navLink"><a href="{{url_for('overviews')}}" target="_self">Investor
+                                                Relations</a></li>
+                                        <li class="active">Overview</li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <h1>
+                                Overview
+                            </h1>
+                        </div>
+                        <a class="scrollTo" href="#explore">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_426_5912" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                    width="24" height="24">
+                                    <rect width="24" height="24" fill="white" />
+                                </mask>
+                                <g mask="url(#mask0_426_5912)">
+                                    <path
+                                        d="M12 20.9992C10.3333 20.9992 8.91667 20.4159 7.75 19.2492C6.58333 18.0826 6 16.6659 6 14.9992V9.07422C6 7.40755 6.58333 5.99089 7.75 4.82422C8.91667 3.65755 10.3333 3.07422 12 3.07422C13.6667 3.07422 15.0833 3.65755 16.25 4.82422C17.4167 5.99089 18 7.40755 18 9.07422V14.9992C18 16.6659 17.4167 18.0826 16.25 19.2492C15.0833 20.4159 13.6667 20.9992 12 20.9992ZM12.5 9.07422H17C17 7.75755 16.5627 6.62822 15.688 5.68622C14.8127 4.74489 13.75 4.21589 12.5 4.09922V9.07422ZM7 9.07422H11.5V4.09922C10.25 4.21589 9.18733 4.74489 8.312 5.68622C7.43733 6.62822 7 7.75755 7 9.07422ZM12 19.9992C13.3833 19.9992 14.5627 19.5119 15.538 18.5372C16.5127 17.5619 17 16.3826 17 14.9992V10.0742H7V14.9992C7 16.3826 7.48767 17.5619 8.463 18.5372C9.43767 19.5119 10.6167 19.9992 12 19.9992Z"
+                                        fill="white" />
+                                </g>
+                            </svg>
+                            <span>Scroll To Explore</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- <div class="ir-area block-fade-up">
+                    <ul class="ir-list">
+                        <li class="active">
+                            <a href="{{url_for('overviews')}}">Overview</a>
+                        </li>
+                        <li class="">
+                            <a href="{{url_for('investor_relations')}}">Results & Presentation</a>
+                        </li>
+                    </ul>
+                </div> -->
+            </div>
+    
+            <!-- <iframe style="background:#000;"
+                src="https://tools.eurolandir.com/tools/ticker/scrolling/?companycode=ae-multi&amp;v=staticr2023&amp;lang=en-GB"></iframe> -->
+            <!-- <div class="ir-detail-block" id="explore">
+                <div class="container-fluid">
+                    <div class="row reports-block">
+                        <div class="col-lg-12">
+                            <section class="section two-col-content-section section_light">
+                                <div class="container-fluid cu-container">
+                                    <div class="section_title">
+                                        <h5>At a Glance</h5>
+                                    </div>
+                                    <div class="two-col-content">
+                                        <div class="title">
+                                            <h2>we operate as a diversified holding company with investments across key sectors.</h2>
+                                            <br><br><br>
+                                            <a class="mutiply-cta arrowed dark"
+                                                href="#"
+                                                target="_blank">
+                                                <span class="arrow">
+                                                    <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1"
+                                                            stroke="#1D2428" stroke-linecap="round" stroke-linejoin="round">
+                                                        </path>
+                                                        <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                    </svg>
+                                                </span>
+                                                <span>download investors presentation</span>
+    
+                                            </a>
+                                            <br><br>
+    
+                                            <a class="mutiply-cta arrowed dark"
+                                                href="#">
+                                                <span class="arrow">
+                                                    <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1"
+                                                            stroke="#1D2428" stroke-linecap="round" stroke-linejoin="round">
+                                                        </path>
+                                                        <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                                            stroke-linejoin="round"></path>
+                                                    </svg>
+                                                </span>
+                                                <span>download Fact sheet</span>
+    
+                                            </a>
+                                        </div>
+                                        <div class="description">
+                                            <div class="desc">
+                                                <p class="p"><strong>RSR Group, a Riyadh-based investment company, globally invests and operates in transformative, cash-generating
+                                                businesses. Known for its trademark growth mindset, RSR Group will continue to deploy capital across its two distinct
+                                                arms, both of which follow a disciplined approach to investing and ensure consistent, sustainable value creation for our
+                                                shareholders in the short-, medium- and long-term.</strong></p>
+                                                <h4 class="p">
+                                                    <meta charset="utf-8" /><strong>RSR Group</strong>
+                                                </h4>
+                                                <h4 class="p">
+                                                    <meta charset="utf-8" />RSR Group’s long-term strategic investments are diversified across key verticals, currently including Food & Beverage,
+                                                    Retail, Real Estate, and Hospitality. This is demonstrated through our core subsidiaries: Foodaroma, Razin, Draft Cafe,
+                                                    and Al Murooj Real Estate.
+                                                </h4>
+                                                <h4 class="p">
+                                                    <meta charset="utf-8" /><strong>RSR Group+</strong>
+                                                </h4>
+                                                <p class="p">RSR Group expands its global reach, investing across diverse sectors and asset classes through its associates to unlock
+                                                disciplined, high-value returns.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="circle-1"></div>
+                                <div class="circle-2"></div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+    
+            <!-- <div class="title-button-block" style="display: none;">
+                <div class="container">
+                    <div class="row reports-block">
+                        <div class="col-lg-12">
+                            <h3 class="page-title">Download the presentation</h3>
+                            <a target="_blank" class="mutiply-cta arrowed light download" download
+                                href="{{ url_for('frontend_static', filename='files/8616/5908/8015/sample.pdf')}}">
+                                <span class="arrow">
+                                    <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                            stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                            stroke-linejoin="round"></path>
+                                    </svg>
+                                </span>
+                                <span>DOWNLOAD PDF</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- <section class="key-feature-section">
+                <div class="container-fluid cu-wrapper">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="section_title">
+                                <h5>Key Highlights</h5>
+                            </div>
+                            <div class="tab-wrapper">
+                                <div class="tab">
+                                    <button class="tablinks tablinkskey" onclick='openTabb(event, 1)' id="defaultOpen">
+                                        Growing Portfolio </button>
+                                    <button class="tablinks tablinkskey" onclick='openTabb(event, 2)' id="defaultOpen">
+                                        Financial Scale </button>
+                                </div>
+                                <div id="1" class="tabcontent tabcontentkey">
+                                    <div class="flex-row">
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>capital deployed to-date</h5>
+                                                </div>
+                                                <div class="value">21bn</div>
+                                                <div class="bottom-text">SAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>Asset Base</h5>
+                                                </div>
+                                                <div class="value">43bn</div>
+                                                <div class="bottom-text">SAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>Companies</h5>
+                                                </div>
+                                                <div class="value">10</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>High-Growth Countries</h5>
+                                                </div>
+                                                <div class="value">5</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>High-Potential Sectors</h5>
+                                                </div>
+                                                <div class="value">5</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="2" class="tabcontent tabcontentkey">
+                                    <div class="flex-row">
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>revenue</h5>
+                                                </div>
+                                                <div class="value">2.03bn</div>
+                                                <div class="bottom-text">SAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>Gross Profit Margin</h5>
+                                                </div>
+                                                <div class="value">48%</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>Adjusted EBITDA (Excluding unrealised FV Changes)</h5>
+                                                </div>
+                                                <div class="value">1.8bn</div>
+                                                <div class="bottom-text">SAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>reported net profit (including SAR 847mn unrealised FV Changes)</h5>
+                                                </div>
+                                                <div class="value">4.2bn</div>
+                                                <div class="bottom-text">SAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>Investment &amp; Other Income (Excluding unrealised FV Changes)</h5>
+                                                </div>
+                                                <div class="value">1.0bn</div>
+                                                <div class="bottom-text">SAR</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="detail-boxes">
+                                                <div class="section_title" style="margin-bottom:40px;">
+                                                    <h5>net debt / equity</h5>
+                                                </div>
+                                                <div class="value">0.26</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p style="font-size:14px;color:#fff;text-align:right;">*30 June 2025 LTM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
+    
+            <!-- <script>
+                function openTabb(event, cityName) {
+                    var i, tabcontentkey, tablinkskey;
+                    tabcontentkey = document.getElementsByClassName("tabcontentkey");
+                    for (i = 0; i < tabcontentkey.length; i++) {
+                        tabcontentkey[i].style.display = "none";
+                    }
+                    tablinkskey = document.getElementsByClassName("tablinkskey");
+                    for (i = 0; i < tablinkskey.length; i++) {
+                        tablinkskey[i].className = tablinkskey[i].className.replace(" active", "");
+                    }
+                    document.getElementById(cityName).style.display = "block";
+                    event.currentTarget.className += " active";
+                }
+                document.getElementById("defaultOpen").click();
+            </script> -->
+    
+            <!-- <section class="our-strategy-section">
+                <div class="container-fluid">
+                    <div class="flex-row">
+                        <div class="col-sm-6">
+                            <div class="section_title">
+                                <h5>Our Profile</h5>
+                            </div>
+                            <div class="large-title">
+                                <div class="strategySwiper">
+                                    <div class="swiper-wrapper">
+                                        <p class="swiper-slide"> A Sizeable holding company with resilient financial
+                                            performance</p>
+                                        <p class="swiper-slide"> Strong regional footprint with global presence</p>
+                                        <p class="swiper-slide"> Clear roadmap for growth across core verticals</p>
+                                        <p class="swiper-slide"> RSR Group+ for opportunistic investments</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="slider-section">
+                                <div class="strategySwiper">
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide">
+                                            <ul>
+                                                <li>
+                                                    <meta charset="utf-8" />SAR 43bn assets
+                                                </li>
+                                                <li>
+                                                    <meta charset="utf-8" />Strong growth from operations amid challenging
+                                                    macro-economics
+                                                </li>
+                                                <li>
+                                                    <meta charset="utf-8" />SAR 21bn capital deployed to-date
+                                                </li>
+                                                <li>2000+ employees</li>
+                                            </ul>
+                                        </div>
+                                        <div class="swiper-slide">
+                                            <ul>
+                                                <li>
+                                                    <meta charset="utf-8" />Positive outlook and strong fundamentals across
+                                                    key markets
+                                                </li>
+                                                <li>
+                                                    <meta charset="utf-8" />Strong presence in home country with a
+                                                    diversified portfolio of leading companies
+                                                </li>
+                                                <li>
+                                                    <meta charset="utf-8" />Supportive regional eco-system strengthened by
+                                                    global partnerships and network
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="swiper-slide">
+                                            <ul>
+                                                <li class="has-submenu">
+                                                    <meta charset="utf-8" />Vertical building across 5 industries:
+                                                    <ul class="sub-menu">
+                                                        <li>Food & Aroma
+                                                            <meta charset="utf-8" />
+                                                        </li>
+                                                        <li>
+                                                            <meta charset="utf-8" />
+                                                            Draft & Cafe
+                                                        </li>
+                                                        <li>Razin</li>
+                                                        <li>Golden & Chicken</li>
+                                                        <li>Specialised Medical Center</li>
+                                                    </ul>
+                                                </li>
+                                                <li>Leveraging on disruptive megatrends per vertical</li>
+                                            </ul>
+                                        </div>
+                                        <div class="swiper-slide">
+                                            <ul>
+                                                <li class="has-submenu">
+                                                    <meta charset="utf-8" />Sector-agnostic opportunistic investment
+                                                    strategy focused on:
+                                                    <ul class="sub-menu">
+                                                        <li>
+                                                            <meta charset="utf-8" />Clear exit opportunities
+                                                        </li>
+                                                        <li>
+                                                            <meta charset="utf-8" />High dividends
+                                                        </li>
+                                                        <li>Attractive valuation</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="navigations">
+                                        <div class="swiper-pagination"></div>
+                                        <div class="relative">
+                                            <div class="arrows swiper-button-next">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                                    viewBox="0 0 40 40" fill="none">
+                                                    <circle cx="20" cy="20" r="19.5" stroke="#1D2428" />
+                                                    <mask id="mask0_2680_132" style="mask-type:alpha"
+                                                        maskUnits="userSpaceOnUse" x="8" y="8" width="24" height="24">
+                                                        <rect x="8" y="8" width="24" height="24" fill="white" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2680_132)">
+                                                        <path
+                                                            d="M22.1016 25.2992L21.4016 24.5992L25.4766 20.4992H12.6016V19.4992H25.4766L21.4016 15.3992L22.1016 14.6992L27.4016 19.9992L22.1016 25.2992Z"
+                                                            fill="#1D2428" />
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                            <div class="arrows swiper-button-prev">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                                    viewBox="0 0 40 40" fill="none">
+                                                    <circle cx="20" cy="20" r="19.5" stroke="#1D2428" />
+                                                    <mask id="mask0_2680_132" style="mask-type:alpha"
+                                                        maskUnits="userSpaceOnUse" x="8" y="8" width="24" height="24">
+                                                        <rect x="8" y="8" width="24" height="24" fill="white" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2680_132)">
+                                                        <path
+                                                            d="M22.1016 25.2992L21.4016 24.5992L25.4766 20.4992H12.6016V19.4992H25.4766L21.4016 15.3992L22.1016 14.6992L27.4016 19.9992L22.1016 25.2992Z"
+                                                            fill="#1D2428" />
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
+    
+            <!-- <section class="investment-portfolio" id="strategy-layout">
+                <div class="outer-wrapper">
+                    <div class="tab">
+                        <h2>Our Strategy</h2>
+                        <button class="tablinks tablinkstrategy active" onclick="openStrategy(event, 'firstTab1')"
+                            id="defaulttabOpenStrategy"> RSR Group</button>
+                        <button class="tablinks tablinkstrategy" onclick="openStrategy(event, 'secondTab2')">RSR Group
+                            +</button>
+                    </div>
+                    <div id="firstTab1" class="tabcontent tabcontentstrategy">
+                        <div class="multi-layout" id="multi-dark">
+                            <div class="fluid">
+                                <div class="rows">
+                                    <div class="single-column">
+                                        <h4>Objective</h4>
+                                        <p>RSR Group acquires market-leading, cash-generating businesses in stable sectors. We drive value through operational
+                                        consolidation, dividend income, asset appreciation, and strategic synergies.</p>
+                                    </div>
+                                    <div class="col-wrapper flex-row">
+                                        <div class="col-sm-6 cols">
+                                            <h4>Anchors</h4>
+                                            <div class="content">
+                                                <h5>
+                                                    <meta charset="utf-8" />Rationale
+                                                </h5>
+                                                <ul style="height:50px">
+                                                    <li>RSR Group secures controlling stakes in leading sector enterprises 
+                                                        to establish dominant market coverage and influence.</li>
+                                                </ul>
+                                                <p>&nbsp;</p>
+                                                <h5>
+                                                    <meta charset="utf-8" />Investment Criteria
+                                                </h5>
+                                                <ul>
+                                                    <li>~SAR 1bn investment size</li>
+                                                    <li>Strong revenue growth</li>
+                                                    <li>Target double-digit IRR</li>
+                                                    <li>Healthy balance sheet</li>
+                                                </ul>
+                                                <style type="text/css">
+                                                    .single-column p {
+                                                        line-height: normal;
+                                                    }
+                                                </style>
+                                            </div>
+                                        </div>
+    
+                                        <div class="col-sm-6 cols even">
+                                            <h4> Bolt-ons</h4>
+                                            <div class="content">
+                                                <h5>Rationale</h5>
+                                                <ul style="height:50px">
+                                                    <li>Significant stakes in companies that bring synergetic value to the
+                                                        Anchor</li>
+                                                </ul>
+                                                <p>&nbsp;</p>
+                                                <h5>&nbsp;</h5>
+                                                <ul>
+                                                    <li>Value accretive to the Group</li>
+                                                    <li>Cash flow generative</li>
+                                                    <li>Operationally Profitable</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-wrapper four-cols">
+                                        <div class="col-sm-3 cols">
+                                            <h5>Enter</h5>
+                                            <div class="content">
+                                                <ul>
+                                                    <li>
+                                                        <meta charset="utf-8" />Vertical strategy development
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Anchor acquisition
+                                                    </li>
+                                                </ul>
+                                            </div>
+    
+                                            <img src="{{ url_for('frontend_static', filename='files/4017/0530/2530/Group_1820550531.png')}}" alt="arrow"
+                                                class="arrow" />
+                                        </div>
+                                        <div class="col-sm-3 cols">
+                                            <h5>Build</h5>
+                                            <div class="content">
+                                                <ul>
+                                                    <li>
+                                                        <meta charset="utf-8" />Bolt-on acquisitions to upscale the anchor
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Digitize scaled business
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <img src="{{ url_for('frontend_static', filename='files/4017/0530/2530/Group_1820550531.png')}}" alt="arrow"
+                                                class="arrow" />
+                                        </div>
+                                        <div class="col-sm-3 cols">
+                                            <h5>Mature</h5>
+                                            <div class="content">
+                                                <ul>
+                                                    <li>
+                                                        <meta charset="utf-8" />Empower anchors for greater independence
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Continued support by acquiring digital
+                                                        capabilities
+                                                    </li>
+                                                </ul>
+                                            </div>
+    
+                                            <img src="{{ url_for('frontend_static', filename='files/4017/0530/2530/Group_1820550531.png')}}" alt="arrow"
+                                                class="arrow" />
+                                        </div>
+                                        <div class="col-sm-3 cols">
+                                            <h5>Exit</h5>
+                                            <div class="content">
+                                                <ul>
+                                                    <li>
+                                                        <meta charset="utf-8" />IPO
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Divestment
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <img src="{{ url_for('frontend_static', filename='files/4017/0530/2530/Group_1820550531.png')}}" alt="arrow"
+                                                class="arrow" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div id="secondTab2" class="tabcontent tabcontentstrategy">
+                        <div class="multi-layout" id="multi-dark">
+                            <div class="fluid">
+                                <div class="rows">
+                                    <div class="single-column">
+                                        <h4>Objective</h4>
+                                        <p>Sector-agnostic minority investments with outstanding financial returns</p>
+                                    </div>
+                                    <div class="col-wrapper flex-row">
+                                        <div class="col-sm-6 cols">
+                                            <h4>Public Companies</h4>
+                                            <div class="content">
+                                                <h5>
+                                                    <meta charset="utf-8" />Rationale
+                                                </h5>
+                                                <ul>
+                                                    <li>
+                                                        <meta charset="utf-8" />Fundamentally strong listed companies
+                                                        available at an attractive valuation
+                                                    </li>
+                                                </ul>
+                                                <p>&nbsp;</p>
+                                                <div style="position:relative;padding-top:30px">
+                                                    <h5>Investment Criteria</h5>
+    
+                                                    <hr class="cu-hr" />
+                                                </div>
+                                                <ul>
+                                                    <li>~SAR 200mn ticket size</li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Attractive dividend yield
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Discounted valuation
+                                                    </li>
+                                                </ul>
+                                                <style type="text/css">
+                                                    .cu-hr {
+                                                        position: absolute;
+                                                        top: 0;
+                                                        width: 100vw;
+                                                        margin: 0;
+                                                        z-index: 1;
+                                                        left: -40px;
+                                                        border-color: hsla(0, 0%, 100%, .1);
+                                                    }
+                                                </style>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 cols even">
+                                            <h4> Private Companies</h4>
+                                            <div class="content">
+                                                <h5>
+                                                    <meta charset="utf-8" />Rationale
+                                                </h5>
+                                                <ul>
+                                                    <li>
+                                                        <meta charset="utf-8" />Private businesses with a strong dividend
+                                                        profile and a clear valuation upside within a 1 to 2 year exit
+                                                        horizon
+                                                    </li>
+                                                </ul>
+                                                <h5 style="position:relative;padding-top:30px;visibility:hidden;">Investment
+                                                    Criteria</h5>
+    
+                                                <ul class="right-ul">
+                                                    <li>
+                                                        <meta charset="utf-8" />10%+ revenue growth
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />Profitable and high margins
+                                                    </li>
+                                                    <li>
+                                                        <meta charset="utf-8" />High visibility on exit within 1-2 year
+                                                    </li>
+                                                </ul>
+                                                <style type="text/css">
+                                                    @media(min-width:1025px) {
+                                                        .right-ul {
+                                                            margin-top: 10px;
+                                                        }
+                                                    }
+                                                </style>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-wrapper four-cols">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </section> -->
+            <!-- <script>
+                function openStrategy(et, ci) {
+                    var i, tabcontentstrategy, tablinkstrategy;
+                    tabcontentstrategy = document.getElementsByClassName("tabcontentstrategy");
+                    for (i = 0; i < tabcontentstrategy.length; i++) {
+                        tabcontentstrategy[i].style.display = "none";
+                    }
+                    tablinkstrategy = document.getElementsByClassName("tablinkstrategy");
+                    for (i = 0; i < tablinkstrategy.length; i++) {
+                        tablinkstrategy[i].className = tablinkstrategy[i].className.replace("active", "");
+                    }
+                    document.getElementById(ci).style.display = "block";
+                    et.currentTarget.className += " active";
+                }
+                document.getElementById("defaulttabOpenStrategy").click();
+                // jQuery('#defaulttabOpen').click();
+            </script> -->
+
+            <section class="investment-portfolio">
+                <div class="outer-wrapper">
+                    <div class="tab">
+                        <h2>Our Portfolio</h2>
+                        <button class="tablinks tablinkstest " onclick="openTab(event, 'firstTab')"> RSR Group</button>
+    
+                        <button class="tablinks tablinkstest active" onclick="openTab(event, 'secondTab')" id="defaulttabOpen">RSR
+                            Group+</button>
+                    </div>
+                    <div id="firstTab" class="tabcontent tabcontenttest">
+                        <div class="inner-wrap">
+                            <h3>A Diversified Investment Portfolio</h3>
+                            <div class="logo-wrap">
+                                <a href="{{ url_for('home') }}"> <img src="{{ url_for('frontend_static', filename='img/RSR_Logo_Brand Mark.png')}}" style="width: 80px;"
+                                        alt="RSR_Logo_Brand Mark.png" />
+                                </a>
+                            </div> 
+                        </div>
+                        <div class="tiles-wrapper">
+                            <a href="{{ url_for('businesses') }}#tab1" style="margin: auto;"> <img
+                                    src="{{ url_for('frontend_static', filename='img/foodaroma-logo.png')}}"
+                                    alt="foodaroma-logo.png" />
+                            </a> <a href="{{ url_for('businesses') }}#tab1"> <img 
+                                src="{{ url_for('frontend_static', filename='img/Razin.webp')}} "
+                                    alt="mob_1.jpg" />
+                            </a> <a href="{{ url_for('businesses') }}#tab1"> <img
+                                    src="{{ url_for('frontend_static', filename='img/draft logo.webp')}}"
+                                    alt="Frame_427320264.jpg" />
+                            </a> <a href="{{ url_for('businesses') }}#tab1"  > <img
+                                    src="{{ url_for('frontend_static', filename='img/almarooj_logo.png')}}"
+                                    alt="Frame_427320181.jpg" style="height: 200px;"/>
+                            </a>
+                             <!-- <a href="{{ url_for('businesses') }}#tab1"> <img
+                                    src="{{ url_for('frontend_static', filename='files/8417/4049/5637/investment_portfolio.png')}}"
+                                    alt="investment portfolio.png" />
+                            </a> -->
+                        </div>
+                    </div>
+                    <div id="secondTab" class="tabcontent tabcontenttest">
+                        <div class="inner-wrap">
+                            <h3>A Diversified Investment Portfolio</h3>
+                            <div class="logo-wrap">
+                                <a href="{{ url_for('home') }}"> <img src="{{ url_for('frontend_static', filename='img/RSR_Logo_Brand Mark.png')}}"
+                                        style="width: 80px;" alt="RSR_Logo_Brand Mark.png" />
+                                </a>
+                            </div>
+                        </div>
+                        <div class="tiles-wrapper">
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;"> <img
+                                    src="{{ url_for('frontend_static', filename='img/rtcclogo.webp')}}" alt="Group_1820550547.jpg"
+                                    style="width: 300px;" />
+                            </a>
+                            <a href="{{ url_for('businesses') }}#tab2"> <img
+                                    src="{{ url_for('frontend_static', filename='img/golden.png')}} "
+                                    alt="Frame_427320262 (1).jpg"  style="width: 300px;"/>
+                            </a> 
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;">
+                                <img src="{{ url_for('frontend_static', filename='img/smc_logo.png')}}" style="width: 300px;" alt="smc_logo.png" />
+                            </a>
+                            <a href="{{ url_for('businesses') }}#tab2"> <img
+                                    src="{{ url_for('frontend_static', filename='img/ara_logo.png')}} "
+                                    alt="ara_logo.png"  style="width: 300px;"/>
+                            </a> 
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;"> 
+                                <img
+                                    src="{{ url_for('frontend_static', filename='img/pcc.png')}}"
+                                    alt="pcc.png"  style="width: 230px;"/>
+                            </a>
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;"> <img
+                                    src="{{ url_for('frontend_static', filename='img/alrafaya_logo.png')}}" alt="alrafaya_logo.png"
+                                    style="width: 230px;" />
+                            </a>
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;">
+                                <img src="{{ url_for('frontend_static', filename='img/bayan_logo.png')}}" style="width: 300px;" alt="bayan_logo.png" />
+                            </a>
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;">
+                                <img src="{{ url_for('frontend_static', filename='img/ufg-logo-two.png')}}" style="width: 300px;"
+                                    alt="ufg-logo-two.png" />
+                            </a>
+                            <a href="{{ url_for('businesses') }}#tab2" style="margin: auto;">
+                                <img src="{{ url_for('frontend_static', filename='img/ssem_logo_white.png')}}" style="width: 230px;"
+                                    alt="ssem_logo_white.png" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+    
+            <script>
+                function openTab(event, city) {
+                    var i, tabcontentport, tablinksport;
+                    tabcontentport = document.getElementsByClassName("tabcontenttest");
+                    for (i = 0; i < tabcontentport.length; i++) {
+                        tabcontentport[i].style.display = "none";
+                    }
+                    tablinksport = document.getElementsByClassName("tablinkstest");
+                    for (i = 0; i < tablinksport.length; i++) {
+                        tablinksport[i].className = tablinksport[i].className.replace("active", "");
+                    }
+                    document.getElementById(city).style.display = "block";
+                    event.currentTarget.className += " active";
+                }
+                document.getElementById("defaulttabOpen").click();
+                // jQuery('#defaulttabOpen').click();
+            </script>
+    
+            <!-- <section class="ir-contact">
+                <div class="row">
+                    <div class="col-sm-6 left-col">
+                        <div class="left-box">
+                            <h2> IR Contacts</h2>
+                            <p> For all inquiries and questions concerning investor relations</p>
+    
+                            <a class="mutiply-cta arrowed light" href="mailto:IR@multiply.ae"><span class="arrow">
+                                    <svg width="16" height="13" viewBox="0 0 16 13" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.79688 12.2222L14.5368 6.61111L8.79688 1" stroke="#1D2428"
+                                            stroke-linecap="round" stroke-linejoin="round"></path>
+                                        <path d="M1 6.60938H14.5455" stroke="#1D2428" stroke-linecap="round"
+                                            stroke-linejoin="round"></path>
+                                    </svg>
+                                </span>Contact us</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 rt-col">
+                        <div class="right-box">
+                            <h2> Download Our IR App</h2>
+    
+                            <p> Download our investor relations app to stay updated on the most recent company announcements
+                                and monitor the price of our shares.</p>
+    
+                            <div class="button-group">
+                                <a href="https://apps.apple.com/us/app/multiply-group-ir/id6472697296">
+                                    <img src="{{ url_for('frontend_static', filename='img/app_store.png')}}"
+                                        alt="App Store Button">
+                                </a>
+                                <a href="https://play.google.com/store/apps/details?id=com.euroland.mobiletools.ae_multi">
+                                    <img src="{{ url_for('frontend_static', filename='img/play_store.png')}}"
+                                        alt="App Store Button">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>   -->
+        </section>
+    </main>
+    
+    <div class="push"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

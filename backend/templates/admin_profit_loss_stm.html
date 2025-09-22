@@ -1,0 +1,616 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2>Profit & Loss Statement</h2>
+
+    <!-- Filter Form -->
+    <form method="POST" id="filterForm" class="mb-4 p-4 border rounded bg-light shadow-sm">
+        <div class="row g-3 mb-4">
+            <!-- Header -->
+            <div class="col-12">
+                <h5 class="text-muted mb-3"><i class="bi bi-funnel me-2"></i> Report Filters</h5>
+            </div>
+
+            <!-- Time Period -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <label class="form-label small text-uppercase text-muted fw-bold mb-2">Time Period</label>
+                        <div class="input-group input-group-sm mb-2">
+                        <select class="form-select" name="period" id="periodSelect">
+                            <option value="">Select...</option>
+                            <optgroup label="Current">
+                                <option value="month">This Month</option>
+                                <option value="quarter">This Quarter</option>
+                                <option value="year">This Year</option>
+                            </optgroup>
+                            <optgroup label="Previous">
+                                <option value="last_month">Last Month</option>
+                                <option value="last_quarter">Last Quarter</option>
+                                <option value="last_year">Last Year</option>
+                            </optgroup>
+                        </select>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">From</span>
+                            <input type="date" class="form-control" name="start_date" id="startDate"
+                                value="{{ start_date }}">
+                            <span class="input-group-text">To</span>
+                            <input type="date" class="form-control" name="end_date" id="endDate" value="{{ end_date }}">
+                        </div>
+                        <!-- <button type="button" class="btn btn-primary btn-sm w-100 mt-3" id="applyPeriod">
+                            <i class="bi bi-check-lg me-1"></i> Apply Period
+                        </button> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare -->
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <label class="form-label small text-uppercase text-muted fw-bold mb-2">Compare With</label>
+                        <div class="input-group input-group-sm mb-2">
+                        <select class="form-select" name="compare_period" id="compareSelect">
+                            <option value="">No comparison</option>
+                            <option value="last_month">Previous Month</option>
+                            <option value="last_quarter">Previous Quarter</option>
+                            <option value="last_year">Previous Year</option>
+                            <option value="custom">Custom Date Range</option>
+                        </select>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">From</span>
+                            <input type="date" class="form-control" name="compare_start" id="compareStart"
+                                value="{{ compare_start }}">
+                            <span class="input-group-text">To</span>
+                            <input type="date" class="form-control" name="compare_end" id="compareEnd"
+                                value="{{ compare_end }}">
+                        </div>
+                        <!-- <button type="button" class="btn btn-primary btn-sm w-100 mt-3" id="applyCompare">
+                            <i class="bi bi-check-lg me-1"></i> Apply Comparison
+                        </button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-filter-circle me-2"></i> Generate Report
+                </button>
+                <button type="reset" class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-arrow-clockwise me-2"></i> Reset
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Report Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Profit & Loss Statement</h4>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {% if period %}
+                        Period: {{ period|replace('_', ' ')|title }}
+                        {% elif start_date and end_date %}
+                        Period: {{ start_date }} to {{ end_date }}
+                        {% else %}
+                        Current Period
+                        {% endif %}
+                        {% if compare_period %}
+                        vs {{ compare_period|replace('_', ' ')|title }}
+                        {% endif %}
+                    </h6>
+                    <p class="card-text text-muted small">Generated on: {{ current_time.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- P&L Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Description</th>
+                            <th class="text-end">Amount (SAR 000)</th>
+                            {% if compare_period %}
+                            <th class="text-end">Comparison ({{ compare_period.replace('_',' ')|title }}) (SAR 000)</th>
+                            <th class="text-end">Change (SAR 000)</th>
+                            <th class="text-end">% Change</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                <tbody>
+                    {% set amounts = {} %}
+                    {% set compare_amounts = {} %}
+                    {% set raw_amounts = {} %} {# Add this for raw numeric values #}
+                    {% set raw_compare_amounts = {} %} {# Add this for raw numeric values #}
+                    
+                    {% for row in classification_totals %}
+                    {% set _ = amounts.update({row.head: row.current}) %}
+                    {% set _ = compare_amounts.update({row.head: row.previous}) %}
+                    {# Store raw values for calculations #}
+                    {% set _ = raw_amounts.update({row.head: row.current_value}) %}
+                    {% set _ = raw_compare_amounts.update({row.head: row.previous_value}) %}
+                    {% endfor %}
+                
+                    {% macro format_thousands(value) %}
+                    {% if value is none %}
+                    <!-- Show empty if NULL -->
+                    {% elif value < 0 %} ({{ "{:,}" .format(((value|abs) / 1000)|round(0, 'floor' )|int) }}) {% elif value==0 %} <!--
+                        Show empty instead of zero -->
+                        {% else %}
+                        {{ "{:,}".format(((value) / 1000)|round(0, 'floor')|int) }}
+                        {% endif %}
+                        {% endmacro %}
+                
+                        {% set required_order = [
+                        "Revenue","Cost of Revenue","GROSS PROFIT/LOSS",
+                        "Salaries & Related","GOSI","Medical Insurance","Office Rent",
+                        "Other Office Exp","Professional Fees","Business Travel","Consultation",
+                        "Depreciation","TOTAL EXPENSES","Net ( Loss ) From Operations",
+                        "Unrealized Valuation from Investment at Fair Value",
+                        "Income from investment at FV realised Gain",
+                        "Dividend from investment at fair value P/L",
+                        "Results in Subsidiary","Results in Associate","Dividend from Investment at cost",
+                        "Interest Income","Finance Cost","Zakat/Tax ",
+                        "Income from investment at Octal",
+                        "Change in the fair value of equity investment at fair value through OCI",
+                        "Impairment losses on investment in subsidiary","Gain from disposal of associate",
+                        "Remeasurement of defined employee benefits obligations","Other Income",
+                        "NET PROFIT/LOSS"
+                        ] %}
+                
+                        {% macro calculate_special(head) %}
+                        {% if head == "GROSS PROFIT/LOSS" %}
+                        {% set current = ((raw_amounts.get("Revenue") or 0) + (raw_amounts.get("Cost of Revenue") or 0)) %}
+                        {% set previous = ((raw_compare_amounts.get("Revenue") or 0) + (raw_compare_amounts.get("Cost of Revenue") or 0)) if
+                        raw_compare_amounts else 0 %}
+                        
+                        {% elif head == "TOTAL EXPENSES" %}
+                        {% set current = (
+                        (raw_amounts.get("Salaries & Related") or 0) +
+                        (raw_amounts.get("GOSI") or 0) +
+                        (raw_amounts.get("Medical Insurance") or 0) +
+                        (raw_amounts.get("Office Rent") or 0) +
+                        (raw_amounts.get("Other Office Exp") or 0) +
+                        (raw_amounts.get("Professional Fees") or 0) +
+                        (raw_amounts.get("Business Travel") or 0) +
+                        (raw_amounts.get("Consultation") or 0) +
+                        (raw_amounts.get("Depreciation") or 0)
+                        ) %}
+                        {% set previous = (
+                        (raw_compare_amounts.get("Salaries & Related") or 0) +
+                        (raw_compare_amounts.get("GOSI") or 0) +
+                        (raw_compare_amounts.get("Medical Insurance") or 0) +
+                        (raw_compare_amounts.get("Office Rent") or 0) +
+                        (raw_compare_amounts.get("Other Office Exp") or 0) +
+                        (raw_compare_amounts.get("Professional Fees") or 0) +
+                        (raw_compare_amounts.get("Business Travel") or 0) +
+                        (raw_compare_amounts.get("Consultation") or 0) +
+                        (raw_compare_amounts.get("Depreciation") or 0)
+                        ) if raw_compare_amounts else 0 %}
+                        
+                        {% elif head == "Net ( Loss ) From Operations" %}
+                        {% set current = (
+                        ((raw_amounts.get("Revenue") or 0) + (raw_amounts.get("Cost of Revenue") or 0)) +
+                        (
+                        (raw_amounts.get("Salaries & Related") or 0) +
+                        (raw_amounts.get("GOSI") or 0) +
+                        (raw_amounts.get("Medical Insurance") or 0) +
+                        (raw_amounts.get("Office Rent") or 0) +
+                        (raw_amounts.get("Other Office Exp") or 0) +
+                        (raw_amounts.get("Professional Fees") or 0) +
+                        (raw_amounts.get("Business Travel") or 0) +
+                        (raw_amounts.get("Consultation") or 0) +
+                        (raw_amounts.get("Depreciation") or 0)
+                        )
+                        ) %}
+                        {% set previous = (
+                        ((raw_compare_amounts.get("Revenue") or 0) + (raw_compare_amounts.get("Cost of Revenue") or 0)) +
+                        (
+                        (raw_compare_amounts.get("Salaries & Related") or 0) +
+                        (raw_compare_amounts.get("GOSI") or 0) +
+                        (raw_compare_amounts.get("Medical Insurance") or 0) +
+                        (raw_compare_amounts.get("Office Rent") or 0) +
+                        (raw_compare_amounts.get("Other Office Exp") or 0) +
+                        (raw_compare_amounts.get("Professional Fees") or 0) +
+                        (raw_compare_amounts.get("Business Travel") or 0) +
+                        (raw_compare_amounts.get("Consultation") or 0) +
+                        (raw_compare_amounts.get("Depreciation") or 0)
+                        )
+                        ) if raw_compare_amounts else 0 %}
+                        
+                        {% elif head == "NET PROFIT/LOSS" %}
+                        {% set current = (
+                        ((raw_amounts.get("Revenue") or 0) + (raw_amounts.get("Cost of Revenue") or 0)) +
+                        (
+                        (raw_amounts.get("Salaries & Related") or 0) +
+                        (raw_amounts.get("GOSI") or 0) +
+                        (raw_amounts.get("Medical Insurance") or 0) +
+                        (raw_amounts.get("Office Rent") or 0) +
+                        (raw_amounts.get("Other Office Exp") or 0) +
+                        (raw_amounts.get("Professional Fees") or 0) +
+                        (raw_amounts.get("Business Travel") or 0) +
+                        (raw_amounts.get("Consultation") or 0) +
+                        (raw_amounts.get("Depreciation") or 0)
+                        ) +
+                        (
+                        (raw_amounts.get("Unrealized Valuation from Investment at Fair Value") or 0) +
+                        (raw_amounts.get("Income from investment at FV realised Gain") or 0) +
+                        (raw_amounts.get("Dividend from investment at fair value P/L") or 0) +
+                        (raw_amounts.get("Results in Subsidiary") or 0) +
+                        (raw_amounts.get("Results in Associate") or 0) +
+                        (raw_amounts.get("Dividend from Investment at cost") or 0) +
+                        (raw_amounts.get("Interest Income") or 0) +
+                        (raw_amounts.get("Finance Cost") or 0) +
+                        (raw_amounts.get("Zakat/Tax ") or 0) +
+                        (raw_amounts.get("Income from investment at Octal") or 0) +
+                        (raw_amounts.get("Change in the fair value of equity investment at fair value through OCI") or 0) +
+                        (raw_amounts.get("Impairment losses on investment in subsidiary") or 0) +
+                        (raw_amounts.get("Gain from disposal of associate") or 0) +
+                        (raw_amounts.get("Remeasurement of defined employee benefits obligations") or 0) +
+                        (raw_amounts.get("Other Income") or 0)
+                        )
+                        ) %}
+                        {% set previous = (
+                        ((raw_compare_amounts.get("Revenue") or 0) + (raw_compare_amounts.get("Cost of Revenue") or 0)) +
+                        (
+                        (raw_compare_amounts.get("Salaries & Related") or 0) +
+                        (raw_compare_amounts.get("GOSI") or 0) +
+                        (raw_compare_amounts.get("Medical Insurance") or 0) +
+                        (raw_compare_amounts.get("Office Rent") or 0) +
+                        (raw_compare_amounts.get("Other Office Exp") or 0) +
+                        (raw_compare_amounts.get("Professional Fees") or 0) +
+                        (raw_compare_amounts.get("Business Travel") or 0) +
+                        (raw_compare_amounts.get("Consultation") or 0) +
+                        (raw_compare_amounts.get("Depreciation") or 0)
+                        ) +
+                        (
+                        (raw_compare_amounts.get("Unrealized Valuation from Investment at Fair Value") or 0) +
+                        (raw_compare_amounts.get("Income from investment at FV realised Gain") or 0) +
+                        (raw_compare_amounts.get("Dividend from investment at fair value P/L") or 0) +
+                        (raw_compare_amounts.get("Results in Subsidiary") or 0) +
+                        (raw_compare_amounts.get("Results in Associate") or 0) +
+                        (raw_compare_amounts.get("Dividend from Investment at cost") or 0) +
+                        (raw_compare_amounts.get("Interest Income") or 0) +
+                        (raw_compare_amounts.get("Finance Cost") or 0) +
+                        (raw_compare_amounts.get("Zakat/Tax ") or 0) +
+                        (raw_compare_amounts.get("Income from investment at Octal") or 0) +
+                        (raw_compare_amounts.get("Change in the fair value of equity investment at fair value through OCI") or 0) +
+                        (raw_compare_amounts.get("Impairment losses on investment in subsidiary") or 0) +
+                        (raw_compare_amounts.get("Gain from disposal of associate") or 0) +
+                        (raw_compare_amounts.get("Remeasurement of defined employee benefits obligations") or 0) +
+                        (raw_compare_amounts.get("Other Income") or 0)
+                        )
+                        ) if raw_compare_amounts else 0 %}
+                        
+                        {% else %}
+                        {% set current = raw_amounts.get(head) or 0 %}
+                        {% set previous = (raw_compare_amounts.get(head) or 0) if raw_compare_amounts else 0 %}
+                        {% endif %}
+                        
+                        {% set change = current - previous %}
+                        {% set change_pct = ((change / previous) * 100) if previous and previous != 0 else None %}
+                        {{ current }},{{ previous }},{{ change }},{{ change_pct }}
+                        {% endmacro %}
+                
+                        {% for head in required_order %}
+                        {% if head in ["GROSS PROFIT/LOSS", "TOTAL EXPENSES", "Net ( Loss ) From Operations", "NET PROFIT/LOSS"] %}
+                        {% set special_values = calculate_special(head).split(',') %}
+                        {% set current = special_values[0]|float %}
+                        {% set previous = special_values[1]|float if special_values[1] != 'None' and compare_period else 0 %}
+                        {% set change = current - previous %}
+                        {% set change_pct = ((change / previous) * 100) if previous and previous != 0 else None %}
+                        {% else %}
+                        {% set current = raw_amounts.get(head) or 0 %}
+                        {% set previous = (raw_compare_amounts.get(head) or 0) if compare_period else 0 %}
+                        {% set change = current - previous %}
+                        {% set change_pct = ((change / previous) * 100) if previous and previous != 0 else None %}
+                        {% endif %}
+                    
+                    <tr
+                        class="{% if head in ['GROSS PROFIT/LOSS','TOTAL EXPENSES','Net ( Loss ) From Operations','NET PROFIT/LOSS'] %}table-active fw-bold{% endif %}">
+                        <td>{{ head }}</td>
+                        <td class="text-end">{{ format_thousands(current) }}</td>
+                    
+                        {% if compare_period %}
+                        <td class="text-end">{{ format_thousands(previous) }}</td>
+                        <td class="text-end {% if change > 0 %}text-success{% elif change < 0 %}text-danger{% endif %}">
+                            {{ format_thousands(change) }}
+                        </td>
+                        <td
+                            class="text-end {% if change_pct is not none and change_pct > 0 %}text-success{% elif change_pct is not none and change_pct < 0 %}text-danger{% endif %}">
+                            {% if change_pct is not none %}{{ change_pct|round(1) }}%{% else %}-{% endif %}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    
+                    <!-- Add separator lines for important sections -->
+                    {% if head == "GROSS PROFIT/LOSS" %}
+                    <tr class="border-top border-2">
+                        <td colspan="{% if compare_period %}5{% else %}2{% endif %}"></td>
+                    </tr>
+                    {% elif head == "Net ( Loss ) From Operations" %}
+                    <tr class="border-top border-2">
+                        <td colspan="{% if compare_period %}5{% else %}2{% endif %}"></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+                </table>
+                </div>
+                </div>
+                </div>
+                
+                <!-- Summary Cards -->
+            <!-- Summary Cards -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    {% set net_profit_loss = calculate_special("NET PROFIT/LOSS").split(',')[0]|float %}
+                    <div class="card {% if (net_profit_loss >= 0) %}bg-success text-white{% else %}bg-danger text-white{% endif %}">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Net Profit/Loss</h5>
+                            <h3 class="card-text">{{ format_thousands(net_profit_loss) }}</h3>
+                            {% if compare_period %}
+                            {% set prev_net_profit_loss = calculate_special("NET PROFIT/LOSS").split(',')[1]|float %}
+                            {% if prev_net_profit_loss %}
+                            <p class="card-text small">
+                                Previous: {{ format_thousands(prev_net_profit_loss) }}
+                            </p>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Revenue</h5>
+                            <!-- FIX: Use raw_amounts instead of amounts -->
+                            <h3 class="card-text">{{ format_thousands(raw_amounts.get('Revenue', 0)) }}</h3>
+                            {% if compare_period %}
+                            <!-- FIX: Use raw_compare_amounts instead of compare_amounts -->
+                            {% set prev_revenue = raw_compare_amounts.get('Revenue', 0) %}
+                            {% if prev_revenue %}
+                            <p class="card-text small">
+                                Previous: {{ format_thousands(prev_revenue) }}
+                            </p>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    {% set gross_profit_loss = calculate_special("GROSS PROFIT/LOSS").split(',')[0]|float %}
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Gross Profit</h5>
+                            <h3 class="card-text">{{ format_thousands(gross_profit_loss) }}</h3>
+                            {% if compare_period %}
+                            {% set prev_gross_profit_loss = calculate_special("GROSS PROFIT/LOSS").split(',')[1]|float %}
+                            {% if prev_gross_profit_loss %}
+                            <p class="card-text small">
+                                Previous: {{ format_thousands(prev_gross_profit_loss) }}
+                            </p>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </div>
+                {% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        // Set today's date as default for end date
+        const today = new Date();
+        const todayFormatted = formatDate(today);
+
+        // Set default start date to first day of current month
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const monthStartFormatted = formatDate(monthStart);
+
+        // Set values if not already set
+        if (!$('#endDate').val()) $('#endDate').val(todayFormatted);
+        if (!$('#startDate').val()) $('#startDate').val(monthStartFormatted);
+
+        // Helper function to format date as YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Helper function to get last day of month
+        function getLastDayOfMonth(year, month) {
+            return new Date(year, month + 1, 0);
+        }
+
+        // Period selection change event
+        $('#periodSelect').change(function () {
+            const period = $(this).val();
+            const today = new Date();
+            let startDate, endDate;
+
+            switch (period) {
+                case 'day': // Today only
+                    startDate = new Date(today);
+                    endDate = new Date(today);
+                    break;
+                case 'month': // Current Month (1st to last day)
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    endDate = getLastDayOfMonth(today.getFullYear(), today.getMonth());
+                    break;
+                case 'last_month': // Last Month
+                    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    startDate = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1);
+                    endDate = getLastDayOfMonth(lastMonth.getFullYear(), lastMonth.getMonth());
+                    break;
+                case 'quarter': // Current Quarter
+                    const currentQuarter = Math.floor(today.getMonth() / 3);
+                    if (currentQuarter === 0) {
+                        startDate = new Date(today.getFullYear(), 0, 1);
+                        endDate = new Date(today.getFullYear(), 2, 31);
+                    } else if (currentQuarter === 1) {
+                        startDate = new Date(today.getFullYear(), 3, 1);
+                        endDate = new Date(today.getFullYear(), 5, 30);
+                    } else if (currentQuarter === 2) {
+                        startDate = new Date(today.getFullYear(), 6, 1);
+                        endDate = new Date(today.getFullYear(), 8, 30);
+                    } else {
+                        startDate = new Date(today.getFullYear(), 9, 1);
+                        endDate = new Date(today.getFullYear(), 11, 31);
+                    }
+                    break;
+                case 'last_quarter': // Last Quarter
+                    const quarter = Math.floor(today.getMonth() / 3);
+                    if (quarter === 0) {
+                        // Previous quarter is Q4 of last year
+                        startDate = new Date(today.getFullYear() - 1, 9, 1);
+                        endDate = new Date(today.getFullYear() - 1, 11, 31);
+                    } else {
+                        // Previous quarter is current quarter - 1
+                        const previousQuarter = quarter - 1;
+                        if (previousQuarter === 0) {
+                            startDate = new Date(today.getFullYear(), 0, 1);
+                            endDate = new Date(today.getFullYear(), 2, 31);
+                        } else if (previousQuarter === 1) {
+                            startDate = new Date(today.getFullYear(), 3, 1);
+                            endDate = new Date(today.getFullYear(), 5, 30);
+                        } else {
+                            startDate = new Date(today.getFullYear(), 6, 1);
+                            endDate = new Date(today.getFullYear(), 8, 30);
+                        }
+                    }
+                    break;
+                case 'year': // Current Year (Jan 1 to Dec 31)
+                    startDate = new Date(today.getFullYear(), 0, 1);
+                    endDate = new Date(today.getFullYear(), 11, 31);
+                    break;
+                case 'last_year': // Previous Year (Jan 1 to Dec 31)
+                    startDate = new Date(today.getFullYear() - 1, 0, 1);
+                    endDate = new Date(today.getFullYear() - 1, 11, 31);
+                    break;
+                case 'q1': // Q1 only
+                    startDate = new Date(today.getFullYear(), 0, 1);
+                    endDate = new Date(today.getFullYear(), 2, 31);
+                    break;
+                case 'q2': // Q2 only
+                    startDate = new Date(today.getFullYear(), 3, 1);
+                    endDate = new Date(today.getFullYear(), 5, 30);
+                    break;
+                case 'q3': // Q3 only
+                    startDate = new Date(today.getFullYear(), 6, 1);
+                    endDate = new Date(today.getFullYear(), 8, 30);
+                    break;
+                case 'q4': // Q4 only
+                    startDate = new Date(today.getFullYear(), 9, 1);
+                    endDate = new Date(today.getFullYear(), 11, 31);
+                    break;
+            }
+
+            if (period) {
+                $('#startDate').val(formatDate(startDate));
+                $('#endDate').val(formatDate(endDate));
+            }
+        });
+
+        // Comparison selection change event
+        $('#compareSelect').change(function () {
+            const comparePeriod = $(this).val();
+
+            if (!comparePeriod || comparePeriod === 'custom') {
+                // If no comparison selected or custom, clear the fields
+                $('#compareStart').val('');
+                $('#compareEnd').val('');
+                return;
+            }
+
+            const mainStart = new Date($('#startDate').val());
+            let compareStart, compareEnd;
+
+            switch (comparePeriod) {
+                case 'last_year':
+                    // Previous year (Jan 1 to Dec 31)
+                    compareStart = new Date(mainStart.getFullYear() - 1, 0, 1);
+                    compareEnd = new Date(mainStart.getFullYear() - 1, 11, 31);
+                    break;
+                case 'last_quarter':
+                    // Previous quarter
+                    const quarter = Math.floor(mainStart.getMonth() / 3);
+                    if (quarter === 0) {
+                        // Previous quarter is Q4 of last year
+                        compareStart = new Date(mainStart.getFullYear() - 1, 9, 1);
+                        compareEnd = new Date(mainStart.getFullYear() - 1, 11, 31);
+                    } else {
+                        // Previous quarter is current quarter - 1
+                        const previousQuarter = quarter - 1;
+                        if (previousQuarter === 0) {
+                            compareStart = new Date(mainStart.getFullYear(), 0, 1);
+                            compareEnd = new Date(mainStart.getFullYear(), 2, 31);
+                        } else if (previousQuarter === 1) {
+                            compareStart = new Date(mainStart.getFullYear(), 3, 1);
+                            compareEnd = new Date(mainStart.getFullYear(), 5, 30);
+                        } else {
+                            compareStart = new Date(mainStart.getFullYear(), 6, 1);
+                            compareEnd = new Date(mainStart.getFullYear(), 8, 30);
+                        }
+                    }
+                    break;
+                case 'last_month':
+                    // Previous month
+                    const prevMonth = new Date(mainStart.getFullYear(), mainStart.getMonth() - 1, 1);
+                    compareStart = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1);
+                    compareEnd = getLastDayOfMonth(prevMonth.getFullYear(), prevMonth.getMonth());
+                    break;
+            }
+
+            $('#compareStart').val(formatDate(compareStart));
+            $('#compareEnd').val(formatDate(compareEnd));
+        });
+
+        // Apply period button
+        $('#applyPeriod').click(function () {
+            $('#periodSelect').trigger('change');
+        });
+
+        // Apply comparison button
+        $('#applyCompare').click(function () {
+            $('#compareCompare').trigger('change');
+        });
+
+        // Form reset handler
+        $('button[type="reset"]').click(function () {
+            // Reset dates to default
+            const today = new Date();
+            const todayFormatted = formatDate(today);
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const monthStartFormatted = formatDate(monthStart);
+
+            $('#startDate').val(monthStartFormatted);
+            $('#endDate').val(todayFormatted);
+            $('#compareStart').val('');
+            $('#compareEnd').val('');
+
+            // Reset selects
+            $('#periodSelect').val('');
+            $('#compareSelect').val('');
+        });
+    });
+</script>
+{% endblock %}

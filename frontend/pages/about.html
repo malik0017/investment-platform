@@ -2,6 +2,12 @@
 
 {% block title %} About Us - RSR Group{% endblock %} 
 {% block extra_css %} 
+<style>
+
+.glightbox .team-leaders-popup {
+   width: 100vw !important;
+}
+  </style>
 {% endblock %} 
 
 {% block content %}
@@ -2127,7 +2133,7 @@
             <!-- <h2>Learn More About Us</h2> -->
 
             <p>
-              <a class="mutiply-cta arrowed light" href="careers.html">
+              <a class="mutiply-cta arrowed light" href="{{ url_for('careers') }}">
                 <span class="arrow">
                   <svg
                     width="16"

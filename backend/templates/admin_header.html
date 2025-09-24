@@ -2,18 +2,24 @@
 <header class="adminuiux-header">
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
+      <button class="btn btn-link btn-square sidebar-toggler" type="button" onclick="initSidebar()">
+        <i class="sidebar-svg" data-feather="menu"></i>
+      </button>
       <a class="navbar-brand" href="{{ url_for('admin_dashboard') }}">
-           <img data-bs-img="light" src="{{ url_for('admin_static', filename='admin_assets/images/RSR Logo_Legal Name_V2.png') }}" alt="" style="width: 230px;" />
-          <img data-bs-img="dark" src="{{ url_for('admin_static', filename='admin_assets/images/RSR Logo_Legal.png') }}" alt=""
-            style="width: 230px;" />
+           <img data-bs-img="light" src="{{ url_for('admin_static', filename='admin_assets/images/RSR_Logo_Brand Mark.png') }}" alt=""  />
+          <img data-bs-img="dark" src="{{ url_for('admin_static', filename='admin_assets/images/RSR_Brand Logo.jpg') }}" alt="" />
+              <div class="">
+                <span class="h4">RSR</span>
+                <p class="company-tagline">Admin Dashboard</p>
+              </div>
       </a>
       <div class="collapse navbar-collapse right-in-device justify-content-center" id="header-navbar">
         <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0">
-          <li class="nav-item">
+          <!-- <li class="nav-item">
              <button class="btn btn-link btn-square sidebar-toggler" type="button" onclick="initSidebar()">
         <i class="sidebar-svg" data-feather="menu"></i>
       </button>
-          </li>
+          </li> -->
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
           </li>

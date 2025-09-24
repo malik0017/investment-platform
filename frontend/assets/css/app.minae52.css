@@ -15068,6 +15068,19 @@ p {
   left: 20px !important;
   right: auto !important;
 }
+
+.multiplyBuisnessPopup .multiplyBuisnessPopupInner{
+  align-items: center !important;
+}
+.multiplyBuisnessPopup .multiplyBuisnessPopupInner .team-leaders-popup {
+  width: 100vw !important;
+  height: 100% !important;
+}
+.gslide .gslide-inner-content .ginner-container .gslide-media{
+  height: 100% !important;
+  width: 100vw !important;
+ }
+
 .page-arabic .glightbox-members-popup .team-leaders-popup {
   padding: 60px 80px 0 150px;
 }

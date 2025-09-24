@@ -80,6 +80,9 @@
     </script>
 
     {% block extra_css %}
+    <style>
+       
+    </style>
     {% endblock %}
 
 </head>
@@ -91,7 +94,7 @@
         </div>
     </div>
     <div class="init-overlay"></div>
-    <script>
+    <!-- <script>
         if (document.cookie.indexOf("visited=") == -1) {
             setCookie("visited", "1");
             $('.site-loader').css({display : 'flex'});
@@ -99,7 +102,7 @@
             $('.init-overlay').css({display : 'block'});
            
         }
-    </script>
+    </script> -->
     
     <div class="wrapper ccm-page page-type-home page-template-home">
         <div class="mobile-nav ">
@@ -112,6 +115,11 @@
                 <li class=""><a href="{{ url_for('businesses') }}" target="_self" class="">Businesses</a></li>
                 <li class=""><a href="{{url_for('overviews')}}" target="_self" class="">Portfolio</a></li>
                 <li class=""><a href="{{url_for('news_insights')}}" target="_self" class="">News &amp; Insights</a></li>
+                {% if session.get('is_logged_in_admin_dashboard') %}
+                <li><a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a></li>
+                {% else %}
+                <li><a href="{{ url_for('admin_login') }}">Login</a></li>
+                {% endif %}
             </ul>
                 </div>
             </div>

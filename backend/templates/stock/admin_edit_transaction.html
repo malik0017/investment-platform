@@ -1,0 +1,117 @@
+<!-- backend/templates/stock/admin_edit_transaction.html -->
+{% extends "admin_base.html" %}
+
+{% block title %}Edit Transaction - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center py-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">Edit Transaction</h1>
+            <p class="text-muted">Edit transaction for {{ stock.company_name }} ({{ stock.ticker_symbol }})</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_transactions', stock_id=stock.id) }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to History
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('edit_transaction_post', transaction_id=transaction.id) }}">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show"
+                    role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="transaction_date" class="form-label">Transaction Date *</label>
+                        <input type="date" class="form-control" id="transaction_date" name="transaction_date"
+                            value="{{ transaction.transaction_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Transaction Type</label>
+                        <div>
+                            <span
+                                class="badge bg-{% if transaction.transaction_type == 'BUY' %}success{% else %}danger{% endif %}">
+                                {{ transaction.transaction_type }}
+                            </span>
+                            <small class="text-muted ms-2">(Type cannot be changed)</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="shares" class="form-label">Shares *</label>
+                        <input type="number" class="form-control" id="shares" name="shares" step="0.0001" min="0.0001"
+                            value="{{ transaction.shares }}" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="price_per_share" class="form-label">Price per Share *</label>
+                        <input type="number" class="form-control" id="price_per_share" name="price_per_share"
+                            step="0.0001" min="0.0001" value="{{ transaction.price_per_share }}" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="total_amount" class="form-label">Total Amount</label>
+                        <input type="text" class="form-control" id="total_amount" value="{{ "
+                            %.2f"|format(transaction.shares * transaction.price_per_share) }}" readonly>
+                        <div class="form-text">Calculated automatically</div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes"
+                            rows="3">{{ transaction.notes or '' }}</textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> Changing this transaction will recalculate the entire stock
+                            portfolio.
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('view_transactions', stock_id=stock.id) }}"
+                                class="btn btn-secondary me-md-2">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Update Transaction
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-calculate total amount
+    document.getElementById('shares').addEventListener('input', calculateTotal);
+    document.getElementById('price_per_share').addEventListener('input', calculateTotal);
+
+    function calculateTotal() {
+        const shares = parseFloat(document.getElementById('shares').value) || 0;
+        const price = parseFloat(document.getElementById('price_per_share').value) || 0;
+        const total = shares * price;
+        document.getElementById('total_amount').value = total.toFixed(2);
+    }
+</script>
+{% endblock %}

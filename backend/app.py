@@ -12,10 +12,6 @@ backend_root = os.path.abspath(os.path.dirname(__file__))
 if backend_root not in sys.path:
     sys.path.insert(0, backend_root)
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from flask import Blueprint, Flask, jsonify, render_template, redirect, url_for, request, session, send_from_directory, flash,  abort
 from jinja2 import FileSystemLoader
 from datetime import datetime, timedelta, date
@@ -28,11 +24,12 @@ import xmlrpc
 from backend.models import MutualFundHolding, MutualFundTransaction
 from backend.extension import db, migrate
 from backend.models import CalendarEvent, Company, MutualFund, MutualFundHolding, MutualFundNAV, User, StockPortfolio, StockTransaction, SystemLog, ProjectCategory, Project, ProjectTask, ProjectTeam, ProjectMilestone, ProjectDocument, ProjectActivity 
-from backend.services.utils import get_period_label, get_investment_time_series, get_period_range_profit_loss, get_balance_sheet_period_range, format_balance_sheet_value, get_project_stats, create_initial_project_categories, calculate_project_progress, map_analytic_account, log_project_activity, prepare_chart_data, prepare_investment_chart_data, calculate_profit_loss, calculate_expenses, calculate_liabilities, calculate_assets
+from backend.services.utils import get_period_label, get_investment_time_series, get_period_range_profit_loss, get_balance_sheet_period_range, format_balance_sheet_value, get_project_stats, create_initial_project_categories, calculate_project_progress, map_analytic_account, log_project_activity, prepare_chart_data, prepare_investment_chart_data, calculate_profit_loss, calculate_expenses, calculate_liabilities, calculate_assets, calculate_working_capital, calculate_detailed_assets_liabilities
 from backend.services.mutual_fund_service import get_mutual_fund_holdings, get_mutual_fund_performance, update_mutual_fund_nav, add_mutual_fund_transaction, get_mutual_fund_summary_by_category
 from backend.services.investment_service import get_investment_report, get_detailed_investments, get_realised_gain_details, get_profit_loss_totals, get_balance_sheet_totals, get_unrealised_gain_detail, get_cash_flow_account, get_cash_flow_transaction_detail, get_total_loans, get_dividends_details, get_fund_income, get_equity_income, get_equity_investment, get_fund_investment, get_monthly_profit_data, get_monthly_expense_data, get_monthly_liability_data, get_monthly_asset_data
 from backend.services.investment_service import calculate_portfolio_growth, calculate_weekly_growth_rate, calculate_profit_revenue, calculate_total_investment
 from backend.services.stock_service import StockService
+from backend.services.associates_service import AssociatesService
 from backend.services.whattsapp_notification import send_whatsapp_notification, format_phone_number
 from dotenv import load_dotenv 
 from backend.routes.odoo_routes import odoo_bp
@@ -84,6 +81,14 @@ def create_app():
         SEND_FILE_MAX_AGE_DEFAULT=0,
         TEMPLATES_AUTO_RELOAD=True,
         SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URL', 'mysql+pymysql://root:@127.0.0.1:3306/investment_db'),
+        SQLALCHEMY_ENGINE_OPTIONS={
+            'connect_args': {
+                'ssl': {
+                    'ssl_mode': 'REQUIRED',
+                    'ssl_ca': '/etc/ssl/certs/ca-certificates.crt'  # Standard CA certificates path
+                }
+            }
+        },
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         SECRET_KEY=os.getenv('SECRET_KEY', 'change_me_in_prod'),
 
@@ -349,10 +354,14 @@ def register_routes(app):
             # Get balance sheet totals for the selected period
             current_totals = get_balance_sheet_totals(filter_start, filter_end)
             current_dict = {row['head']: row['amount'] for row in current_totals}
+
+            # Calculate detailed assets and liabilities breakdown
+            assets_liabilities_breakdown = calculate_detailed_assets_liabilities(current_dict)
             
             # Get profit and loss statement data
             pl_data = get_profit_loss_totals(filter_start, filter_end)
             pl_dict = {row['head']: row['amount'] for row in pl_data}
+            # print("🔍 P&L Data Retrieved:", pl_dict)
             
             # Calculate current values
             current_profit_loss = calculate_profit_loss(current_dict)
@@ -360,6 +369,9 @@ def register_routes(app):
             total_expenses = calculate_expenses(current_dict)
             total_liabilities = calculate_liabilities(current_dict)
             total_assets = calculate_assets(current_dict)
+
+            # ADD WORKING CAPITAL CALCULATION
+            current_working_capital, current_assets_total, current_liabilities_total = calculate_working_capital(current_dict)
 
             # Calculate YTD values for all metrics
             ytd_start_date = datetime(filter_end.year, 1, 1).date()
@@ -374,7 +386,84 @@ def register_routes(app):
             ytd_expenses = calculate_expenses(ytd_dict)
             ytd_liabilities = calculate_liabilities(ytd_dict)
             ytd_assets = calculate_assets(ytd_dict)
+            
+            # Calculate GP Margin and MP Margin with CORRECT NET PROFIT/LOSS calculation
+            def calculate_net_profit_loss(pl_dict):
+                """Calculate NET PROFIT/LOSS using correct accounting formula"""
+                print("🔍 Starting NET PROFIT/LOSS calculation...")
+                
+                # Get individual values from the dictionary
+                revenue = pl_dict.get('Revenue', 0)
+                cost_of_revenue = pl_dict.get('Cost of Revenue', 0)
+                interest_income = pl_dict.get('Interest Income', 0)
+                finance_cost = pl_dict.get('Finance Cost', 0)
+                zakat_tax = pl_dict.get('Zakat/Tax ', 0)
+                other_income = pl_dict.get('Other Income', 0)
+                
+                # Investment income items (positive contributions to profit)
+                investment_income_items = [
+                    "Unrealized Valuation from Investment at Fair Value",
+                    "Income from investment at FV realised Gain",
+                    "Dividend from investment at fair value P/L",
+                    "Results in Subsidiary", 
+                    "Results in Associate", 
+                    "Dividend from Investment at cost",
+                    "Income from investment at Octal",
+                    "Gain from disposal of associate",
+                    "Change in the fair value of equity investment at fair value through OCI",
+                    "Remeasurement of defined employee benefits obligations",
+                    "Impairment losses on investment in subsidiary"
+                ]
 
+                # Operating expense items
+                operating_expense_items = [
+                    "Salaries & Related", 
+                    "GOSI", 
+                    "Medical Insurance",
+                    "Office Rent",
+                    "Other Office Exp", 
+                    "Professional Fees", 
+                    "Business Travel",
+                    "Consultation", 
+                    "Depreciation"
+                ]
+                
+                # Calculate totals
+                total_investment_income = sum(pl_dict.get(item, 0) for item in investment_income_items)
+                total_operating_expenses = sum(pl_dict.get(item, 0) for item in operating_expense_items)
+                
+                # Standard accounting formula for NET PROFIT/LOSS:
+                # NET PROFIT/LOSS = Revenue - Cost of Revenue - Operating Expenses + Investment Income - Investment Expenses + Other Income - Finance Cost - Zakat/Tax + Interest Income
+                net_profit_loss = abs(total_investment_income + other_income + revenue + interest_income + finance_cost + zakat_tax + cost_of_revenue + total_operating_expenses)
+                
+                return net_profit_loss
+                
+            def calculate_margins(pl_dict):
+                revenue = abs(pl_dict.get('Revenue', 0))
+                # print(f"💰 Revenue for margin calculation: {revenue}")
+                
+                # Calculate Gross Profit/Loss (Revenue - Cost of Revenue)
+                cost_of_revenue = abs(pl_dict.get('Cost of Revenue', 0))
+                gross_profit_loss = revenue - cost_of_revenue
+                # print(f"💰 Gross Profit/Loss: {gross_profit_loss}")
+                
+                # Calculate NET PROFIT/LOSS using the proper function
+                net_profit_loss = calculate_net_profit_loss(pl_dict)
+                
+                # Calculate margins (handle division by zero)
+                gp_margin = (gross_profit_loss / revenue * 100) if revenue != 0 else 0
+                mp_margin = (net_profit_loss / revenue * 100) if revenue != 0 else 0
+                
+                # print(f"💰 GP Margin: {gp_margin}%")
+                # print(f"💰 MP Margin: {mp_margin}%")
+                
+                return gp_margin, mp_margin, gross_profit_loss, net_profit_loss, revenue
+
+            # Calculate margins for current period
+            gp_margin, mp_margin, gross_profit, net_profit, revenue = calculate_margins(pl_dict)
+            
+            # Calculate YTD margins
+            ytd_gp_margin, ytd_mp_margin, ytd_gross_profit, ytd_net_profit, ytd_revenue = calculate_margins(ytd_pl_dict)
             # Get monthly data for charts
             monthly_data = get_monthly_profit_data(6, filter_end)
             monthly_expense_data = get_monthly_expense_data(6, filter_end)
@@ -394,16 +483,30 @@ def register_routes(app):
                 ytd_expenses=ytd_expenses,
                 ytd_liabilities=ytd_liabilities,
                 ytd_assets=ytd_assets,
+                current_working_capital=current_working_capital,
+                current_assets_total=current_assets_total,
+                current_liabilities_total=current_liabilities_total,
                 monthly_expense_data=monthly_expense_data,
                 monthly_data=monthly_data,
                 monthly_liability_data=monthly_liability_data,
                 monthly_asset_data=monthly_asset_data,
-                pl_data=pl_dict,  # Add P&L data to template
-                ytd_pl_data=ytd_pl_dict,  # Add YTD P&L data
+                assets_liabilities_breakdown=assets_liabilities_breakdown,
+                pl_data=pl_dict,  
+                ytd_pl_data=ytd_pl_dict,
                 period=period,
                 ytd_only=ytd_only,
                 end_date=filter_end.strftime('%Y-%m-%d') if filter_end else '',
-                start_date=filter_start.strftime('%Y-%m-%d') if filter_start else ''
+                start_date=filter_start.strftime('%Y-%m-%d') if filter_start else '',
+                gp_margin=gp_margin,
+                mp_margin=mp_margin,
+                gross_profit=gross_profit,
+                net_profit=net_profit,
+                revenue=revenue,
+                ytd_gp_margin=ytd_gp_margin,
+                ytd_mp_margin=ytd_mp_margin,
+                ytd_gross_profit=ytd_gross_profit,
+                ytd_net_profit=ytd_net_profit,
+                ytd_revenue=ytd_revenue
             )
         except Exception as e:
             import traceback
@@ -587,8 +690,8 @@ def register_routes(app):
                 compare_end = compare_end_date
                 compare_period = "custom"  # Set this to enable comparison columns
 
-            print(f"Main Period: {filter_start} → {filter_end}")
-            print(f"Comparison Period: {compare_start} → {compare_end}")
+            # print(f"Main Period: {filter_start} → {filter_end}")
+            # print(f"Comparison Period: {compare_start} → {compare_end}")
 
             # Get totals
             current_totals = get_profit_loss_totals(filter_start, filter_end)
@@ -1871,6 +1974,116 @@ def register_routes(app):
     @role_required(['super_admin', 'Group_Chief_accountant'])
     def admin_deposit():
         return render_template('admin_deposit.html', current_year=datetime.now().year)
+    
+    @app.route('/admin/associates')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def admin_associates():
+        try:
+            # Get all companies summary
+            companies_summary = AssociatesService.get_all_companies_summary()
+            
+            # Get available companies and years for filters
+            available_companies = AssociatesService.get_available_companies()
+            
+            return render_template('admin_associates.html', 
+                                current_year=datetime.now().year,
+                                companies_summary=companies_summary,
+                                available_companies=available_companies)
+        except Exception as e:
+            print(f"Error in admin_associates: {e}")
+            return render_template('admin_associates.html', 
+                                current_year=datetime.now().year,
+                                companies_summary={},
+                                available_companies=[])
+
+    # Add API endpoints for AJAX calls - REMOVE THE DUPLICATES BELOW THESE
+    @app.route('/api/associates/<company_name>/financial-data')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def get_associate_financial_data(company_name):
+        year = request.args.get('year', type=int)
+        data_type = request.args.get('type')  # balance_sheet, income_statement, ratios
+        
+        try:
+            if data_type == 'balance_sheet':
+                data = AssociatesService.get_balance_sheet(company_name, year)
+            elif data_type == 'income_statement':
+                data = AssociatesService.get_income_statement(company_name, year)
+                print(f"here is the data type in income statements {data}" )
+            elif data_type == 'ratios':
+                data = AssociatesService.get_financial_ratios(company_name, year)
+            else:
+                data = AssociatesService.get_financial_data(company_name, year)
+            
+            return jsonify(data)
+        except Exception as e:
+            print(f"Error getting financial data: {e}")
+            return jsonify({})
+
+    @app.route('/api/associates/<company_name>/years')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def get_associate_years(company_name):
+        try:
+            years = AssociatesService.get_company_years(company_name)
+            return jsonify(years)
+        except Exception as e:
+            print(f"Error getting years: {e}")
+            return jsonify([])
+
+    @app.route('/api/associates/summary')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def get_associates_summary():
+        try:
+            summary = AssociatesService.get_all_companies_summary()
+            return jsonify(summary)
+        except Exception as e:
+            print(f"Error getting summary: {e}")
+            return jsonify({})
+        
+    @app.route('/api/associates/trend-data')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def get_associates_trend_data():
+        companies = request.args.getlist('companies[]')
+        metrics = request.args.getlist('metrics[]')
+        years_back = request.args.get('years_back', 5, type=int)
+        
+        if not companies or not metrics:
+            return jsonify({'error': 'Companies and metrics are required'}), 400
+        
+        try:
+            trend_data = AssociatesService.get_trend_data(companies, metrics, years_back)
+            return jsonify(trend_data)
+        except Exception as e:
+            print(f"Error getting trend data: {e}")
+            return jsonify({'error': 'Failed to get trend data'}), 500
+
+    @app.route('/api/associates/comparison-data')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def get_associates_comparison_data():
+        companies = request.args.getlist('companies[]')
+        year = request.args.get('year', type=int)
+        metrics = request.args.getlist('metrics[]')
+        
+        if not companies or not year:
+            return jsonify({'error': 'Companies and year are required'}), 400
+        
+        try:
+            comparison_data = AssociatesService.get_comparison_data(companies, year, metrics)
+            return jsonify(comparison_data)
+        except Exception as e:
+            print(f"Error getting comparison data: {e}")
+            return jsonify({'error': 'Failed to get comparison data'}), 500
+
+    @app.route('/api/associates/available-metrics')
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def get_available_metrics():
+        try:
+            metrics = AssociatesService.get_available_metrics()            
+            return jsonify(metrics)            
+
+        except Exception as e:
+            print(f"Error getting available metrics: {e}")
+            return jsonify([])
+        
 
     @app.route('/admin/logout')
     def admin_logout():
@@ -2314,6 +2527,32 @@ def register_routes(app):
     def admin_stock_view():
         """Main stock portfolio view"""
         stocks = StockPortfolio.query.all()
+
+        # Auto-update all stock values including YTD
+        for stock in stocks:
+            stock.update_values()
+        
+        # Initialize year-start prices for stocks that don't have them
+        current_year = datetime.now().year
+        from backend.models import StockYearStartPrice
+        
+        for stock in stocks:
+            if stock.no_of_shares > 0:
+                existing_price = StockYearStartPrice.query.filter_by(
+                    stock_id=stock.id, year=current_year
+                ).first()
+                
+                if not existing_price and stock.market_price:
+                    # Create current year price record if missing
+                    year_start_price = StockYearStartPrice(
+                        stock_id=stock.id,
+                        year=current_year,
+                        price=stock.market_price,  # Use current price as fallback
+                        recorded_date=datetime.now().date()
+                    )
+                    db.session.add(year_start_price)
+        
+        db.session.commit()
         
         # Calculate portfolio totals with proper None handling
         total_investment = sum(float(stock.total_cost_basis or 0) for stock in stocks)
@@ -2441,7 +2680,7 @@ def register_routes(app):
             stock, realized_gain_loss = StockService.sell_stock(stock_id, shares_to_sell, sell_price, sell_date)
             
             db.session.commit()
-            flash(f'Sold {shares_to_sell} shares of {stock.ticker_symbol}. Realized P&L: ${realized_gain_loss:.2f}', 'success')
+            flash(f'Sold {shares_to_sell} shares of {stock.ticker_symbol}. Realized P&L: {realized_gain_loss:.2f}', 'success')
             
         except Exception as e:
             db.session.rollback()
@@ -2488,7 +2727,11 @@ def register_routes(app):
     def delete_stock(stock_id):
         """Delete a stock and all its transactions"""
         try:
-            # First delete all transactions for this stock
+            # First delete all year_start_prices for this stock
+            from backend.models import StockYearStartPrice
+            StockYearStartPrice.query.filter_by(stock_id=stock_id).delete()
+            
+            # Then delete all transactions for this stock
             StockTransaction.query.filter_by(stock_id=stock_id).delete()
             
             # Then delete the stock
@@ -2503,26 +2746,114 @@ def register_routes(app):
             app.logger.error(f"Error deleting stock: {str(e)}")
             flash('Error deleting stock', 'error')
         
-        # Return a redirect response
         return redirect(url_for('admin_stock_view'))
-
-    # Set year-end prices route
-    @app.route('/stock/set_year_end_prices', methods=['POST'])
+    
+    @app.route('/admin/stock_year_end_process', methods=['POST'])
     @role_required(['super_admin', 'Group_Chief_accountant'])
-    def set_year_end_prices():
+    def stock_year_end_process():
+        """Process year-end prices for all stocks"""
         try:
-            year_end_date = datetime.strptime(request.form.get('year_end_date'), '%Y-%m-%d').date()
+            from backend.models import StockPortfolio, StockYearStartPrice
             
-            # Use service method
-            updated_count = StockService.set_year_end_prices(year_end_date)
+            current_year = datetime.now().year
+            next_year = current_year + 1
             
-            flash(f'Year-end prices set for {updated_count} stocks. YTD gains reset.', 'success')
+            stocks = StockPortfolio.query.all()
+            processed_count = 0
+            
+            for stock in stocks:
+                if stock.market_price:
+                    # Create year-start price record for next year
+                    existing_price = StockYearStartPrice.query.filter_by(
+                        stock_id=stock.id, year=next_year
+                    ).first()
+                    
+                    if not existing_price:
+                        year_start_price = StockYearStartPrice(
+                            stock_id=stock.id,
+                            year=next_year,
+                            price=stock.market_price,
+                            recorded_date=datetime.now().date()
+                        )
+                        db.session.add(year_start_price)
+                        processed_count += 1
+            
+            db.session.commit()
+            flash(f'Year-end prices captured for {processed_count} stocks. Ready for {next_year} YTD calculations.', 'success')
             
         except Exception as e:
             db.session.rollback()
-            flash(f'Error setting year-end prices: {str(e)}', 'error')
+            flash(f'Error processing year-end: {str(e)}', 'error')
         
         return redirect(url_for('admin_stock_view'))
+    
+    # Edit transaction routes
+    @app.route('/stock/transaction/edit/<int:transaction_id>', methods=['GET'])
+    @role_required(['super_admin', 'Group_Chief_accountant', 'portfolio_manager'])
+    def edit_transaction(transaction_id):
+        """Edit a specific transaction"""
+        transaction = StockTransaction.query.get_or_404(transaction_id)
+        stock = StockPortfolio.query.get_or_404(transaction.stock_id)
+        return render_template('stock/admin_edit_transaction.html', 
+                            transaction=transaction, stock=stock)
+
+    @app.route('/stock/transaction/edit/<int:transaction_id>', methods=['POST'])
+    @role_required(['super_admin', 'Group_Chief_accountant', 'portfolio_manager'])
+    def edit_transaction_post(transaction_id):
+        """Update a specific transaction and recalculate stock"""
+        try:
+            transaction = StockTransaction.query.get_or_404(transaction_id)
+            stock = StockPortfolio.query.get_or_404(transaction.stock_id)
+            
+            # Store old values for recalculation
+            old_shares = transaction.shares
+            old_price = transaction.price_per_share
+            old_total = transaction.total_amount
+            old_type = transaction.transaction_type
+            
+            # Update transaction
+            transaction.transaction_date = datetime.strptime(
+                request.form.get('transaction_date'), '%Y-%m-%d'
+            ).date()
+            transaction.shares = Decimal(request.form.get('shares'))
+            transaction.price_per_share = Decimal(request.form.get('price_per_share'))
+            transaction.total_amount = transaction.shares * transaction.price_per_share
+            transaction.notes = request.form.get('notes')
+            
+            # Recalculate entire stock portfolio from scratch
+            StockService.recalculate_stock_from_transactions(stock.id)
+            
+            db.session.commit()
+            flash('Transaction updated successfully! Stock portfolio recalculated.', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating transaction: {str(e)}', 'error')
+        
+        return redirect(url_for('view_transactions', stock_id=transaction.stock_id))
+
+    # Delete transaction route
+    @app.route('/stock/transaction/delete/<int:transaction_id>', methods=['POST'])
+    @role_required(['super_admin', 'Group_Chief_accountant'])
+    def delete_transaction(transaction_id):
+        """Delete a specific transaction and recalculate stock"""
+        try:
+            transaction = StockTransaction.query.get_or_404(transaction_id)
+            stock_id = transaction.stock_id
+            
+            db.session.delete(transaction)
+            
+            # Recalculate entire stock portfolio from scratch
+            StockService.recalculate_stock_from_transactions(stock_id)
+            
+            db.session.commit()
+            flash('Transaction deleted successfully! Stock portfolio recalculated.', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error deleting transaction: {str(e)}', 'error')
+        
+        return redirect(url_for('view_transactions', stock_id=stock_id))
     
     # @app.route('/admin/projects')
     # @role_required(['super_admin'])

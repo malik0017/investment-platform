@@ -89,7 +89,7 @@
             <div class="card mutual-fund-card">
                 <div class="card-body text-center">
                     <i
-                        class="bi bi-heart display-4 {% if performance_data.total_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}"></i>
+                        class="bi bi-award display-4 {% if performance_data.total_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}"></i>
                     <h3
                         class="mt-2 {% if performance_data.total_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
                         SAR {{ "%.2f"|format(performance_data.total_gain_loss/1000000) }}M

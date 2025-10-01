@@ -14,10 +14,12 @@
       </div>
       <div class="text-center collapse" id="usersidebarprofile">
         <figure class="avatar avatar-100 rounded-circle coverimg my-3">
-          <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" />
+          <!-- <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" /> -->
+          <img src="{{ url_for('frontend_static', filename='img/bilal_LE.jpg')}}" alt="" />          
         </figure>
-        <h5 class="mb-1 fw-medium">{{ session.get('username', 'Admin') }}</h5>
-        <p class="small">Administrator</p>
+        <h5 class="mb-1 fw-medium">{{ session.get('username', 'admin') }}</h5>
+        <!-- <h5 class="mb-1 fw-medium">Bilal</h5> -->
+        <p class="small">Super Admin</p>
       </div>
     </div>
     <ul class="nav flex-column menu-active-line">
@@ -33,12 +35,6 @@
           <span class="menu-name">Cash & Bank
         </a>
       </li>
-      <!-- <li class="nav-item">
-        <a href="{{ url_for('admin_users') }}" class="nav-link">
-          <i class="menu-icon bi bi-people"></i>
-          <span class="menu-name">Users</span>
-        </a>
-      </li> -->
       <li class="nav-item">
         <a href="{{ url_for('admin_projects') }}" class="nav-link">
           <i class="menu-icon bi bi-kanban"></i>
@@ -81,96 +77,19 @@
               <span class="menu-name">Equity Portfolio</span>
             </a>
           </div>
-          <!-- <div class="nav-item">
-            <a href="{{ url_for('admin_deposit') }}" class="nav-link">
-          <i class="menu-icon bi bi-clipboard-check"></i>
-          <span class="menu-name">Investments In OCI</span>
-        </a>
-          </div> -->
         </div>
       </li>
            
-      <li class="nav-item dropdown">
-        <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-    <i class="menu-icon bi bi-piggy-bank"></i>
-    <span class="menu-name">Associates</span>
-  </a>
-  <div class="dropdown-menu">
-     <div class="nav-item">
-            <a href="#" class="nav-link">
-          <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">RTCC</span>
-        </a>
-          </div>
-          <div class="nav-item">
-            <a href="#" class="nav-link">
-          <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">Abetong</span>
-        </a>
-          </div>
-          <div class="nav-item">
-            <a href="#" class="nav-link">
-            <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">SSEM</span>
-        </a>
-          </div>
-           <div class="nav-item">
-            <a href="#" class="nav-link">
-             <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">Golden Chicken</span>
-        </a>
-          </div>
-           <div class="nav-item">
-            <a href="#" class="nav-link">
-            <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">PPC</span>
-        </a>
-          </div>
-          <div class="nav-item">
-            <a href="#" class="nav-link">
-             <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">Razin</span>
-        </a>
-          </div>
-  </div>
-</li>
-      
-<li class="nav-item dropdown">
-  <a href="javascript:void(0)" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+     
+<li class="nav-item">
+  <a href="{{ url_for('admin_associates') }}" class="nav-link">
     <i class="menu-icon bi bi-layers"></i>
-    <span class="menu-name">Subsidiaries</span>
+    <span class="menu-name">Associates/Subsidiaries
   </a>
-  <div class="dropdown-menu">
-     <div class="nav-item">
-            <a href="#" class="nav-link">
-          <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">Murooj</span>
-        </a>
-          </div>
-           <div class="nav-item">
-            <a href="#" class="nav-link">
-          <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">Food Aroma</span>
-        </a>
-          </div>
-            <div class="nav-item">
-            <a href="#" class="nav-link">
-          <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">Impulse</span>
-        </a>
-          </div>
-           <div class="nav-item">
-            <a href="#" class="nav-link">
-          <i class="menu-icon bi bi-bank"></i>
-      <span class="menu-name">SARPCO</span>
-        </a>
-          </div>
-           
-  </div>
 </li>
 <li class="nav-item">
   <a href="{{url_for('investor_relations')}}" class="nav-link">
-    <i class="menu-icon bi bi-bar-chart-line"></i>
+    <i class="menu-icon bi bi-hdd-rack"></i>
     <span class="menu-name">Results & Presentation
   </a>
 </li>
@@ -222,11 +141,11 @@
         <div class="card-body p-2">
           <div class="row gx-2">
             <div class="col-12 d-flex justify-content-between">
-              <a href="#" class="btn btn-square btn-link theme-red">
+              <!-- <a href="#" class="btn btn-square btn-link theme-red">
                 <span class="position-relative">
                   <i data-feather="plus"></i>
                 </span>
-              </a>
+              </a> -->
               <a href="{{ url_for('admin_schedule_calendar') }}" class="btn btn-square btn-link">
                 <span class="position-relative">
                   <i data-feather="calendar"></i>
@@ -244,12 +163,12 @@
       </div>
     </div>
     <ul class="nav flex-column menu-active-line">
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a href="#" class="nav-link">
           <i class="menu-icon" data-feather="help-circle"></i>
           <span class="menu-name">Help Center</span>
         </a>
-      </li>
+      </li> -->
       <li class="nav-item">
         <a href="{{ url_for('admin_logout') }}" class="nav-link">
           <i class="menu-icon" data-feather="log-out"></i>

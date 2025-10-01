@@ -246,9 +246,9 @@
     const priceDifference = purchasePrice - currentAvgPrice;
 
     // Update preview fields
-    document.getElementById('previewAveragePrice').textContent = '$' + newAveragePrice.toFixed(4);
+    document.getElementById('previewAveragePrice').textContent = ' ' + newAveragePrice.toFixed(4);
     document.getElementById('previewTotalShares').textContent = totalShares.toFixed(4);
-    document.getElementById('previewTotalInvestment').textContent = '$' + totalInvestment.toFixed(2);
+    document.getElementById('previewTotalInvestment').textContent = '' + totalInvestment.toFixed(2);
 
     // Update form fields
     document.getElementById('total_cost').value = newInvestment.toFixed(2);
@@ -274,17 +274,17 @@
         const expectedImpactElement = document.getElementById('expectedImpact');
 
         if (purchaseVsMarket > 0) {
-            purchaseVsMarketElement.textContent = '$+' + purchaseVsMarket.toFixed(4) + ' (Above Market)';
+            purchaseVsMarketElement.textContent = '+' + purchaseVsMarket.toFixed(4) + ' (Above Market)';
             purchaseVsMarketElement.className = 'text-danger';
             expectedImpactElement.textContent = 'Diluting Gains';
             expectedImpactElement.className = 'text-warning';
         } else if (purchaseVsMarket < 0) {
-            purchaseVsMarketElement.textContent = '$' + purchaseVsMarket.toFixed(4) + ' (Below Market)';
+            purchaseVsMarketElement.textContent = ' ' + purchaseVsMarket.toFixed(4) + ' (Below Market)';
             purchaseVsMarketElement.className = 'text-success';
             expectedImpactElement.textContent = 'Improving Position';
             expectedImpactElement.className = 'text-success';
         } else {
-            purchaseVsMarketElement.textContent = '$0.0000 (At Market)';
+            purchaseVsMarketElement.textContent = '0.0000 (At Market)';
             purchaseVsMarketElement.className = 'text-secondary';
             expectedImpactElement.textContent = 'Neutral Impact';
             expectedImpactElement.className = 'text-secondary';

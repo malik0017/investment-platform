@@ -1,7 +1,13 @@
 # backend/models.py
+from datetime import datetime
+
+from backend.services.stock_service import StockService
 from .extension import db 
 
 class User(db.Model):
+    __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
+     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False) # HASH THIS IN PROD!
@@ -308,10 +314,20 @@ class StockPortfolio(db.Model):
     
     transactions = db.relationship('StockTransaction', backref='stock', lazy=True, 
                                  cascade='all, delete-orphan')
+    
+    # FIXED: Remove the backref here since it's defined in StockYearStartPrice
+    year_start_prices = db.relationship('StockYearStartPrice', back_populates='stock', lazy=True)
 
     def update_values(self):
-        """Update calculated values based on current data"""
-        if self.market_price and self.no_of_shares:
+        """Update calculated values including automatic YTD"""
+        if self.no_of_shares == 0:
+            # When all shares are sold, reset values but keep transaction history
+            self.current_value = 0
+            self.unrealized_gain_loss = 0
+            self.unrealized_gain_loss_percent = 0
+            self.unrealized_ytd_gain_loss = 0
+            self.unrealized_ytd_gain_loss_percent = 0
+        elif self.market_price and self.no_of_shares:
             self.current_value = self.no_of_shares * self.market_price
             self.unrealized_gain_loss = self.current_value - self.total_cost_basis
             if self.total_cost_basis > 0:
@@ -319,14 +335,86 @@ class StockPortfolio(db.Model):
                     self.unrealized_gain_loss / self.total_cost_basis * 100
                 )
             
-            # Update YTD values
-            if self.price_at_last_year_end:
-                ytd_value = self.no_of_shares * self.price_at_last_year_end
-                self.unrealized_ytd_gain_loss = self.current_value - ytd_value
-                if ytd_value > 0:
+            # AUTOMATIC YTD CALCULATION
+            self.calculate_ytd_values()
+    
+    def calculate_ytd_values(self):
+        """Calculate YTD gains/losses based on transaction year"""
+        current_year = datetime.now().year
+        
+        if self.no_of_shares == 0 or not self.current_value:
+            self.unrealized_ytd_gain_loss = 0
+            self.unrealized_ytd_gain_loss_percent = 0
+            return
+        
+        # Get all transactions for current year
+        current_year_transactions = [t for t in self.transactions 
+                                if t.transaction_date.year == current_year]
+        
+        if not current_year_transactions:
+            # No transactions in current year - use year-start price
+            jan_1_price = self.get_january_first_price(current_year)
+            if jan_1_price and self.no_of_shares:
+                jan_1_value = self.no_of_shares * jan_1_price
+                self.unrealized_ytd_gain_loss = self.current_value - jan_1_value
+                if jan_1_value > 0:
                     self.unrealized_ytd_gain_loss_percent = (
-                        self.unrealized_ytd_gain_loss / ytd_value * 100
+                        self.unrealized_ytd_gain_loss / jan_1_value * 100
                     )
+                else:
+                    self.unrealized_ytd_gain_loss_percent = 0
+            else:
+                self.unrealized_ytd_gain_loss = 0
+                self.unrealized_ytd_gain_loss_percent = 0
+        else:
+            # Calculate YTD based on current year transactions
+            ytd_investment = 0
+            ytd_shares = 0
+            
+            for transaction in current_year_transactions:
+                if transaction.transaction_type == 'BUY':
+                    ytd_investment += transaction.total_amount
+                    ytd_shares += transaction.shares
+                elif transaction.transaction_type == 'SELL':
+                    # For sells, calculate cost basis of sold shares
+                    avg_cost_ytd = ytd_investment / ytd_shares if ytd_shares > 0 else 0
+                    cost_of_sold = transaction.shares * avg_cost_ytd
+                    ytd_investment -= cost_of_sold
+                    ytd_shares -= transaction.shares
+            
+            if ytd_shares > 0:
+                current_ytd_value = ytd_shares * self.market_price
+                self.unrealized_ytd_gain_loss = current_ytd_value - ytd_investment
+                if ytd_investment > 0:
+                    self.unrealized_ytd_gain_loss_percent = (
+                        self.unrealized_ytd_gain_loss / ytd_investment * 100
+                    )
+                else:
+                    self.unrealized_ytd_gain_loss_percent = 0
+            else:
+                self.unrealized_ytd_gain_loss = 0
+                self.unrealized_ytd_gain_loss_percent = 0
+    
+    def get_january_first_price(self, year):
+        """Get the price on January 1st of the given year"""
+        # Check if we have a year-start price record
+        year_start_price = StockYearStartPrice.query.filter_by(
+            stock_id=self.id, year=year
+        ).first()
+        
+        if year_start_price:
+            return year_start_price.price
+        
+        # Fallback: use last year's price if available
+        last_year_price = StockYearStartPrice.query.filter_by(
+            stock_id=self.id
+        ).order_by(StockYearStartPrice.year.desc()).first()
+        
+        if last_year_price:
+            return last_year_price.price
+        
+        # Final fallback: use average cost
+        return self.average_cost
 
 class StockTransaction(db.Model):
     """Records every single Buy and Sell transaction."""
@@ -342,6 +430,20 @@ class StockTransaction(db.Model):
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+class StockYearStartPrice(db.Model):
+    """Tracks stock prices at the start of each year for YTD calculations"""
+    __tablename__ = 'stock_year_start_prices'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    stock_id = db.Column(db.Integer, db.ForeignKey('stock_portfolio.id'), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Numeric(18, 4), nullable=False)
+    recorded_date = db.Column(db.Date, nullable=False)
+    
+    # FIXED: Use back_populates instead of backref to avoid conflict
+    stock = db.relationship('StockPortfolio', back_populates='year_start_prices')
+    
+    __table_args__ = (db.UniqueConstraint('stock_id', 'year', name='unique_stock_year'),)
 
 class SystemLog(db.Model):
     """Logs system-level actions like year-end price setting."""
@@ -566,3 +668,279 @@ class MutualFundTransaction(db.Model):
 
     def __repr__(self):
         return f'<MutualFundTransaction {self.transaction_type} - {self.amount}>'
+    
+class AssociateCompany(db.Model):
+    __tablename__ = 'associate_companies'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_code = db.Column(db.String(50), unique=True, nullable=False)
+    company_name = db.Column(db.String(255), nullable=False)
+    display_name = db.Column(db.String(255))
+    description = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+
+    def __repr__(self):
+        return f'<AssociateCompany {self.company_name}>'
+
+# Base model for all associate data tables
+class AssociateDataBase:
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+# Individual associate company models
+class RSRData(db.Model):
+    __tablename__ = 'rsr_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_rsr_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_rsr_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<RSRData {self.company_name} {self.financial_year}>'
+
+class RTCCData(db.Model):
+    __tablename__ = 'rtcc_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_rtcc_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_rtcc_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<RTCCData {self.company_name} {self.financial_year}>'
+
+class SMCData(db.Model):
+    __tablename__ = 'smc_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_smc_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_smc_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<SMCData {self.company_name} {self.financial_year}>'
+
+class SSEMData(db.Model):
+    __tablename__ = 'ssem_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_ssem_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_ssem_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<SSEMData {self.company_name} {self.financial_year}>'
+
+class RazinData(db.Model):
+    __tablename__ = 'razin_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_razin_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_razin_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<RazinData {self.company_name} {self.financial_year}>'
+
+class RafayaData(db.Model):
+    __tablename__ = 'rafaya_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_rafaya_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_rafaya_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<RafayaData {self.company_name} {self.financial_year}>'
+
+class PPCData(db.Model):
+    __tablename__ = 'ppc_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_ppc_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_ppc_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<PPCData {self.company_name} {self.financial_year}>'
+
+class GChickenData(db.Model):
+    __tablename__ = 'g_chicken_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_gchicken_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_gchicken_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<GChickenData {self.company_name} {self.financial_year}>'
+
+class BayanData(db.Model):
+    __tablename__ = 'bayan_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_bayan_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_bayan_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<BayanData {self.company_name} {self.financial_year}>'
+
+class AbetongData(db.Model):
+    __tablename__ = 'abetong_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_abetong_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_abetong_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<AbetongData {self.company_name} {self.financial_year}>'
+
+class FoodAromaData(db.Model):
+    __tablename__ = 'food_aroma'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_foodaroma_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_foodaroma_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<FoodAromaData {self.company_name} {self.financial_year}>'
+
+class ImpulseData(db.Model):
+    __tablename__ = 'impulse_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_impulse_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_impulse_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<ImpulseData {self.company_name} {self.financial_year}>'
+
+class MaroojData(db.Model):
+    __tablename__ = 'marooj_data'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(50), nullable=False)
+    financial_year = db.Column(db.Integer, nullable=False)
+    account_item = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.DECIMAL(18, 2))
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    __table_args__ = (
+        db.Index('idx_marooj_company_year', 'company_name', 'financial_year'),
+        db.Index('idx_marooj_item', 'account_item'),
+    )
+    
+    def __repr__(self):
+        return f'<MaroojData {self.company_name} {self.financial_year}>'
+
+# Mapping dictionary for easy access
+ASSOCIATE_MODELS = {
+    'RSR': RSRData,
+    'RTCC': RTCCData,
+    'SMC': SMCData,
+    'SSEM': SSEMData,
+    'Razin': RazinData,
+    'Rafaya': RafayaData,
+    'PPC': PPCData,
+    'G.Chicken': GChickenData,
+    'Bayan': BayanData,
+    'Abetong': AbetongData,
+    'Food Aroma': FoodAromaData,
+    'Impulse': ImpulseData,
+    'Marooj': MaroojData
+}

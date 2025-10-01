@@ -1083,7 +1083,7 @@ Admin{% endblock %}
                             cells.forEach(cell => {
                               const text = cell.textContent;
                               const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
-                              cell.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
+                              cell.innerHTML = text.replace(regex, '<span class="highlight">1</span>');
                             });
                           }
 

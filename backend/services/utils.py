@@ -7,7 +7,6 @@ from flask import session
 from backend.models import Project, ProjectActivity, ProjectCategory, ProjectTask
 from ..extension import db
 from sqlalchemy import text
-import pytz
 
 def get_period_label(period, today=None):
     """Return a human-friendly label for period (Q2 2025, Jan 2025, 2024, etc.)."""
@@ -601,3 +600,80 @@ def calculate_assets(data_dict):
     ])
     
     return current_assets + non_current_assets
+
+def calculate_working_capital(data_dict):
+    """Calculate Working Capital = Current Assets - Current Liabilities"""
+    
+    # Current Assets items
+    current_assets_items = [
+        "Cash & Cash Equivalent",
+        "Account Receivable Other Prepaid",
+        "Inventory",
+        "Due from Related Party",
+        "Short Term Deposit"
+    ]
+    
+    # Current Liabilities items
+    current_liabilities_items = [
+        "Account Payable , Accrued Other Liabilities",
+        "Short Term Loan",
+        "Provision for Zakat/Tax",
+        "Due to Related Party",
+        "Deffered Income"
+    ]
+    
+    current_assets = sum(data_dict.get(k, 0) for k in current_assets_items)
+    current_liabilities = abs(sum(data_dict.get(k, 0) for k in current_liabilities_items))
+    
+    working_capital = current_assets - current_liabilities
+    return working_capital, current_assets, current_liabilities
+
+def calculate_detailed_assets_liabilities(data_dict):
+    """Calculate detailed breakdown of assets and liabilities"""
+    
+    # Short-term Assets
+    short_term_assets_items = [
+        "Cash & Cash Equivalent",
+        "Account Receivable Other Prepaid",
+        "Inventory",
+        "Due from Related Party",
+        "Short Term Deposit"
+    ]
+    
+    # Long-term Assets
+    long_term_assets_items = [
+        "Investment in Subsidiaries",
+        "Investment in Associate",
+        "Investment at Cost",
+        "Investment at fair value",
+        "Investment Property",
+        "Property Plant & Equipment",
+        "Intangible Assets"
+    ]
+    
+    # Short-term Liabilities
+    short_term_liabilities_items = [
+        "Account Payable , Accrued Other Liabilities",
+        "Short Term Loan",
+        "Provision for Zakat/Tax",
+        "Due to Related Party",
+        "Deffered Income"
+    ]
+    
+    # Long-term Liabilities
+    long_term_liabilities_items = [
+        "Employees defined benefits Liabilities",
+        "Long Term Loan"
+    ]
+    
+    short_term_assets = sum(data_dict.get(k, 0) for k in short_term_assets_items)
+    long_term_assets = sum(data_dict.get(k, 0) for k in long_term_assets_items)
+    short_term_liabilities = abs(sum(data_dict.get(k, 0) for k in short_term_liabilities_items))
+    long_term_liabilities = abs(sum(data_dict.get(k, 0) for k in long_term_liabilities_items))
+    
+    return {
+        'short_term_assets': short_term_assets,
+        'long_term_assets': long_term_assets,
+        'short_term_liabilities': short_term_liabilities,
+        'long_term_liabilities': long_term_liabilities
+    }

@@ -186,7 +186,10 @@ body.dark-mode .adminuiux-header {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="{{ url_for('admin_static', filename='admin_assets/js/app.js') }}"></script>
+
 <!-- <script src="{{ url_for('admin_static', filename='admin_assets/js/investment/investment-statistics.js') }}"> </script> -->
+<!-- <script src="{{ url_for('admin_static', filename='admin_assets/js/latest_app.js') }}"></script>
+<script src="{{ url_for('admin_static', filename='admin_assets/js/adminux-finance-bank.js') }}"> </script> -->
 
 
    <script src="{{ url_for('admin_static', filename='admin_assets/plugins/apexcharts-bundle/js/apexcharts.min.js') }}"></script>
@@ -391,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const value = context.raw || 0;
                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                 const percentage = Math.round((value / total) * 100);
-                return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+                return `${label}: ${value.toLocaleString()} (${percentage}%)`;
               }
             }
           }
@@ -435,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
   //           beginAtZero: false,
   //           ticks: {
   //             callback: function(value) {
-  //               return '' + (value / 1000).toLocaleString() + '             k';
+  //               return '' + (value / 1000).toLocaleString() + 'k';
   //             }
   //           }
   //         }
@@ -446,11 +449,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
   document.addEventListener('DOMContentLoaded', function () {
-    const d    kModeBtn = document.getElementById('btn-layout-modes-dark-pag      
+    const darkModeBtn = document.getElementById('btn-layout-modes-dark-page');
 
     if (darkModeBtn) {
-      darkModeBtn.addEventListener('click', functi      ) {
-        toggleD        e();
+      darkModeBtn.addEventListener('click', function () {
+        toggleDarkMode();
       });
     }
 

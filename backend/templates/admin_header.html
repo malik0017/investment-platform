@@ -15,16 +15,11 @@
       </a>
       <div class="collapse navbar-collapse right-in-device justify-content-center" id="header-navbar">
         <ul class="navbar-nav mx-lg-3 mb-2 mb-md-0">
-          <!-- <li class="nav-item">
-             <button class="btn btn-link btn-square sidebar-toggler" type="button" onclick="initSidebar()">
-        <i class="sidebar-svg" data-feather="menu"></i>
-      </button>
-          </li> -->
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('admin_portfolio') }}">Portfolio</a>
+            <a class="nav-link" href="{{ url_for('admin_stock_view') }}">Portfolio</a>
           </li>
           <li class="nav-item">
              <a href="{{ url_for('home') }}" class="nav-link">
@@ -35,9 +30,6 @@
         </ul>
       </div>
       <div class="ms-auto">
-        <button class="btn btn-link btn-square btn-icon btn-link-header" type="button" onclick="openSearch()">
-          <i data-feather="search"></i>
-        </button>
         <button class="btn btn-link btn-square btnsunmoon btn-link-header" id="btn-layout-modes-dark-page">
           <i class="sun mx-auto" data-feather="sun"></i>
           <i class="moon mx-auto" data-feather="moon"></i>
@@ -62,11 +54,11 @@
                   </a>
                 </div>
                 <div class="col-4">
-                  <a class="dropdown-item square-item" href="{{ url_for('admin_users') }}">
+                  <a class="dropdown-item square-item" href="{{ url_for('admin_financial_performance') }}">
                     <div class="avatar avatar-40 rounded mb-2">
-                      <i class="bi bi-people fs-4 mx-0"></i>
+                      <i class="bi bi-bar-chart-line fs-4 mx-0"></i>
                     </div>
-                    <p class="mb-0">Users</p>
+                    <p class="mb-0">Financials</p>
                   </a>
                 </div>
                 <div class="col-4">
@@ -82,49 +74,12 @@
           </div>
         </div>
         <div class="dropdown d-inline-block">
-          <button class="btn btn-link btn-square btn-icon btn-link-header dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i data-feather="bell"></i>
-            <span class="position-absolute top-0 end-0 badge rounded-pill bg-danger p-1">
-              <small>3</small>
-              <span class="visually-hidden">unread messages</span>
-            </span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end notification-dd sm-mi-95px">
-            <li>
-              <a class="dropdown-item p-2" href="#">
-                <div class="row gx-3">
-                  <div class="col-auto">
-                    <figure class="avatar avatar-40 rounded-circle bg-pink">
-                      <i class="bi bi-gift text-white"></i>
-                    </figure>
-                  </div>
-                  <div class="col">
-                    <p class="mb-2 small">
-                      New user registered
-                    </p>
-                    <span class="row">
-                      <span class="col">
-                        <span class="badge badge-light rounded-pill text-bg-warning small">User</span>
-                      </span>
-                      <span class="col-auto small opacity-75">Just now</span>
-                    </span>
-                  </div>
-                </div>
-              </a>
-            </li>
-            <li class="text-center">
-              <button class="btn btn-link text-center" onclick="notifcationAll()">
-                View all <i class="bi bi-arrow-right fs-14"></i>
-              </button>
-            </li>
-          </ul>
-        </div>
-        <div class="dropdown d-inline-block">
           <a class="dropdown-toggle btn btn-link btn-square btn-link-header style-none no-caret px-0" id="userprofiledd" data-bs-toggle="dropdown" aria-expanded="false" role="button">
             <div class="row gx-0 d-inline-flex">
               <div class="col-auto align-self-center">
                 <figure class="avatar avatar-28 rounded-circle coverimg align-middle">
-                  <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" id="userphotoonboarding2" />
+                  <!-- <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" id="userphotoonboarding2" /> -->
+                    <img src="{{ url_for('frontend_static', filename='img/bilal_LE.jpg')}}" alt="" id="userphotoonboarding2"/>
                 </figure>
               </div>
             </div>
@@ -134,20 +89,22 @@
               <div class="row gx-0">
                 <div class="col-auto px-3">
                   <figure class="avatar avatar-50 rounded-circle coverimg align-middle">
-                    <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" />
+                    <!-- <img src="{{ url_for('admin_static', filename='admin_assets/images/modern-ai-image/user-6.jpg') }}" alt="" /> -->
+                      <img src="{{ url_for('frontend_static', filename='img/bilal_LE.jpg')}}" alt="" />
                   </figure>
                 </div>
                 <div class="col align-self-center">
                   <p class="mb-1"><span>{{ session.get('username', 'Admin') }}</span></p>
-                  <p class="small">Administrator</p>
+                  <!-- <p class="mb-1"><span>Bilal</span></p> -->
+                  <p class="small">Super Admin</p>
                 </div>
               </div>
             </div>
             <div class="px-2">
               <div>
-                <a class="dropdown-item" href="#">
+                <!-- <a class="dropdown-item" href="#">
                   <i data-feather="user" class="avatar avatar-18 me-1"></i> My Profile
-                </a>
+                </a> -->
               </div>
               <div>
                 <a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">
@@ -155,12 +112,12 @@
                   Dashboard
                 </a>
               </div>
-              <div>
+              <!-- <div>
                 <a class="dropdown-item" href="#">
                   <i data-feather="settings" class="avatar avatar-18 me-1"></i>
                   Settings
                 </a>
-              </div>
+              </div> -->
               <div>
                 <a class="dropdown-item theme-red" href="{{ url_for('admin_logout') }}">
                   <i data-feather="power" class="avatar avatar-18 me-1"></i>

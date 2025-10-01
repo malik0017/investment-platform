@@ -148,53 +148,51 @@ def get_detailed_investments(start_date=None, end_date=None):
         print("Error in get_detailed_investments:", str(e))
         return []
 
-def get_profit_loss_totals(start_date=None, end_date=None):
-    """Get classification totals for P&L statement"""
-    try:
-        query = text("""
-            SELECT 
-                coa.classification as head,
-                SUM(gl.balance) as amount
-            FROM gl_transactions gl
-            JOIN chart_of_accounts coa ON gl.account_code = coa.code
-            WHERE coa.classification IN (
-                'Revenue', 'Cost of Revenue', 'Salaries & Related','GOSI','Medical Insurance',
-                'Office Rent','Other Office Exp','Professional Fees','Business Travel','Consultation',
-                'Depreciation','Unrealized Valuation from Investment at Fair Value','Income from investment at FV realised Gain',
-                'Dividend from investment at fair value P/L','Results in Subsidiary','Results in Associate','Dividend from Investment at cost',
-                'Interest Income','Finance Cost','Zakat/Tax','Income from investment at Octal',
-                'Change in the fair value of equity investment at fair value through OCI',
-                'Impairment losses on investment in subsidiary','Gain from disposal of associate',
-                'Remeasurement of defined employee benefits obligations','Other Income'
-            )
-            AND (:start_date IS NULL OR DATE(gl.transaction_date) >= :start_date)
-            AND (:end_date IS NULL OR DATE(gl.transaction_date) <= :end_date)
-            GROUP BY coa.classification
-            ORDER BY coa.classification;
-        """)
+# def get_profit_loss_totals(start_date=None, end_date=None):
+#     """Get classification totals for P&L statement"""
+#     try:
+#         query = text("""
+#             SELECT 
+#                 coa.classification as head,
+#                 SUM(gl.balance) as amount
+#             FROM gl_transactions gl
+#             JOIN chart_of_accounts coa ON gl.account_code = coa.code
+#             WHERE coa.classification IN (
+#                 'Revenue', 'Cost of Revenue', 'Salaries & Related','GOSI','Medical Insurance',
+#                 'Office Rent','Other Office Exp','Professional Fees','Business Travel','Consultation',
+#                 'Depreciation','Unrealized Valuation from Investment at Fair Value','Income from investment at FV realised Gain',
+#                 'Dividend from investment at fair value P/L','Results in Subsidiary','Results in Associate','Dividend from Investment at cost',
+#                 'Interest Income','Finance Cost','Zakat/Tax','Income from investment at Octal',
+#                 'Change in the fair value of equity investment at fair value through OCI',
+#                 'Impairment losses on investment in subsidiary','Gain from disposal of associate',
+#                 'Remeasurement of defined employee benefits obligations','Other Income'
+#             )
+#             AND (:start_date IS NULL OR DATE(gl.transaction_date) >= :start_date)
+#             AND (:end_date IS NULL OR DATE(gl.transaction_date) <= :end_date)
+#             GROUP BY coa.classification
+#             ORDER BY coa.classification;
+#         """)
         
-        # Convert date objects to strings if needed
-        if isinstance(start_date, date):
-            start_date = start_date.strftime('%Y-%m-%d')
-        if isinstance(end_date, date):
-            end_date = end_date.strftime('%Y-%m-%d')
+#         if isinstance(start_date, date):
+#             start_date = start_date.strftime('%Y-%m-%d')
+#         if isinstance(end_date, date):
+#             end_date = end_date.strftime('%Y-%m-%d')
         
-        result = db.session.execute(query, {
-            'start_date': start_date,
-            'end_date': end_date
-        }).fetchall()
+#         result = db.session.execute(query, {
+#             'start_date': start_date,
+#             'end_date': end_date
+#         }).fetchall()
         
-        # Convert Decimal to float for template compatibility
-        return [{
-            'head': row._mapping['head'],
-            'amount': float(row._mapping['amount']) if row._mapping['amount'] is not None else 0.0
-        } for row in result]
+#         return [{
+#             'head': row._mapping['head'],
+#             'amount': float(row._mapping['amount']) if row._mapping['amount'] is not None else 0.0
+#         } for row in result]
         
-    except Exception as e:
-        print(f"Error in get_classification_totals: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return []
+#     except Exception as e:
+#         print(f"Error in get_classification_totals: {str(e)}")
+#         import traceback
+#         traceback.print_exc()
+#         return []
     
 
 def get_balance_sheet_totals(start_date=None, end_date=None):
@@ -394,7 +392,7 @@ def get_profit_loss_totals(start_date=None, end_date=None):
                 'Office Rent','Other Office Exp','Professional Fees','Business Travel','Consultation',
                 'Depreciation','Unrealized Valuation from Investment at Fair Value','Income from investment at FV realised Gain',
                 'Dividend from investment at fair value P/L','Results in Subsidiary','Results in Associate','Dividend from Investment at cost',
-                'Interest Income','Finance Cost','Zakat/Tax','Income from investment at Octal',
+                'Interest Income','Finance Cost','Zakat/Tax ','Income from investment at Octal',
                 'Change in the fair value of equity investment at fair value through OCI',
                 'Impairment losses on investment in subsidiary','Gain from disposal of associate',
                 'Remeasurement of defined employee benefits obligations','Other Income'
@@ -416,6 +414,8 @@ def get_profit_loss_totals(start_date=None, end_date=None):
             'end_date': end_date
         }).fetchall()
         
+        # print(f"get_profit_loss_totals: {result}")
+
         # Convert Decimal to float for template compatibility
         return [{
             'head': row._mapping['head'],
@@ -1381,7 +1381,7 @@ def calculate_profit_revenue(start_date, end_date):
         expense_items = [
             "Cost of Revenue", "Salaries & Related", "GOSI", "Medical Insurance",
             "Office Rent", "Other Office Exp", "Professional Fees", "Business Travel",
-            "Consultation", "Depreciation", "Finance Cost", "Zakat/Tax",
+            "Consultation", "Depreciation", "Finance Cost", "Zakat/Tax ",
             "Impairment losses on investment in subsidiary"
         ]
         

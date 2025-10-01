@@ -92,6 +92,181 @@ Financial Performance - Investment Admin
             display: none;
         }
     }
+    /* Riskometer Styles for GP and MP */
+    .riskometer {
+        --riskometer-width: 240px;
+        --riskometer-height: calc(var(--riskometer-width) / 2);
+        align-items: flex-end;
+        background: radial-gradient(
+                at 50% var(--riskometer-height),
+                transparent 50%,
+                hsla(0, 0%, 100%, 0)
+            ),
+            conic-gradient(
+                from 270deg at bottom,
+                #08a046 0 30deg,
+                #00cc1b 30deg 60deg,
+                #fe0 60deg 90deg,
+                #ffae07 90deg 120deg,
+                #fc7a1e 120deg 150deg,
+                #c80036 150deg 180deg
+            );
+        background-blend-mode: color-dodge;
+        border-radius: var(--riskometer-height) var(--riskometer-height) 0 0;
+        display: flex;
+        height: var(--riskometer-height);
+        justify-content: center;
+        margin: 0 auto 30px;
+        position: relative;
+        width: var(--riskometer-width);
+    }
+    .riskometer:before {
+        --inner-circle-width-offset: calc(var(--riskometer-height) * 20 / 100);
+        --inner-circle-width: calc(
+            var(--riskometer-height) + var(--inner-circle-width-offset)
+        );
+        --inner-circle-height: calc(var(--inner-circle-width) / 2);
+        background: #fff;
+        border-radius: var(--inner-circle-width) var(--inner-circle-width) 0 0;
+        bottom: 0;
+        content: "";
+        display: block;
+        height: var(--inner-circle-height);
+        position: absolute;
+        width: var(--inner-circle-width);
+        z-index: 1;
+    }
+    .riskometer .indicator {
+        --indicator-width-offset: calc(var(--riskometer-height) * 10 / 100);
+        --indicator-width: calc(
+            var(--riskometer-height) - var(--indicator-width-offset)
+        );
+        --indicator-height: calc(var(--indicator-width) / 2);
+        height: var(--indicator-height);
+        position: absolute;
+        width: var(--indicator-width);
+        z-index: 1;
+    }
+    .riskometer .indicator:after {
+        background-color: var(--adminuiux-theme-accent-1);
+        border: 2px solid var(--adminuiux-theme-1);
+        border-radius: 50%;
+        content: "";
+        height: 20px;
+        left: 50%;
+        margin-left: -10px;
+        position: absolute;
+        top: calc(100% - 10px);
+        width: 20px;
+        z-index: 1;
+    }
+    .riskometer .indicator:before {
+        content: "";
+        --arrow-width: calc(var(--riskometer-height) * 0.06);
+        --arrow-height: calc(var(--riskometer-height) * 0.5);
+        --arrow-width-double: calc(var(--arrow-width) * 2);
+        border: var(--arrow-width) solid transparent;
+        border-right: var(--arrow-height) solid var(--adminuiux-theme-1);
+        bottom: calc(var(--riskometer-height) * -0.055);
+        display: block;
+        left: calc(var(--riskometer-height) * -0.115);
+        position: absolute;
+        rotate: var(--arrow-rotation);
+        transform-origin: calc(var(--indicator-height) + var(--arrow-width-double))
+            var(--arrow-width);
+        transition: rotate 0.3s;
+        width: calc(var(--riskometer-height) * 0.01);
+        z-index: 0;
+    }
+
+    /* Dynamic risk levels for GP Margin */
+    .gp-riskometer.excellent { --arrow-rotation: 15deg; }
+    .gp-riskometer.good { --arrow-rotation: 45deg; }
+    .gp-riskometer.moderate { --arrow-rotation: 75deg; }
+    .gp-riskometer.poor { --arrow-rotation: 105deg; }
+    .gp-riskometer.critical { --arrow-rotation: 135deg; }
+    .gp-riskometer.extreme { --arrow-rotation: 165deg; }
+
+    /* Dynamic risk levels for MP Margin */
+    .mp-riskometer.excellent { --arrow-rotation: 15deg; }
+    .mp-riskometer.good { --arrow-rotation: 45deg; }
+    .mp-riskometer.moderate { --arrow-rotation: 75deg; }
+    .mp-riskometer.poor { --arrow-rotation: 105deg; }
+    .mp-riskometer.critical { --arrow-rotation: 135deg; }
+    .mp-riskometer.extreme { --arrow-rotation: 165deg; }
+
+    /* Status indicator */
+    .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+
+    .status-excellent { background-color: #08a046; }
+    .status-good { background-color: #00cc1b; }
+    .status-moderate { background-color: #fe0; }
+    .status-poor { background-color: #ffae07; }
+    .status-critical { background-color: #fc7a1e; }
+    .status-extreme { background-color: #c80036; }
+
+    .riskometer-value {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+        z-index: 2;
+    }
+
+    .riskometer-labels {
+        position: absolute;
+        width: 100%;
+        top: -25px;
+        text-align: center;
+        font-size: 12px;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    .gp-riskometer .riskometer-labels span:first-child { float: left; margin-left: 10px; }
+    .gp-riskometer .riskometer-labels span:last-child { float: right; margin-right: 10px; }
+
+    .mp-riskometer .riskometer-labels span:first-child { float: left; margin-left: 10px; }
+    .mp-riskometer .riskometer-labels span:last-child { float: right; margin-right: 10px; }
+
+/* Working Capital Pyramid Chart Styles */
+.pyramid-chart-container {
+    position: relative;
+    height: 200px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.working-capital-status {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.status-positive {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.status-negative {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
 </style>
 {% endblock %}
 
@@ -252,13 +427,12 @@ Financial Performance - Investment Admin
                 </div>
             </div>
         </div>
-        <!-- Profit and Loss Statement Breakdown (Waterfall Chart) -->
-        <div class="col-12 col-lg-12 col-xl-12 mb-4">
-            <div class="card adminuiux-card">
+        <div class="col-12 col-lg-12 col-xl-8 mb-4">
+            <div class="card adminuiux-card h-100">
                 <div class="card-header">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6>Profit and Loss Waterfall Analysis</h6>
+                            <h6>Profit and Loss Statement Breakdown</h6>
                         </div>
                         <div class="col-auto">
                             <button class="btn btn-sm btn-outline-primary" onclick="refreshPLChart()">
@@ -268,694 +442,722 @@ Financial Performance - Investment Admin
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="w-100 height-500">
-                        <canvas id="profitLossWaterfallChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-12 col-xl-8 mb-4">
-            <div class="card adminuiux-card">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h6>Profit and Loss Statement Breakdown</h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
                     <div class="w-100 height-500 ">
                         <canvas id="profitLossStatementChart"></canvas>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card adminuiux-card h-100">
-                <div class="card-header">
-                    <h6>Ages in Years</h6>
-                </div>
-                <div class="card-body pb-0"><canvas id="doughnutchart" class="mx-auto mb-3 height-180"></canvas>
-                    <p class="text-secondary small">It looks like a children age between 0-15 are have more
-                        cases than expected.</p>
-                    <div class="row">
-                        <div class="col-auto mb-3">
-                            <p class="h4 mb-1">40</p>
-                            <p class="text-secondary small"><span
-                                    class="me-1 avatar avatar-10 rounded bg-green"></span>0-15</p>
-                        </div>
-                        <div class="col-auto mb-3">
-                            <p class="h4 mb-1">10</p>
-                            <p class="text-secondary small"><span
-                                    class="me-1 avatar avatar-10 rounded bg-yellow"></span>16-30</p>
-                        </div>
-                        <div class="col-auto mb-3">
-                            <p class="h4 mb-1">15</p>
-                            <p class="text-secondary small"><span
-                                    class="me-1 avatar avatar-10 rounded bg-orange"></span>31-45</p>
-                        </div>
-                        <div class="col-auto mb-3">
-                            <p class="h4 mb-1">25</p>
-                            <p class="text-secondary small"><span
-                                    class="me-1 avatar avatar-10 rounded bg-purple"></span>46-60</p>
-                        </div>
-                        <div class="col-auto mb-3">
-                            <p class="h4 mb-1">10</p>
-                            <p class="text-secondary small"><span
-                                    class="me-1 avatar avatar-10 rounded bg-secondary"></span>60+</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card adminuiux-card h-100">
-                <div class="card-header">
-                    <h6>Top Investment Categories</h6>
-                </div>
-                <div class="card-body">
-                    <div class="semidoughnutchart">
-                        <div class="expensedatasemidoughnut">
-                            <p class="h4 mb-0"> 15.50k</p>
-                            <p class="text-secondary small">Profit</p>
-                        </div><canvas id="semidoughnutchart" class="mx-auto width-260 height-260"></canvas>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 col-md-6 mb-4">
-                            <p class="text-secondary small mb-2"><span
-                                    class="me-1 avatar avatar-10 rounded bg-green"></span> Share holdings</p>
-                            <h4 class="ps-3 fw-medium"> 165.52k<br><span class="text-success fs-14 fw-normal"><i
-                                        class="bi bi-caret-up-fill me-1 fs-14"></i> 25.30%</span></h4>
-                        </div>
-                        <div class="col-6 col-md-6 mb-4">
-                            <p class="text-secondary small mb-2"><span
-                                    class="me-1 avatar avatar-10 rounded bg-yellow"></span> Mutual Funds</p>
-                            <h4 class="ps-3 fw-medium"> 265.85k<br><span class="text-success fs-14 fw-normal"><i
-                                        class="bi bi-caret-up-fill me-1"></i> 21.42%</span></h4>
-                        </div>
-                        <div class="col-6 col-md-6 mb-4">
-                            <p class="text-secondary small mb-2"><span
-                                    class="me-1 avatar avatar-10 rounded bg-orange"></span> Bank Bonds</p>
-                            <h4 class="ps-3 fw-medium"> 356.26k<br><span class="text-success fs-14 fw-normal"><i
-                                        class="bi bi-caret-up-fill me-1"></i> 20.18%</span></h4>
-                        </div>
-                        <div class="col-6 col-md-6 mb-4">
-                            <p class="text-secondary small mb-2"><span
-                                    class="me-1 avatar avatar-10 rounded bg-purple"></span> Gov. Securities</p>
-                            <h4 class="ps-3 fw-medium"> 185.65<br><span class="text-success fs-14 fw-normal"><i
-                                        class="bi bi-caret-up-fill me-1"></i> 15.65%</span></h4>
-                        </div>
-                        <div class="col-6 col-md-6">
-                            <p class="text-secondary small mb-2"><span
-                                    class="me-1 avatar avatar-10 rounded bg-secondary"></span> Fixed Deposit</p>
-                            <h4 class="ps-3 fw-medium"> 190.45k<br><span class="text-success fs-14 fw-normal"><i
-                                        class="bi bi-caret-up-fill me-1"></i> 18.50%</span></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-12 col-xl-8">
-            <div class="card adminuiux-card mb-4">
-                <div class="card-header">
-                    <h6>My Holdings Performance</h6>
-                </div>
-                <div class="card-body">
-                    <table class="table responsive nowrap mb-0" id="dataTable">
-                        <thead>
-                            <tr>
-                                <th data-priority="1">Company</th>
-                                <th data-priority="1">Price</th>
-                                <th>Holding</th>
-                                <th data-priority="2">Profit/Loss</th>
-                                <th data-priority="3">Today's Trend</th>
-                                <th data-priority="4">% Change</th>
-                                <th data-priority="1">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Jintudal</p>
-                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 100.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 152</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">102 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Ciplasc</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 520.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 521.05</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">50 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 1520.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 15.40%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 408.65</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-danger"><i class="bi bi-graph-down-arrow"></i> Bearish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-danger"><i class="bi bi-caret-down-fill"></i> 0.85%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Trisha LLC</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 856.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 856.55</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">20 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 2050.00</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 35.15%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 685.00</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.03%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Cyborgous</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 150.00</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 153.00</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">3 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 450.00</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 10.00%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 45.0</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-danger"><i class="bi bi-graph-down-arrow"></i> Bearish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-danger"><i class="bi bi-caret-down-fill"></i> 0.65%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Spanishwebs</p>
-                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 130.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 135.52</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">100 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 150.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 5.52%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 10.15</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Jintudal</p>
-                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 100.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 152</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">102 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Jintudal</p>
-                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 100.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 152</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">102 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Jintudal</p>
-                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 100.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 152</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">102 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <p class="mb-0">Jintudal</p>
-                                        <p class="small text-theme-1"><i class="bi bi-award-fill"></i> Event</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"> 100.45</p>
-                                    <p class="small"><span class="text-secondary" data-bs-toggle="tooltip"
-                                            title="Last top price">LTP:</span> 152</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0">102 units</p>
-                                    <p class="small"><span class="text-secondary">Invested:</span> 1400.45</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
-                                    <p class="small"><span class="text-secondary">Profit:</span> 305.5</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-graph-up-arrow"></i> Bullish
-                                    </p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 text-success"><i class="bi bi-caret-up-fill"></i> 1.24%</p>
-                                </td>
-                                <td><button class="btn btn-sm btn-outline-success">Invest</button> <button
-                                        class="btn btn-sm btn-outline-danger">Sell</button>
-                                    <div class="dropdown d-inline-block"><a class="btn btn-link btn-square no-caret"
-                                            data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Favorite</a>
-                                            </li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">View
-                                                    Chart</a></li>
-                                            <li><a class="dropdown-item" href="javascript:void(0)">Company
-                                                    Events</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        </div>       
+        <!-- GP Margin Riskometer -->
         <div class="col-12 col-lg-6 col-xl-4 mb-4">
             <div class="card adminuiux-card">
                 <div class="card-header">
-                    <h6>Top Gainer</h6>
-                </div>
-                <ul class="list-group list-group-flush border-top bg-none">
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto"><i
-                                    class="bi bi-building-lock avatar avatar-40 h5 rounded-circle border"></i>
-                            </div>
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Jindaabanda</p>
-                                <p class="small text-secondary"> 2250.00, 15 Units</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 4500.00</h6>
-                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 25.30%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto"><span
-                                    class="avatar avatar-40 rounded-circle border fw-bold small">SIP</span>
-                            </div>
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Guaranteed Return</p>
-                                <p class="small text-secondary"> 1500.00, 200.00/mo.</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 1800.00</h6>
-                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 24.15%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto"><i
-                                    class="bi bi-percent avatar avatar-40 h5 rounded-circle border"></i></div>
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Fixed Deposit @7.25%</p>
-                                <p class="small text-secondary"> 4000.00</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 5280.00</h6>
-                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 22.65%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto"><i
-                                    class="bi bi-percent avatar avatar-40 h5 rounded-circle border"></i></div>
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Fixed Deposit @7.00%</p>
-                                <p class="small text-secondary"> 4500.00, 24/45 mo.</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 5600.00</h6>
-                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 18.15%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col-auto"><span
-                                    class="avatar avatar-40 rounded-circle border fw-bold small">SIP</span>
-                            </div>
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Real Estate Fund</p>
-                                <p class="small text-secondary"> 1500.00</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 1850.00</h6>
-                                <p class="small text-success"><i class="bi bi-caret-up-fill"></i> 17.65%</p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card adminuiux-card">
-                <div class="card-header">
-                    <h6>Top Loser</h6>
-                </div>
-                <ul class="list-group list-group-flush border-top bg-none">
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Infragistic LLP</p>
-                                <p class="small text-secondary"> 2250.00, 10 units</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 4500.00</h6>
-                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 25.30%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Reliables</p>
-                                <p class="small text-secondary"> 1200.00, 15 units</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 3150.00</h6>
-                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 22.65%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Alsometan</p>
-                                <p class="small text-secondary"> 2560.00, 11 units</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 4280.00</h6>
-                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 21.15%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col">
-                                <p class="mb-1 fw-medium">LinkedJosh</p>
-                                <p class="small text-secondary"> 850.00, 25 units</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 4280.00</h6>
-                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 21.05%</p>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row gx-3 align-items-center">
-                            <div class="col">
-                                <p class="mb-1 fw-medium">Real Estate Card</p>
-                                <p class="small text-secondary"> 1325.00, 13 units</p>
-                            </div>
-                            <div class="col-auto text-end">
-                                <h6> 1850.00</h6>
-                                <p class="small text-danger"><i class="bi bi-caret-down-fill"></i> - 20.75%</p>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-12 col-lg-6 col-xl-4 mb-4">
-            <div class="card adminuiux-card">
-                <div class="card-header">
-                    <h6>Riskometer</h6>
+                    <h6>GP & NP Margin</h6>
                 </div>
                 <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h5>Moderate</h5>
-                        <p class="text-secondary small">Your portfolio in good situation</p>
+                    <div class="text-center mb-3">
+                        <h5 id="gp-status">
+                            <span class="status-indicator status-excellent"></span>
+                            Excellent
+                        </h5>
+                        <p class="text-secondary small mb-0">Gross Profit Margin</p>
                     </div>
-                    <div class="riskometer moderate mb-3">
+        
+                    <div class="riskometer gp-riskometer excellent" id="gp-riskometer">
                         <div class="indicator"></div>
-                    </div><br>
-                    <div class="text-center">
-                        <h4 class="fw-medium"> 15.51k <span class="text-success fs-14"><i
-                                    class="bi bi-arrow-up-short me-1"></i> 11.5%</span></h4>
-                        <p class="text-secondary">Profit Revenue</p>
+                        <div class="riskometer-value" id="gp-riskometer-value">{{ "%.1f"|format(gp_margin) }}%</div>
+                    </div>
+        
+                    <div class="text-center mt-3">
+                        <h4 class="fw-medium text-dark mb-1">
+                            {{ "%.1f"|format(gp_margin) }}%
+                            <span class="fs-14" id="gp-trend">
+                                {% if gp_margin >= 20 %}
+                                <span class="text-success"><i class="bi bi-arrow-up-short me-1"></i> Excellent</span>
+                                {% elif gp_margin >= 10 %}
+                                <span class="text-success"><i class="bi bi-arrow-up-short me-1"></i> Good</span>
+                                {% elif gp_margin >= 5 %}
+                                <span class="text-warning"><i class="bi bi-dash me-1"></i> Moderate</span>
+                                {% elif gp_margin >= 0 %}
+                                <span class="text-warning"><i class="bi bi-arrow-down-short me-1"></i> Poor</span>
+                                {% else %}
+                                <span class="text-danger"><i class="bi bi-arrow-down-short me-1"></i> Critical</span>
+                                {% endif %}
+                            </span>
+                        </h4>
+                        <div class="row text-secondary small mt-2">
+                            <div class="col-6 d-flex justify-content-center text-center">
+                                <p class="mb-1"><strong>Gross Profit:</strong></p>
+                                <p class="mb-0">{{ gross_profit|format_currency }}</p>
+                            </div>
+                            <div class="col-6 d-flex justify-content-center text-center">
+                                <p class="mb-1"><strong>Revenue:</strong></p>
+                                <p class="mb-0">{{ revenue|format_currency }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <h5 id="mp-status">
+                            <span class="status-indicator status-moderate"></span>
+                            Moderate
+                        </h5>
+                        <p class="text-secondary small mb-0">Net Profit Margin</p>
+                    </div>
+                
+                    <div class="riskometer mp-riskometer moderate" id="mp-riskometer">
+                        <div class="indicator"></div>
+                        <div class="riskometer-value" id="mp-riskometer-value">{{ "%.1f"|format(mp_margin) }}%</div>
+                    </div>
+                
+                    <div class="text-center mt-3">
+                        <h4 class="fw-medium text-dark mb-1">
+                            {{ "%.1f"|format(mp_margin) }}%
+                            <span class="fs-14" id="mp-trend">
+                                {% if mp_margin >= 15 %}
+                                <span class="text-success"><i class="bi bi-arrow-up-short me-1"></i> Excellent</span>
+                                {% elif mp_margin >= 10 %}
+                                <span class="text-success"><i class="bi bi-arrow-up-short me-1"></i> Good</span>
+                                {% elif mp_margin >= 5 %}
+                                <span class="text-warning"><i class="bi bi-dash me-1"></i> Moderate</span>
+                                {% elif mp_margin >= 0 %}
+                                <span class="text-warning"><i class="bi bi-arrow-down-short me-1"></i> Poor</span>
+                                {% else %}
+                                <span class="text-danger"><i class="bi bi-arrow-down-short me-1"></i> Critical</span>
+                                {% endif %}
+                            </span>
+                        </h4>
+                        <div class="row text-secondary small mt-2">
+                            <div class="col-6 d-flex justify-content-center text-center">
+                                <p class="mb-1"><strong>Net Profit:</strong></p>
+                                <p class="mb-0">{{ net_profit|format_currency }}</p>
+                            </div>
+                            <div class="col-6 d-flex justify-content-center text-center">
+                                <p class="mb-1"><strong>Revenue:</strong></p>
+                                <p class="mb-0">{{ revenue|format_currency }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+    <!-- Replace the entire Working Capital Pyramid section with this code -->
+    <!-- ADD WORKING CAPITAL CARD HERE -->
+    <div class="col-12 col-lg-6 col-xl-4 mb-4">
+        <div class="card adminuiux-card h-100">
+            <div class="card-header">
+                <h6>Working Capital</h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h4 class="fw-medium {% if current_working_capital >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ current_working_capital|format_currency }}
+                    </h4>
+                    <p class="text-secondary small">Working Capital</p>
+                </div>
+    
+                <!-- Pyramid Chart for Working Capital -->
+                <div class="pyramid-chart-container">
+                    <canvas id="workingCapitalPyramidChart"></canvas>
+                </div>
+    
+                <div class="row text-center mt-3">
+                    <div class="col-12 col-sm-6 col-lg-6 mb-3">
+                        <div class="card bg-success bg-opacity-10 border-success h-100">
+                            <div class="card-body p-3 text-center">
+                                <h6 class="card-title text-success mb-1">Current Assets:</h6>
+                                <p class="card-text fw-bold text-dark mb-0">
+                                    {{ current_assets_total|format_currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-6 mb-3">
+                        <div class="card bg-warning bg-opacity-10 border-warning">
+                            <div class="card-body p-3 text-center">
+                                <h6 class="card-title text-warning mb-1">Current Liabilities</h6>
+                                <p class="card-text fw-bold text-dark mb-0">
+                                    {{ assets_liabilities_breakdown.short_term_liabilities|format_currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Assets & Liabilities Breakdown Chart -->
+    <div class="col-12 col-lg-12 col-xl-8 mb-4">
+        <div class="card adminuiux-card h-100">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h6>Assets & Liabilities</h6>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshAssetsLiabilitiesChart()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="w-100 height-asset">
+                    <canvas id="assetsLiabilitiesChart"></canvas>
+                </div>
+    
+                <!-- Summary Cards -->
+                <div class="row mt-4">
+                    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                        <div class="card bg-success bg-opacity-10 border-success" style="height: 100px;">
+                            <div class="card-body p-3 text-center">
+                                <h6 class="card-title text-success mb-1">Current Assets</h6>
+                                <p class="card-text fw-bold text-dark mb-0">
+                                    {{ assets_liabilities_breakdown.short_term_assets|format_currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                        <div class="card bg-warning bg-opacity-10 border-warning" style="height: 100px;">
+                            <div class="card-body p-3 text-center">
+                                <h6 class="card-title text-warning mb-1">Current Liabilities</h6>
+                                <p class="card-text fw-bold text-dark mb-0">
+                                    {{ assets_liabilities_breakdown.short_term_liabilities|format_currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                        <div class="card bg-primary bg-opacity-10 border-primary" style="height: 100px;">
+                            <div class="card-body p-3 text-center">
+                                <h6 class="card-title text-primary mb-1">Non-Current Assets</h6>
+                                <p class="card-text fw-bold text-dark mb-0">
+                                    {{ assets_liabilities_breakdown.long_term_assets|format_currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3 mb-3">
+                        <div class="card bg-danger bg-opacity-10 border-danger" style="height: 100px;">
+                            <div class="card-body p-3 text-center">
+                                <h6 class="card-title text-danger mb-1">Non-Current Liabilities</h6>
+                                <p class="card-text fw-bold text-dark mb-0">
+                                    {{ assets_liabilities_breakdown.long_term_liabilities|format_currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </div>
 
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-waterfall"></script>
 <script>
+  function initializeAssetsLiabilitiesChart() {
+        const ctx = document.getElementById('assetsLiabilitiesChart');
+        if (!ctx) {
+            console.error('Assets & Liabilities chart canvas not found');
+            return;
+        }
+
+        try {
+            // Check if chart already exists and destroy it
+            const existingChart = Chart.getChart(ctx);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            const breakdown = {{ assets_liabilities_breakdown | tojson | safe
+        }};
+    console.log('Assets/Liabilities breakdown:', breakdown);
+
+    // Use simplified labels for X-axis
+    const labels = ['Current Asset', 'Current Libility', '', 'Non-Current Asset', 'Non-Current Libility'];
+    const fullLabels = [
+        'Short-term Assets',
+        'Short-term Liabilities',
+        '',
+        'Long-term Assets',
+        'Long-term Liabilities'
+    ];
+
+    const data = [
+        breakdown.short_term_assets || 0,
+        breakdown.short_term_liabilities || 0,
+        0, // Empty space for separation
+        breakdown.long_term_assets || 0,
+        breakdown.long_term_liabilities || 0
+    ];
+
+    const backgroundColors = [
+        'rgba(40, 167, 69, 0.8)',    
+        'rgba(255, 193, 7, 0.8)',    
+        'rgba(255, 255, 255, 0)',    
+        'rgba(0, 123, 255, 0.8)',   
+        'rgba(220, 53, 69, 0.8)'     
+    ];
+
+    const borderColors = [
+        'rgba(40, 167, 69, 1)',
+        'rgba(255, 193, 7, 1)',
+        'rgba(255, 255, 255, 0)',
+        'rgba(0, 123, 255, 1)',
+        'rgba(220, 53, 69, 1)'
+    ];
+
+    // Calculate dynamic Y-axis max value
+    const maxDataValue = Math.max(...data.filter((val, idx) => idx !== 2)); // Exclude empty space
+    const yAxisMax = calculateYAxisMax(maxDataValue);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels, // This sets the X-axis labels
+            datasets: [{
+                label: 'Amount (SAR)',
+                data: data,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function (tooltipItems) {
+                            const index = tooltipItems[0].dataIndex;
+                            return fullLabels[index] || '';
+                        },
+                        label: function (context) {
+                            if (context.dataIndex === 2) return null;
+                            return formatCurrencyNoDecimals(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: ' '
+                    },
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 0, 
+                        minRotation: 0,
+                        callback: function (value, index) {
+                            if (index === 2) return ''; 
+                            return this.getLabelForValue(value); 
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Amount (SAR)'
+                    },
+                    ticks: {
+                        callback: function (value) {
+                            return formatCurrencyNoDecimals(value);
+                        },
+                        // Set fixed intervals based on the max value
+                        stepSize: calculateStepSize(maxDataValue),
+                        max: yAxisMax
+                    },
+                    // Ensure small values are still visible
+                    min: 0
+                }
+            },
+            // Add space between the bars
+            layout: {
+                padding: {
+                    left: 20,
+                    right: 20,
+                    top: 20,
+                    bottom: 10 // Extra bottom padding for X-axis labels
+                }
+            },
+            // Adjust bar spacing for better grouping
+            barPercentage: 0.5,
+            categoryPercentage: 0.7,
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+
+    console.log('Assets & Liabilities chart initialized successfully');
+    } catch (error) {
+        console.error('Error initializing assets & liabilities chart:', error);
+    }
+}
+
+    // Helper function to format currency without decimal places
+    function formatCurrencyNoDecimals(value) {
+        const absValue = Math.abs(value);
+        if (absValue >= 1000000) {
+            return (value / 1000000).toFixed(0) + 'M';
+        } else if (absValue >= 1000) {
+            return (value / 1000).toFixed(0) + 'K';
+        } else {
+            return value.toFixed(0);
+        }
+    }
+
+    // Helper function to calculate Y-axis max value
+    function calculateYAxisMax(maxValue) {
+        if (maxValue === 0) return 1000; // Default for zero values
+
+        // Calculate appropriate max value with some padding
+        const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)));
+        const normalized = maxValue / magnitude;
+
+        if (normalized <= 1) return magnitude * 1.2;
+        if (normalized <= 2) return magnitude * 2;
+        if (normalized <= 5) return magnitude * 5;
+        return magnitude * 10;
+    }
+
+    // Helper function to calculate step size for Y-axis
+    function calculateStepSize(maxValue) {
+        if (maxValue === 0) return 100;
+
+        const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)));
+        const normalized = maxValue / magnitude;
+
+        if (maxValue < 1000) {
+            return 100; // For values under 1,000, use 100 intervals
+        } else if (maxValue < 10000) {
+            return 1000; // For values under 10,000, use 1,000 intervals
+        } else if (maxValue < 100000) {
+            return 10000; // For values under 100,000, use 10,000 intervals
+        } else if (maxValue < 1000000) {
+            return 100000; // For values under 1,000,000, use 100,000 intervals
+        } else if (maxValue < 10000000) {
+            return 1000000; // For values under 10,000,000, use 1,000,000 intervals
+        } else {
+            return 10000000; // For larger values, use 10,000,000 intervals
+        }
+    }
+
+    // Add refresh function
+    function refreshAssetsLiabilitiesChart() {
+        initializeAssetsLiabilitiesChart();
+    }
+    // Riskometer initialization for GP and MP
+        function initializeRiskometers() {
+            const gpMargin = {{ gp_margin }};
+        const mpMargin = {{ mp_margin }};
+
+        console.log('Initializing riskometers - GP:', gpMargin, 'MP:', mpMargin);
+
+        // Update riskometers with proper values
+        updateRiskometer('gp', gpMargin, 50); // GP max at 50%
+        updateRiskometer('mp', mpMargin, 25); // MP max at 25%
+}
+
+        function updateRiskometer(type, margin, maxValue) {
+            const riskometer = document.getElementById(`${type}-riskometer`);
+            const valueDisplay = document.getElementById(`${type}-riskometer-value`);
+            const status = document.getElementById(`${type}-status`);
+            const trend = document.getElementById(`${type}-trend`);
+
+            if (!riskometer) {
+                console.error(`${type} riskometer element not found`);
+                return;
+            }
+
+            // Handle negative values - for negative margins, we want to show them in the critical/poor zone
+            const isNegative = margin < 0;
+            const isExtremeValue = margin > maxValue;
+
+            // For negative values, we'll map them to the left side of the gauge (0% to -100% scale)
+            let percentage, arrowRotation;
+
+            if (isNegative) {
+                // Map negative values to the left side (0% to -100% becomes 15deg to -15deg)
+                const negativePercentage = Math.min(Math.abs(margin) / 100, 1); // Cap at -100%
+                percentage = -negativePercentage;
+                arrowRotation = calculateArrowRotationForNegative(negativePercentage);
+            } else {
+                // Handle positive values normally
+                const displayMargin = isExtremeValue ? maxValue : Math.min(margin, maxValue);
+                percentage = displayMargin / maxValue;
+                arrowRotation = calculateArrowRotationForPositive(percentage);
+            }
+
+            // Calculate risk level
+            const riskLevel = getRiskLevel(type, margin, isExtremeValue);
+
+            console.log(`${type} Riskometer Update:`, {
+                margin,
+                maxValue,
+                percentage,
+                riskLevel,
+                arrowRotation,
+                isNegative,
+                isExtremeValue
+            });
+
+            // Update riskometer class for styling
+            updateRiskometerClass(riskometer, riskLevel);
+
+            // Update the CSS custom property for arrow rotation
+            riskometer.style.setProperty('--arrow-rotation', arrowRotation + 'deg');
+
+            // Update value display
+            if (valueDisplay) {
+                if (isExtremeValue) {
+                    valueDisplay.textContent = 'MAX+';
+                    valueDisplay.style.color = '#c80036';
+                    valueDisplay.style.fontSize = '20px';
+                } else {
+                    valueDisplay.textContent = margin.toFixed(1) + '%';
+                    valueDisplay.style.color = isNegative ? '#c80036' : '#2c3e50';
+                    valueDisplay.style.fontSize = '24px';
+                }
+            }
+
+            // Update status and trend
+            updateRiskometerStatus(status, trend, riskLevel, margin, type, isNegative);
+        }
+
+        function getRiskLevel(type, margin, isExtreme) {
+            if (isExtreme) return 'extreme';
+
+            // Handle negative values first
+            if (margin < 0) {
+                if (margin <= -20) return 'extreme';
+                if (margin <= -10) return 'critical';
+                if (margin <= -5) return 'poor';
+                return 'moderate'; // For very small negative values
+            }
+
+            // Positive values
+            if (type === 'gp') {
+                if (margin >= 20) return 'excellent';
+                if (margin >= 10) return 'good';
+                if (margin >= 5) return 'moderate';
+                return 'poor';
+            } else {
+                if (margin >= 15) return 'excellent';
+                if (margin >= 10) return 'good';
+                if (margin >= 5) return 'moderate';
+                return 'poor';
+            }
+        }
+
+        function calculateArrowRotationForPositive(percentage) {
+            // Map positive percentage to 180-degree scale (0% = 15deg, 100% = 165deg)
+            const baseRotation = 15; // Starting point (poor/moderate)
+            const maxRotation = 165; // Ending point (excellent/extreme)
+
+            return baseRotation + (percentage * (maxRotation - baseRotation));
+        }
+
+        function calculateArrowRotationForNegative(percentage) {
+            // Map negative percentage to left side scale (0% = 15deg, -100% = -15deg)
+            const baseRotation = 15; // Center position
+            const maxNegativeRotation = -15; // Maximum left rotation
+
+            return baseRotation + (percentage * (maxNegativeRotation - baseRotation));
+        }
+
+        function updateRiskometerClass(riskometer, riskLevel) {
+            // Remove all risk level classes
+            const classes = ['excellent', 'good', 'moderate', 'poor', 'critical', 'extreme'];
+            riskometer.classList.remove(...classes);
+
+            // Add current risk level class
+            riskometer.classList.add(riskLevel);
+        }
+
+        function updateRiskometerStatus(statusElement, trendElement, riskLevel, margin, type, isNegative) {
+            if (!statusElement || !trendElement) return;
+
+            const statusText = riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1);
+            const statusIndicatorClass = `status-${riskLevel}`;
+
+            // Update status indicator
+            statusElement.innerHTML = `
+        <span class="status-indicator ${statusIndicatorClass}"></span>
+        ${statusText}
+    `;
+
+            // Update trend text based on whether value is negative or positive
+            let trendText = '';
+            let trendClass = '';
+            let trendIcon = '';
+
+            if (isNegative) {
+                trendClass = 'text-danger';
+                trendIcon = 'bi-arrow-down-short';
+
+                if (margin <= -20) {
+                    trendText = 'Extreme Loss';
+                } else if (margin <= -10) {
+                    trendText = 'Critical Loss';
+                } else if (margin <= -5) {
+                    trendText = 'Significant Loss';
+                } else {
+                    trendText = 'Minor Loss';
+                }
+            } else {
+                if (type === 'gp') {
+                    if (margin >= 20) {
+                        trendText = 'Excellent';
+                        trendClass = 'text-success';
+                        trendIcon = 'bi-arrow-up-short';
+                    } else if (margin >= 10) {
+                        trendText = 'Good';
+                        trendClass = 'text-success';
+                        trendIcon = 'bi-arrow-up-short';
+                    } else if (margin >= 5) {
+                        trendText = 'Moderate';
+                        trendClass = 'text-warning';
+                        trendIcon = 'bi-dash';
+                    } else {
+                        trendText = 'Poor';
+                        trendClass = 'text-warning';
+                        trendIcon = 'bi-arrow-down-short';
+                    }
+                } else {
+                    if (margin >= 15) {
+                        trendText = 'Excellent';
+                        trendClass = 'text-success';
+                        trendIcon = 'bi-arrow-up-short';
+                    } else if (margin >= 10) {
+                        trendText = 'Good';
+                        trendClass = 'text-success';
+                        trendIcon = 'bi-arrow-up-short';
+                    } else if (margin >= 5) {
+                        trendText = 'Moderate';
+                        trendClass = 'text-warning';
+                        trendIcon = 'bi-dash';
+                    } else {
+                        trendText = 'Poor';
+                        trendClass = 'text-warning';
+                        trendIcon = 'bi-arrow-down-short';
+                    }
+                }
+            }
+
+            trendElement.innerHTML = `
+        <span class="${trendClass}">
+            <i class="bi ${trendIcon} me-1"></i>
+            ${trendText}
+        </span>
+    `;
+        }
+
+        function initializeWorkingCapitalPyramidChart() {
+                const ctx = document.getElementById('workingCapitalPyramidChart');
+                if (!ctx) {
+                    console.error('Working Capital Pyramid chart canvas not found');
+                    return;
+                }
+
+                try {
+                    // Check if chart already exists and destroy it
+                    const existingChart = Chart.getChart(ctx);
+                    if (existingChart) {
+                        existingChart.destroy();
+                    }
+
+                    const currentAssets = {{ current_assets_total }};
+                const currentLiabilities = {{ current_liabilities_total }};
+            const workingCapital = {{ current_working_capital }};
+
+            // Create pyramid data
+            const pyramidData = {
+                labels: ['Current Assets', 'Current Liabilities','Working Capital'],
+                datasets: [{
+                    data: [currentAssets, currentLiabilities, Math.abs(workingCapital)],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.8)',    // Green for assets
+                        workingCapital >= 0 ? 'rgba(255, 193, 7, 0.8)' : 'rgba(220, 53, 69, 0.8)', // Yellow/Red for working capital
+                        'rgba(220, 53, 69, 0.8)'     // Red for liabilities
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        workingCapital >= 0 ? 'rgba(255, 193, 7, 1)' : 'rgba(220, 53, 69, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: pyramidData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.dataset.label || ''}: ${formatCurrency(context.parsed.x)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+
+            console.log('Working Capital Pyramid chart initialized successfully');
+    } catch (error) {
+                console.error('Error initializing working capital pyramid chart:', error);
+            }
+}
+
     document.addEventListener('DOMContentLoaded', function () {
         console.log('DOM loaded, initializing charts...');
+
+        // Initialize margin gauges first
+        initializeRiskometers();
 
         // Initialize all charts
         initializeCharts();
@@ -975,7 +1177,7 @@ Financial Performance - Investment Admin
     let liabilityChart = null;
     let assetChart = null;
     let profitLossStatementChart = null;
-    let profitLossWaterfallChart = null;
+    // let profitLossWaterfallChart = null;
 
     function initializeCharts() {
         // Destroy existing charts first
@@ -987,17 +1189,18 @@ Financial Performance - Investment Admin
         initializeLiabilityChart();
         initializeAssetChart();
         initializeProfitLossStatementChart();
-        initializeProfitLossWaterfallChart();
+        initializeWorkingCapitalPyramidChart(); 
+        initializeAssetsLiabilitiesChart();
     }
 
     // Add refresh function
     function refreshPLChart() {
-        initializeProfitLossWaterfallChart();
+        initializeProfitLossStatementChart();
     }
 
     function destroyCharts() {
-        const charts = [profitChart, expenseChart, liabilityChart, assetChart, profitLossStatementChart, profitLossWaterfallChart];
-        const chartIds = ['profitLossChart', 'expenseChart', 'liabilityChart', 'assetChart', 'profitLossStatementChart', 'profitLossWaterfallChart'];
+        const charts = [profitChart, expenseChart, liabilityChart, assetChart, profitLossStatementChart];
+        const chartIds = ['profitLossChart', 'expenseChart', 'liabilityChart', 'assetChart', 'profitLossStatementChart', 'workingCapitalPyramidChart', 'assetsLiabilitiesChart'];
 
         charts.forEach((chart, index) => {
             if (chart) {
@@ -1432,7 +1635,11 @@ Financial Performance - Investment Admin
         'Net Operating Profit',
         'Finance Cost', 'Zakat/Tax ',
         'Other Incomes',
+        'Results in Subsidiary',
+        'Results in Associate',
         'Total Investment Income',
+        'Unrealized Valuation from Investment at Fair Value',
+        'Income from investment at FV realised Gain',
         'NET PROFIT/LOSS'
     ];
 
@@ -1471,11 +1678,7 @@ Financial Performance - Investment Admin
     ];
 
     const investmentItems = [
-        'Unrealized Valuation from Investment at Fair Value',
-        'Income from investment at FV realised Gain',
         'Dividend from investment at fair value P/L',
-        'Results in Subsidiary',
-        'Results in Associate',
         'Dividend from Investment at cost',
         'Income from investment at Octal',
         'Change in the fair value of equity investment at fair value through OCI',
@@ -1486,6 +1689,13 @@ Financial Performance - Investment Admin
         'Remeasurement of defined employee benefits obligations',
         'Other Income'
     ];
+
+    const otherItemsInvestment = [
+        'Unrealized Valuation from Investment at Fair Value',
+        'Income from investment at FV realised Gain',
+        'Results in Subsidiary',
+        'Results in Associate'
+    ]
 
     // Prepare data for the chart
     const chartData = categories.map(category => {
@@ -1523,12 +1733,14 @@ Financial Performance - Investment Admin
             const costOfRevenue = plData['Cost of Revenue'] || 0;
             const totalExpenses = expenseItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
             const totalInvestmentIncome = investmentItems.reduce((sum, item) => sum + (plData[item] || 0), 0);
+            const TotalotherItemsInvestment = otherItemsInvestment.reduce((sum, item) => sum + (plData[item] || 0), 0);
+            console.log("otherItemsInvestment", TotalotherItemsInvestment);
             const interestIncome = Math.abs(plData['Interest Income'] || 0);
             const financeCost = Math.abs(plData['Finance Cost'] || 0);
             const zakatTax = Math.abs(plData['Zakat/Tax '] || 0);
             const employeeBenefit = Math.abs(plData['Remeasurement of defined employee benefits obligations'] || 0);
             const otherIncome = Math.abs(plData['Other Income'] || 0);
-            value = totalInvestmentIncome - otherIncome - interestIncome + financeCost + zakatTax + employeeBenefit - revenue + costOfRevenue + totalExpenses;
+            value = totalInvestmentIncome - otherIncome - interestIncome + financeCost + zakatTax + employeeBenefit - revenue + costOfRevenue + totalExpenses + TotalotherItemsInvestment;
             if (value < 0) {
                 value = -value; // Convert to positive if it's negative (loss)
             }
@@ -1572,14 +1784,19 @@ Financial Performance - Investment Admin
 
         // Income items - Blue
         if (category === 'Other Incomes') return 'rgba(23, 162, 184, 0.8)';
+        if (category === 'Results in Subsidiary') return 'rgba(40, 167, 69, 0.6)' ;
+
+        if (category === 'Results in Associate') return 'rgba(40, 167, 69, 0.6)';
+
+        if (category === 'Unrealized Valuation from Investment at Fair Value') return 'rgba(40, 167, 69, 0.6)';
+
+        if (category === 'Income from investment at FV realised Gain') return 'rgba(40, 167, 69, 0.6)';
 
         // Investment income - Purple
         if ([
             'Unrealized Valuation from Investment at Fair Value',
             'Income from investment at FV realised Gain',
             'Dividend from investment at fair value P/L',
-            'Results in Subsidiary',
-            'Results in Associate',
             'Dividend from Investment at cost',
             'Interest Income',
             'Income from investment at Octal',
@@ -1595,7 +1812,7 @@ Financial Performance - Investment Admin
                 'rgba(40, 167, 69, 0.8)' : 'rgba(220, 53, 69, 0.8)';
         }
 
-        return 'rgba(108, 117, 125, 0.6)'; // Default gray
+        return '#004557'; // Default gray
     });
 
     // Create the chart
@@ -1686,260 +1903,6 @@ Financial Performance - Investment Admin
         } catch (error) {
         console.error('Error initializing profit/loss statement chart:', error);
     }
-    }
-
-    function initializeProfitLossWaterfallChart() {
-        const ctx = document.getElementById('profitLossWaterfallChart');
-        if (!ctx) {
-            console.error('Profit/Loss Waterfall chart canvas not found');
-            return;
-        }
-
-        try {
-            // Check if chart already exists and destroy it
-            const existingChart = Chart.getChart(ctx);
-            if (existingChart) {
-                existingChart.destroy();
-            }
-
-            // Get data from template variables
-            const plData = {{ pl_data | tojson | safe
-        }};
-    console.log('P&L Data for waterfall chart:', plData);
-
-    // If no data, show a message and return
-    if (!plData || Object.keys(plData).length === 0) {
-        console.warn('No P&L data available for waterfall chart');
-        ctx.parentElement.innerHTML = '<div class="text-center p-4 text-muted">No P&L data available for the selected period</div>';
-        return;
-    }
-
-    // Prepare waterfall data structure
-    const waterfallData = prepareWaterfallData(plData);
-
-    // Create the waterfall chart
-    profitLossWaterfallChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: waterfallData.labels,
-            datasets: [{
-                label: 'Amount (SAR)',
-                data: waterfallData.data,
-                backgroundColor: waterfallData.backgroundColors,
-                borderColor: waterfallData.borderColors,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            let value = context.parsed.y;
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (value !== null) {
-                                label += formatCurrency(Math.abs(value));
-                            }
-                            return label;
-                        }
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Profit & Loss Waterfall Analysis',
-                    font: {
-                        size: 16
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function (value) {
-                            return formatCurrency(value);
-                        },
-                        stepSize: (function () {
-                            const maxValue = Math.max(...waterfallData.data.map(v => Math.abs(v)));
-                            if (maxValue <= 20) return 2;
-                            if (maxValue <= 100) return 10;
-                            if (maxValue <= 1000) return 100;
-                            return Math.ceil(maxValue / 5);
-                        })()
-                    }
-                },
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45,
-                        callback: function (value, index) {
-                            // Shorten long labels for better display
-                            const label = this.getLabelForValue(value);
-                            if (label.length > 15) {
-                                return label.substring(0, 15) + '...';
-                            }
-                            return label;
-                        }
-                    }
-                }
-            },
-            animation: {
-                duration: 2000,
-                easing: 'easeOutQuart'
-            }
-        }
-    });
-
-    console.log('Profit/Loss Waterfall chart initialized successfully');
-        } catch (error) {
-        console.error('Error initializing profit/loss waterfall chart:', error);
-    }
-    }
-
-    function prepareWaterfallData(plData) {
-        // Define the order of items in the waterfall chart
-        const waterfallOrder = [
-            'Revenue',
-            'Cost of Revenue',
-            'Gross Profit',
-            'Operating Expenses',
-            'Operating Profit',
-            'Other Income',
-            'Finance Cost',
-            'Zakat/Tax',
-            'Investment Income',
-            'Net Profit Before Tax',
-            'Tax',
-            'NET PROFIT/LOSS'
-        ];
-
-        // Calculate values for each category
-        const values = {};
-
-        // Revenue (positive)
-        values['Revenue'] = Math.abs(plData['Revenue'] || 0);
-
-        // Cost of Revenue (negative)
-        values['Cost of Revenue'] = -(Math.abs(plData['Cost of Revenue'] || 0));
-
-        // Gross Profit
-        values['Gross Profit'] = values['Revenue'] + values['Cost of Revenue'];
-
-        // Operating Expenses (sum of all expense items, negative)
-        const expenseItems = [
-            'Salaries & Related', 'GOSI', 'Medical Insurance', 'Office Rent',
-            'Other Office Exp', 'Professional Fees', 'Business Travel',
-            'Consultation', 'Depreciation'
-        ];
-        values['Operating Expenses'] = -expenseItems.reduce((sum, item) =>
-            sum + Math.abs(plData[item] || 0), 0);
-
-        // Operating Profit
-        values['Operating Profit'] = values['Gross Profit'] + values['Operating Expenses'];
-
-        // Other Income (positive)
-        values['Other Income'] = Math.abs(plData['Other Income'] || 0);
-
-        // Finance Cost (negative)
-        values['Finance Cost'] = -(Math.abs(plData['Finance Cost'] || 0));
-
-        // Zakat/Tax (negative)
-        values['Zakat/Tax'] = -(Math.abs(plData['Zakat/Tax '] || 0));
-
-        // Investment Income (positive)
-        const investmentItems = [
-            'Unrealized Valuation from Investment at Fair Value',
-            'Income from investment at FV realised Gain',
-            'Dividend from investment at fair value P/L',
-            'Results in Subsidiary',
-            'Results in Associate',
-            'Dividend from Investment at cost',
-            'Interest Income',
-            'Income from investment at Octal',
-            'Change in the fair value of equity investment at fair value through OCI',
-            'Gain from disposal of associate'
-        ];
-        values['Investment Income'] = investmentItems.reduce((sum, item) =>
-            sum + Math.abs(plData[item] || 0), 0);
-
-        // Net Profit Before Tax
-        values['Net Profit Before Tax'] = values['Operating Profit'] + values['Other Income'] +
-            values['Finance Cost'] + values['Zakat/Tax'] +
-            values['Investment Income'];
-
-        // Tax (negative)
-        values['Tax'] = -(Math.abs(plData['Zakat/Tax '] || 0) * 0.2); // Assuming 20% tax rate
-
-        // NET PROFIT/LOSS (final value)
-        values['NET PROFIT/LOSS'] = values['Net Profit Before Tax'] + values['Tax'];
-
-        // Prepare data for waterfall chart
-        const data = [];
-        const backgroundColors = [];
-        const borderColors = [];
-        const labels = [];
-
-        // Starting point (0)
-        data.push(0);
-        backgroundColors.push('rgba(0, 0, 0, 0)'); // Transparent
-        borderColors.push('rgba(0, 0, 0, 0)'); // Transparent
-        labels.push('Start');
-
-        // Add each category in order
-        for (const category of waterfallOrder) {
-            if (values.hasOwnProperty(category)) {
-                data.push(values[category]);
-
-                // Set colors based on category type
-                if (category === 'Revenue' || category === 'Other Income' || category === 'Investment Income') {
-                    // Income items - green
-                    backgroundColors.push('rgba(40, 167, 69, 0.8)');
-                    borderColors.push('rgba(40, 167, 69, 1)');
-                } else if (category === 'Cost of Revenue' || category === 'Operating Expenses' ||
-                    category === 'Finance Cost' || category === 'Zakat/Tax' || category === 'Tax') {
-                    // Expense items - red
-                    backgroundColors.push('rgba(220, 53, 69, 0.8)');
-                    borderColors.push('rgba(220, 53, 69, 1)');
-                } else if (category === 'Gross Profit' || category === 'Operating Profit' ||
-                    category === 'Net Profit Before Tax') {
-                    // Intermediate totals - blue
-                    backgroundColors.push('rgba(23, 162, 184, 0.8)');
-                    borderColors.push('rgba(23, 162, 184, 1)');
-                } else if (category === 'NET PROFIT/LOSS') {
-                    // Final total - purple if positive, orange if negative
-                    if (values[category] >= 0) {
-                        backgroundColors.push('rgba(111, 66, 193, 0.8)');
-                        borderColors.push('rgba(111, 66, 193, 1)');
-                    } else {
-                        backgroundColors.push('rgba(253, 126, 20, 0.8)');
-                        borderColors.push('rgba(253, 126, 20, 1)');
-                    }
-                }
-
-                labels.push(category);
-            }
-        }
-
-        // Final point (0)
-        data.push(0);
-        backgroundColors.push('rgba(0, 0, 0, 0)'); // Transparent
-        borderColors.push('rgba(0, 0, 0, 0)'); // Transparent
-        labels.push('End');
-
-        return {
-            labels: labels,
-            data: data,
-            backgroundColors: backgroundColors,
-            borderColors: borderColors
-        };
     }
 
     function formatCurrency(value) {
